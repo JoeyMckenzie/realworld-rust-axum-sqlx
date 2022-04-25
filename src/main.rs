@@ -1,7 +1,7 @@
 use std::env;
 
 use sqlx::postgres::PgPoolOptions;
-use tracing::{info, Level, span};
+use tracing::{info, span, Level};
 use tracing_subscriber::FmtSubscriber;
 
 use crate::errors::ConduitError;
@@ -17,8 +17,7 @@ async fn main() -> Result<(), ConduitError> {
         .with_max_level(Level::INFO)
         .finish();
 
-    tracing::subscriber::set_global_default(subscriber)
-        .expect("setting default subscriber failed");
+    tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
 
     let _init_span = span!(Level::INFO, "initialize_api").entered();
 

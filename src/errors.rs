@@ -2,7 +2,7 @@ use std::fmt::{Debug, Display, Formatter};
 
 #[derive(Debug)]
 pub enum ConduitError {
-    StartupError
+    StartupError,
 }
 
 impl From<hyper::error::Error> for ConduitError {
