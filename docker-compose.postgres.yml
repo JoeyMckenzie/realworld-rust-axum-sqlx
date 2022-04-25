@@ -13,4 +13,4 @@ services:
       timeout: 5s
       retries: 5
     ports:
-      - "5431:5431"
+      - "5432:5432"

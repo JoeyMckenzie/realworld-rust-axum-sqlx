@@ -7,6 +7,8 @@ use tracing_subscriber::FmtSubscriber;
 use crate::errors::ConduitError;
 use crate::lib::routes::build_api_router;
 
+extern crate argon2;
+
 mod errors;
 mod lib;
 
