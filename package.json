@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/joeymckenzie/realworld-rust-axum-sqlx#readme",
   "lint-staged": {
-    ".rs": "make format"
+    "*.rs": "make format"
   },
   "devDependencies": {
     "husky": "^7.0.0",
