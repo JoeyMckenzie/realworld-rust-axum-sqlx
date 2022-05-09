@@ -1,19 +1,14 @@
 use std::env;
 
-use sqlx::postgres::PgPoolOptions;
-use tracing::{info, span, Level};
+use conduit_core::routes::build_api_router;
+use conduit_repository::initialize_db;
+
+use conduit_shared::context::AppContext;
+use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
 
-use crate::errors::ConduitError;
-use crate::lib::routes::build_api_router;
-
-extern crate argon2;
-
-mod errors;
-mod lib;
-
 #[tokio::main]
-async fn main() -> Result<(), ConduitError> {
+async fn main() -> anyhow::Result<()> {
     // Build out the logging instance using tracing
     let subscriber = FmtSubscriber::builder()
         .with_max_level(Level::INFO)
@@ -21,35 +16,26 @@ async fn main() -> Result<(), ConduitError> {
 
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
 
-    let _init_span = span!(Level::INFO, "initialize_api").entered();
-
+    // Initialize environment variables
     info!("Loading environment variables...");
     dotenv::dotenv().ok();
 
     let connection_string =
         env::var("CONNECTION_STRING").expect("connection string is not available");
 
-    info!("Environment loaded! Configuration Postgres connection...");
-    let db = PgPoolOptions::new()
-        .max_connections(5)
-        .connect(&connection_string)
-        .await
-        .expect("could not connect to the database");
-
-    info!("Postgres connection established, running migrations...");
-    sqlx::migrate!()
-        .run(&db)
-        .await
-        .expect("could not run database migrations");
+    // Spin up a connection to the database and run any outstanding migrations
+    info!("Running migrations...");
+    let db = initialize_db(&connection_string).await;
 
     info!("Migrations successfully ran! Initializing axum server...");
     let port = env::var("PORT").expect("port is not defined as an env var");
-    let app = build_api_router();
+    let app_context = AppContext::new(db);
+    let router = build_api_router(app_context);
 
     info!("Routes initialized! Now listening on port {}", port);
-    _init_span.exit();
+
     axum::Server::bind(&format!("0.0.0.0:{}", port).parse()?)
-        .serve(app.into_make_service())
+        .serve(router.into_make_service())
         .await
         .expect("error while connecting to the server");
 

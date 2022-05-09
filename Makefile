@@ -40,8 +40,8 @@ test: ## run all rust unit tests
 version: ## display the version of the API server
 	@echo $(VERSION)
 
-.PHONY: db-start
-db-start: ## start the database server
+.PHONY: start-db
+start-db: ## start the database server
 	@docker-compose -f ./docker-compose.postgres.yml up --build
 
 .PHONY: lint

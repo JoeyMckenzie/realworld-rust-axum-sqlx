@@ -1,0 +1,19 @@
+[package]
+name = "conduit-api"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+conduit-core = { path = "../conduit-core" }
+conduit-repository = { path = "../conduit-repository" }
+conduit-shared = { path = "../conduit-shared" }
+sqlx = { version = "0.5", features = ["runtime-tokio-rustls", "postgres"] }
+axum = { version = "0.5.1", features = ["tower-log"] }
+tokio = { version = "1.17.0", features = ["full"] }
+clap = { version = "3.1.12", features = ["derive", "env"] }
+dotenv = "0.15.0"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+anyhow = "1"
