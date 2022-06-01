@@ -1,6 +1,6 @@
-use crate::users::repository::UsersRepository;
+
 use async_trait::async_trait;
-use conduit_domain::users::models::{User, UserDto};
+use conduit_domain::users::models::{UserDto};
 use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto};
 use std::sync::Arc;
 

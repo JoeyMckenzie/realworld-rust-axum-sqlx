@@ -2,7 +2,7 @@ use crate::repositories::ConduitConnectionPool;
 use async_trait::async_trait;
 use conduit_core::users::repository::UsersRepository;
 use conduit_domain::users::models::User;
-use sqlx::{query, Pool, Postgres};
+use sqlx::{query};
 use std::sync::Arc;
 
 pub struct UsersRepositoryImpl {
@@ -22,7 +22,7 @@ impl UsersRepository for UsersRepositoryImpl {
         email: String,
         username: String,
     ) -> anyhow::Result<User> {
-        let existing_user = query!(
+        let _existing_user = query!(
             r#"
         select *
         from users

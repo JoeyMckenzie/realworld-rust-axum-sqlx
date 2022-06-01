@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use std::sync::Arc;
 use conduit_domain::users::models::User;
-use conduit_domain::users::requests::RegisterUserDto;
+
 
 pub type DynUsersRepository = Arc<dyn UsersRepository + Send + Sync>;
 

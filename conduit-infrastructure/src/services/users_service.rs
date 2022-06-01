@@ -18,7 +18,7 @@ impl UsersServiceImpl {
 #[async_trait]
 impl UsersService for UsersServiceImpl {
     async fn register_user(&self, request: RegisterUserDto) -> anyhow::Result<UserDto> {
-        let existing_user = self
+        let _existing_user = self
             .repository
             .get_user_by_email_or_username(request.email.unwrap(), request.username.unwrap())
             .await?;
@@ -32,7 +32,7 @@ impl UsersService for UsersServiceImpl {
         })
     }
 
-    async fn login_user(&self, request: LoginUserDto) -> anyhow::Result<UserDto> {
+    async fn login_user(&self, _request: LoginUserDto) -> anyhow::Result<UserDto> {
         todo!()
     }
 }

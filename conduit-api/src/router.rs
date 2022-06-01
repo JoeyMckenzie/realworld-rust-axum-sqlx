@@ -1,10 +1,10 @@
 use crate::articles::build_articles_routes;
 use crate::users::build_users_routes;
 use anyhow::Context;
-use axum::{Extension, Router};
+use axum::{Router};
 use conduit_infrastructure::repositories::ConduitConnectionPool;
 use conduit_utilities::config::AppConfig;
-use sqlx::{Pool, Postgres};
+
 use std::sync::Arc;
 use tracing::info;
 
