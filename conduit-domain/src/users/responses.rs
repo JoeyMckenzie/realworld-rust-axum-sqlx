@@ -1,14 +1,20 @@
-use serde::Serialize;
+use crate::users::models::UserDto;
 
-#[derive(Serialize, Debug)]
+#[derive(serde::Serialize, Debug)]
 pub struct RegisterUserResponse {
     pub user: UserDto,
 }
 
 impl RegisterUserResponse {
-    pub fn new(username: String, email: String) -> Self {
-        let user = UserDto { username, email };
-
-        RegisterUserResponse { user }
+    pub fn new(username: String, email: String, bio: String, image: String, token: String) -> Self {
+        RegisterUserResponse {
+            user: UserDto {
+                username,
+                email,
+                bio,
+                image,
+                token,
+            },
+        }
     }
 }

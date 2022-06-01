@@ -4,10 +4,11 @@ use serde_json::json;
 use std::{borrow::Cow, collections::HashMap, fmt::Debug};
 use thiserror::Error;
 
-type ConduitErrorMap = HashMap<Cow<'static, str>, Vec<Cow<'static, str>>>;
+pub type ConduitEndpointResult<T> = Result<T, ConduitError>;
+
+pub type ConduitErrorMap = HashMap<Cow<'static, str>, Vec<Cow<'static, str>>>;
 
 #[derive(Error, Debug)]
-#[error("...")]
 pub enum ConduitError {
     #[error("authentication is required to access this resource")]
     Unauthorized,
@@ -15,12 +16,14 @@ pub enum ConduitError {
     Forbidden,
     #[error("requested resource was not found")]
     NotFound,
-    #[error("request error occurred while accessing requested resource")]
-    BadRequest,
-    #[error("unexpected error occurred while accessing requested resource")]
+    #[error("{0}")]
+    ApplicationStartup(&'static str),
+    #[error("{0}")]
+    BadRequest(&'static str),
+    #[error("unexpected error has occurred")]
     InternalServerError,
-    #[error("resource cannot be created as it already exists")]
-    ObjectConflict,
+    #[error("{0} already exists")]
+    ObjectConflict(&'static str),
     #[error("unprocessable request has occurred")]
     UnprocessableEntity { errors: ConduitErrorMap },
 }
@@ -50,10 +53,8 @@ impl ConduitError {
             Self::Unauthorized => StatusCode::UNAUTHORIZED,
             Self::Forbidden => StatusCode::FORBIDDEN,
             Self::NotFound => StatusCode::NOT_FOUND,
-            Self::BadRequest => StatusCode::BAD_REQUEST,
-            Self::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
-            Self::ObjectConflict => StatusCode::CONFLICT,
             Self::UnprocessableEntity { .. } => StatusCode::UNPROCESSABLE_ENTITY,
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }

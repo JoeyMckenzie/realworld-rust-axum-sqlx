@@ -1,8 +1,9 @@
 [workspace]
 members = [
     "conduit-api",
+    "conduit-bin",
     "conduit-core",
     "conduit-domain",
-    "conduit-repository",
-    "conduit-shared",
+    "conduit-infrastructure",
+    "conduit-utilities",
 ]

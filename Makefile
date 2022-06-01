@@ -42,7 +42,7 @@ version: ## display the version of the API server
 
 .PHONY: start-db
 start-db: ## start the database server
-	@docker-compose -f ./docker-compose.postgres.yml up --build
+	@docker compose -f ./docker-compose.postgres.yml up --build
 
 .PHONY: lint
 lint: ## run clippy on all rust package
