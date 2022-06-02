@@ -31,7 +31,7 @@ async fn main() -> anyhow::Result<()> {
     info!("Migrations successfully ran! Initializing axum server...");
     build_and_serve_api_router(config, pg_pool.unwrap())
         .await
-        .context("could not initialize application routes");
+        .context("could not initialize application routes")?;
 
     Ok(())
 }

@@ -1,7 +1,7 @@
 use crate::articles::build_articles_routes;
 use crate::users::build_users_routes;
 use anyhow::Context;
-use axum::{Router};
+use axum::Router;
 use conduit_infrastructure::repositories::ConduitConnectionPool;
 use conduit_utilities::config::AppConfig;
 
@@ -24,7 +24,7 @@ pub async fn build_and_serve_api_router(
     axum::Server::bind(&format!("0.0.0.0:{}", port).parse().unwrap())
         .serve(router.into_make_service())
         .await
-        .context("error while starting API server");
+        .context("error while starting API server")?;
 
     Ok(())
 }
