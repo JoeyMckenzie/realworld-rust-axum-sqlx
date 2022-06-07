@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 conduit-core = { path = "../conduit-core" }
-conduit-infrastructure = { path = "../conduit-infrastructure" }
 conduit-domain = { path = "../conduit-domain" }
 conduit-utilities = { path = "../conduit-utilities" }
 
@@ -25,3 +24,7 @@ async-trait = "0.1"
 http-body = "0.4.3"
 serde_json = "1.0.81"
 thiserror = "1"
+
+# tower crates for HTTP middleware
+tower = { version = "0.4", features = ["timeout"] }
+tower-http = { version = "0.1", features = ["trace"] }

@@ -1,10 +1,7 @@
 use crate::infrastructure::connection_pool::ConduitConnectionPool;
-use crate::repositories::ConduitConnectionPool;
-use crate::services::users_service::UsersServiceImpl;
-use crate::users::repository::{DynUsersRepository, UsersRepositoryImpl};
-use crate::users::service::DynUsersService;
-use conduit_core::users::repository::DynUsersRepository;
-use conduit_core::users::service::DynUsersService;
+use crate::users::repository::UsersRepositoryImpl;
+use crate::users::service::UsersServiceImpl;
+use crate::users::{DynUsersRepository, DynUsersService};
 use std::sync::Arc;
 
 pub struct ServiceRegister {

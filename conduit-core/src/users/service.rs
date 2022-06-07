@@ -1,16 +1,7 @@
-use crate::users::repository::DynUsersRepository;
+use crate::users::{DynUsersRepository, UsersService};
 use async_trait::async_trait;
 use conduit_domain::users::models::UserDto;
 use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto};
-use std::sync::Arc;
-
-pub type DynUsersService = Arc<dyn UsersService + Send + Sync>;
-
-#[async_trait]
-pub trait UsersService {
-    async fn register_user(&self, request: RegisterUserDto) -> anyhow::Result<UserDto>;
-    async fn login_user(&self, request: LoginUserDto) -> anyhow::Result<UserDto>;
-}
 
 #[derive(Clone)]
 pub struct UsersServiceImpl {
@@ -26,10 +17,10 @@ impl UsersServiceImpl {
 #[async_trait]
 impl UsersService for UsersServiceImpl {
     async fn register_user(&self, request: RegisterUserDto) -> anyhow::Result<UserDto> {
-        let existing_user = self
+        let _existing_user = self
             .repository
             .get_user_by_email_or_username(request.email.unwrap(), request.username.unwrap())
-            .await;
+            .await?;
 
         Ok(UserDto {
             email: String::from("email"),

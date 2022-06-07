@@ -1,22 +1,31 @@
 use anyhow::Context;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Pool, Postgres};
+use tracing::info;
 
 pub type ConduitConnectionPool = Pool<Postgres>;
 
-pub async fn initialize_pg_pool_with_migrations(
-    connection_string: &str,
-) -> anyhow::Result<ConduitConnectionPool> {
-    let pool = PgPoolOptions::new()
-        .max_connections(5)
-        .connect(connection_string)
-        .await
-        .context("error while initializing the database connection pool")?;
+pub struct ConduitConnectionManager;
 
-    sqlx::migrate!()
-        .run(&pool)
-        .await
-        .context("error while running database migrations")?;
+impl ConduitConnectionManager {
+    pub async fn new_pg_pool(
+        connection_string: &str,
+        run_migrations: bool,
+    ) -> anyhow::Result<ConduitConnectionPool> {
+        let pool = PgPoolOptions::new()
+            .max_connections(5)
+            .connect(connection_string)
+            .await
+            .context("error while initializing the database connection pool")?;
 
-    Ok(pool)
+        if run_migrations {
+            info!("migrations enabled, running...");
+            sqlx::migrate!()
+                .run(&pool)
+                .await
+                .context("error while running database migrations")?;
+        }
+
+        Ok(pool)
+    }
 }

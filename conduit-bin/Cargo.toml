@@ -10,13 +10,13 @@ conduit-api = { path = "../conduit-api" }
 conduit-domain = { path = "../conduit-domain" }
 conduit-utilities = { path = "../conduit-utilities" }
 conduit-core = { path = "../conduit-core" }
-conduit-infrastructure = { path = "../conduit-infrastructure" }
 
 sqlx = { version = "0.5", features = ["runtime-tokio-rustls", "postgres"] }
+anyhow = "1"
 axum = { version = "0.5.1", features = ["tower-log"] }
 tokio = { version = "1.17.0", features = ["full"] }
 clap = "3"
 dotenv = "0.15.0"
 tracing = "0.1"
-tracing-subscriber = "0.3"
-anyhow = "1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tower-http = { version = "0.3.0", features = ["trace"] }

@@ -4,6 +4,5 @@ members = [
     "conduit-bin",
     "conduit-core",
     "conduit-domain",
-    "conduit-infrastructure",
     "conduit-utilities",
 ]

@@ -38,6 +38,7 @@ pub enum ConduitError {
 }
 
 impl ConduitError {
+    /// Maps `validator`'s `ValidationrErrors` to a simple map of property name/error messages structure.
     pub fn unprocessable_entity(errors: ValidationErrors) -> Response {
         let mut validation_errors = ConduitErrorMap::new();
 
