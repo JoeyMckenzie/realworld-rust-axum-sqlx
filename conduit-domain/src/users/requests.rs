@@ -4,13 +4,13 @@ use validator::Validate;
 #[derive(Deserialize, Debug, Validate)]
 pub struct RegisterUserRequest {
     #[validate]
-    pub user: Option<RegisterUserDto>,
+    pub user: RegisterUserDto,
 }
 
 #[derive(Deserialize, Debug, Validate)]
 pub struct LoginUserRequest {
     #[validate]
-    pub user: Option<LoginUserDto>,
+    pub user: LoginUserDto,
 }
 
 #[derive(Deserialize, Debug, Validate)]

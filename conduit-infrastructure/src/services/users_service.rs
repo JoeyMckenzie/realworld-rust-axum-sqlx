@@ -5,6 +5,7 @@ use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto};
 
 use async_trait::async_trait;
 
+#[derive(Clone)]
 pub struct UsersServiceImpl {
     repository: DynUsersRepository,
 }
@@ -18,10 +19,10 @@ impl UsersServiceImpl {
 #[async_trait]
 impl UsersService for UsersServiceImpl {
     async fn register_user(&self, request: RegisterUserDto) -> anyhow::Result<UserDto> {
-        let _existing_user = self
+        let existing_user = self
             .repository
             .get_user_by_email_or_username(request.email.unwrap(), request.username.unwrap())
-            .await?;
+            .await;
 
         Ok(UserDto {
             email: String::from("email"),

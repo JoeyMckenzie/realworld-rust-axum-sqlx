@@ -263,6 +263,7 @@ name = "conduit-api"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "axum",
  "clap",
  "conduit-core",
@@ -270,6 +271,7 @@ dependencies = [
  "conduit-infrastructure",
  "conduit-utilities",
  "dotenv",
+ "http-body",
  "serde",
  "serde_json",
  "sqlx",
@@ -277,6 +279,7 @@ dependencies = [
  "tokio",
  "tracing",
  "tracing-subscriber",
+ "validator",
 ]
 
 [[package]]
@@ -287,6 +290,7 @@ dependencies = [
  "axum",
  "clap",
  "conduit-api",
+ "conduit-core",
  "conduit-domain",
  "conduit-infrastructure",
  "conduit-utilities",
@@ -310,6 +314,7 @@ dependencies = [
  "rust-argon2",
  "serde",
  "serde_json",
+ "sqlx",
  "thiserror",
  "tokio",
  "tracing",

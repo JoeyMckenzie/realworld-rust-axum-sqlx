@@ -1,9 +1,6 @@
 use anyhow::Context;
-
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Pool, Postgres};
-
-pub mod users_repository;
 
 pub type ConduitConnectionPool = Pool<Postgres>;
 

@@ -1,17 +1,16 @@
 use crate::errors::ConduitEndpointResult;
+use crate::request_validator::RequestValidator;
 use axum::{Extension, Json};
-use conduit_core::users::service::DynUserService;
+use conduit_core::users::service::DynUsersService;
 use conduit_domain::users::models::UserDto;
 use conduit_domain::users::requests::RegisterUserRequest;
 use conduit_domain::users::responses::RegisterUserResponse;
 
 pub async fn register_user_endpoint(
-    Json(request): Json<RegisterUserRequest>,
-    Extension(users_service): Extension<DynUserService>,
+    RequestValidator(request): RequestValidator<RegisterUserRequest>,
+    Extension(users_service): Extension<DynUsersService>,
 ) -> ConduitEndpointResult<Json<RegisterUserResponse>> {
-    let user_dto = request.user.unwrap();
-
-    let _test = users_service.register_user(user_dto).await;
+    let register_response = users_service.register_user(request.user).await?;
 
     let user = UserDto {
         email: String::from("email"),
