@@ -1,6 +1,6 @@
-use crate::errors::ConduitEndpointResult;
 use crate::request_validator::RequestValidator;
 use axum::{Extension, Json};
+use conduit_core::errors::ConduitResult;
 use conduit_core::users::DynUsersService;
 use conduit_domain::users::requests::RegisterUserRequest;
 use conduit_domain::users::responses::RegisterUserResponse;
@@ -9,7 +9,7 @@ use tracing::info;
 pub async fn register_user_endpoint(
     RequestValidator(request): RequestValidator<RegisterUserRequest>,
     Extension(users_service): Extension<DynUsersService>,
-) -> ConduitEndpointResult<Json<RegisterUserResponse>> {
+) -> ConduitResult<Json<RegisterUserResponse>> {
     info!(
         "recieved request to create user {:?}/{:?}",
         request.user.email.as_ref().unwrap(),

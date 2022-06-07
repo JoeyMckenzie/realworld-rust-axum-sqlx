@@ -1,7 +1,7 @@
-use crate::errors::ConduitError;
 use async_trait::async_trait;
 use axum::extract::{FromRequest, RequestParts};
 use axum::{BoxError, Json};
+use conduit_core::errors::ConduitError;
 use serde::de::DeserializeOwned;
 use validator::Validate;
 

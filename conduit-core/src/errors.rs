@@ -7,7 +7,7 @@ use thiserror::Error;
 use tracing::log::error;
 use validator::{ValidationErrors, ValidationErrorsKind};
 
-pub type ConduitEndpointResult<T> = Result<T, ConduitError>;
+pub type ConduitResult<T> = Result<T, ConduitError>;
 
 pub type ConduitErrorMap = HashMap<Cow<'static, str>, Vec<Cow<'static, str>>>;
 
@@ -25,7 +25,7 @@ pub enum ConduitError {
     BadRequest(&'static str),
     #[error("unexpected error has occurred")]
     InternalServerError,
-    #[error("{0} already exists")]
+    #[error("{0}")]
     ObjectConflict(&'static str),
     #[error("unprocessable request has occurred")]
     UnprocessableEntity { errors: ConduitErrorMap },
@@ -82,6 +82,7 @@ impl IntoResponse for ConduitError {
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "unexpected error occurred",
             ),
+            Self::ObjectConflict(err) => (StatusCode::CONFLICT, err),
             _ => (StatusCode::NOT_FOUND, "resource not found"),
         };
 

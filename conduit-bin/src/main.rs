@@ -4,10 +4,9 @@ use conduit_api::router::ConduitApplicationController;
 use conduit_core::infrastructure::connection_pool::ConduitConnectionManager;
 use conduit_core::infrastructure::service_register::ServiceRegister;
 use conduit_utilities::config::AppConfig;
-use tracing::{info, Level};
+use tracing::info;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::FmtSubscriber;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

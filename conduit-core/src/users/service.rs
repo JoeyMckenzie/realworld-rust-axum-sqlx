@@ -1,7 +1,9 @@
+use crate::errors::{ConduitError, ConduitResult};
 use crate::users::{DynUsersRepository, UsersService};
 use async_trait::async_trait;
 use conduit_domain::users::models::UserDto;
 use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto};
+use tracing::error;
 
 #[derive(Clone)]
 pub struct UsersServiceImpl {
@@ -16,11 +18,19 @@ impl UsersServiceImpl {
 
 #[async_trait]
 impl UsersService for UsersServiceImpl {
-    async fn register_user(&self, request: RegisterUserDto) -> anyhow::Result<UserDto> {
-        let _existing_user = self
+    async fn register_user(&self, request: RegisterUserDto) -> ConduitResult<UserDto> {
+        let email = request.email.unwrap();
+        let username = request.username.unwrap();
+
+        let existing_user = self
             .repository
-            .get_user_by_email_or_username(request.email.unwrap(), request.username.unwrap())
+            .get_user_by_email_or_username(&email, &username)
             .await?;
+
+        if existing_user.is_some() {
+            error!("user {:?}/{:?} already exists", email, username);
+            return Err(ConduitError::ObjectConflict("username or email is taken"));
+        }
 
         Ok(UserDto {
             email: String::from("email"),
@@ -31,7 +41,7 @@ impl UsersService for UsersServiceImpl {
         })
     }
 
-    async fn login_user(&self, _request: LoginUserDto) -> anyhow::Result<UserDto> {
+    async fn login_user(&self, _request: LoginUserDto) -> ConduitResult<UserDto> {
         todo!()
     }
 }

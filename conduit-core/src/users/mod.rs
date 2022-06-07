@@ -1,3 +1,4 @@
+use crate::errors::ConduitResult;
 use async_trait::async_trait;
 use conduit_domain::users::models::UserDto;
 use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto};
@@ -18,16 +19,16 @@ pub type DynUsersRepository = Arc<dyn UsersRepository + Send + Sync>;
 
 #[async_trait]
 pub trait UsersService {
-    async fn register_user(&self, request: RegisterUserDto) -> anyhow::Result<UserDto>;
-    async fn login_user(&self, request: LoginUserDto) -> anyhow::Result<UserDto>;
+    async fn register_user(&self, request: RegisterUserDto) -> ConduitResult<UserDto>;
+    async fn login_user(&self, request: LoginUserDto) -> ConduitResult<UserDto>;
 }
 
 #[async_trait]
 pub trait UsersRepository {
     async fn get_user_by_email_or_username(
         &self,
-        email: String,
-        username: String,
+        email: &str,
+        username: &str,
     ) -> anyhow::Result<Option<UserEntity>>;
 }
 

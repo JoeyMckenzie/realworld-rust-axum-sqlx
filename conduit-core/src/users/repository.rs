@@ -20,8 +20,8 @@ impl UsersRepositoryImpl {
 impl UsersRepository for UsersRepositoryImpl {
     async fn get_user_by_email_or_username(
         &self,
-        email: String,
-        username: String,
+        email: &str,
+        username: &str,
     ) -> anyhow::Result<Option<UserEntity>> {
         query_as!(
             UserEntity,
