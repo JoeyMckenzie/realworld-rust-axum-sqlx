@@ -26,6 +26,8 @@ pub enum ConduitError {
     #[error("unexpected error has occurred")]
     InternalServerError,
     #[error("{0}")]
+    InternalServerErrorWithContext(&'static str),
+    #[error("{0}")]
     ObjectConflict(&'static str),
     #[error("unprocessable request has occurred")]
     UnprocessableEntity { errors: ConduitErrorMap },
@@ -78,12 +80,12 @@ impl IntoResponse for ConduitError {
         }
 
         let (status, error_message) = match self {
-            Self::InternalServerError => (
+            Self::InternalServerErrorWithContext(err) => (StatusCode::INTERNAL_SERVER_ERROR, err),
+            Self::ObjectConflict(err) => (StatusCode::CONFLICT, err),
+            _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "unexpected error occurred",
             ),
-            Self::ObjectConflict(err) => (StatusCode::CONFLICT, err),
-            _ => (StatusCode::NOT_FOUND, "resource not found"),
         };
 
         let body = Json(json!({

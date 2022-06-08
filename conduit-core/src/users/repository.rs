@@ -44,4 +44,26 @@ impl UsersRepository for UsersRepositoryImpl {
         .await
         .context("an unexpected error occured while retrieving the user")
     }
+
+    async fn create_user(
+        &self,
+        email: &str,
+        username: &str,
+        hashed_password: &str,
+    ) -> anyhow::Result<UserEntity> {
+        query_as!(
+            UserEntity,
+            r#"
+        insert into users (created_at, updated_at, username, email, password, bio, image)
+        values (current_timestamp, current_timestamp, $1::varchar, $2::varchar, $3::varchar, '', '')
+        returning *
+            "#,
+            username,
+            email,
+            hashed_password
+        )
+        .fetch_one(self.pool.as_ref())
+        .await
+        .context("an unexpected error occured while retrieving the user")
+    }
 }

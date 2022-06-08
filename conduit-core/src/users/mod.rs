@@ -19,7 +19,8 @@ pub type DynUsersRepository = Arc<dyn UsersRepository + Send + Sync>;
 
 #[async_trait]
 pub trait UsersService {
-    async fn register_user(&self, request: RegisterUserDto) -> ConduitResult<UserDto>;
+    async fn register_user(&self, request: RegisterUserDto, salt: String)
+        -> ConduitResult<UserDto>;
     async fn login_user(&self, request: LoginUserDto) -> ConduitResult<UserDto>;
 }
 
@@ -30,6 +31,13 @@ pub trait UsersRepository {
         email: &str,
         username: &str,
     ) -> anyhow::Result<Option<UserEntity>>;
+
+    async fn create_user(
+        &self,
+        email: &str,
+        username: &str,
+        hashed_password: &str,
+    ) -> anyhow::Result<UserEntity>;
 }
 
 pub struct UserEntity {

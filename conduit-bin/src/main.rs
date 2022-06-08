@@ -10,13 +10,6 @@ use tracing_subscriber::util::SubscriberInitExt;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    // Build out the logging instance using tracing
-    // let subscriber = FmtSubscriber::builder()
-    //     .with_max_level(Level::DEBUG)
-    //     .finish();
-    // tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
-
-    // Initialize environment variables
     dotenv::dotenv().ok();
 
     let config = AppConfig::parse();

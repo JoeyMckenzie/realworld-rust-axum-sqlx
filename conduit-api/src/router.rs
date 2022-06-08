@@ -6,6 +6,7 @@ use axum::{BoxError, Json, Router};
 use conduit_core::infrastructure::service_register::ServiceRegister;
 use conduit_utilities::config::AppConfig;
 use serde_json::json;
+use std::sync::Arc;
 use std::time::Duration;
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
@@ -18,11 +19,12 @@ pub struct ConduitApplicationController;
 impl ConduitApplicationController {
     pub async fn serve(config: AppConfig, service_register: ServiceRegister) -> anyhow::Result<()> {
         let port = config.port;
+        let arc_config = Arc::new(config);
 
         let router = Router::new()
             .nest(
                 "/api",
-                UsersController::new_router(service_register.users_service),
+                UsersController::new_router(arc_config, service_register.users_service),
             )
             .layer(
                 ServiceBuilder::new()
