@@ -26,7 +26,7 @@ impl ServiceRegister {
         info!("initializing utility services...");
         let security_service =
             Arc::new(ArgonSecurityService::new(arc_config.clone())) as DynSecurityService;
-        let token_service = Arc::new(JwtService::new(arc_config.clone())) as DynTokenService;
+        let token_service = Arc::new(JwtService::new(arc_config)) as DynTokenService;
 
         info!("utility services initialized, building feature services...");
         let users_repository =
