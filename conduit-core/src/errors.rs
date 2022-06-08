@@ -1,8 +1,9 @@
+use std::borrow::Cow;
+use std::{collections::HashMap, fmt::Debug};
+
 use axum::response::Response;
 use axum::{http::StatusCode, response::IntoResponse, Json};
 use serde_json::json;
-use std::borrow::Cow;
-use std::{collections::HashMap, fmt::Debug};
 use thiserror::Error;
 use tracing::log::error;
 use validator::{ValidationErrors, ValidationErrorsKind};
@@ -20,15 +21,15 @@ pub enum ConduitError {
     #[error("requested resource was not found")]
     NotFound,
     #[error("{0}")]
-    ApplicationStartup(&'static str),
+    ApplicationStartup(String),
     #[error("{0}")]
-    BadRequest(&'static str),
+    BadRequest(String),
     #[error("unexpected error has occurred")]
     InternalServerError,
     #[error("{0}")]
-    InternalServerErrorWithContext(&'static str),
+    InternalServerErrorWithContext(String),
     #[error("{0}")]
-    ObjectConflict(&'static str),
+    ObjectConflict(String),
     #[error("unprocessable request has occurred")]
     UnprocessableEntity { errors: ConduitErrorMap },
     #[error(transparent)]
@@ -84,7 +85,7 @@ impl IntoResponse for ConduitError {
             Self::ObjectConflict(err) => (StatusCode::CONFLICT, err),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                "unexpected error occurred",
+                String::from("unexpected error occurred"),
             ),
         };
 

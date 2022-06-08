@@ -1,70 +1,29 @@
-use crate::errors::{ConduitError, ConduitResult};
-use crate::users::{DynUsersRepository, UsersService};
-use argon2::Config;
+use crate::errors::ConduitResult;
+use crate::users::repository::UserEntity;
 use async_trait::async_trait;
 use conduit_domain::users::models::UserDto;
 use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto};
-use tracing::{error, info};
+use std::sync::Arc;
 
-#[derive(Clone)]
-pub struct UsersServiceImpl {
-    repository: DynUsersRepository,
-}
-
-impl UsersServiceImpl {
-    pub fn new(repository: DynUsersRepository) -> Self {
-        Self { repository }
-    }
-}
+/// A reference counter for our user service allows us safely pass instances user services
+/// around which themselves depend on the user repostiory, and ultimately, our Posgres connection pool.
+pub type DynUsersService = Arc<dyn UsersService + Send + Sync>;
 
 #[async_trait]
-impl UsersService for UsersServiceImpl {
-    async fn register_user(
-        &self,
-        request: RegisterUserDto,
-        salt: String,
-    ) -> ConduitResult<UserDto> {
-        let email = request.email.unwrap();
-        let username = request.username.unwrap();
-        let password = request.password.unwrap();
-        let password_bytes = password.as_bytes();
+pub trait UsersService {
+    async fn register_user(&self, request: RegisterUserDto) -> ConduitResult<UserDto>;
+    async fn login_user(&self, request: LoginUserDto) -> ConduitResult<UserDto>;
+}
 
-        let existing_user = self
-            .repository
-            .get_user_by_email_or_username(&email, &username)
-            .await?;
-
-        if existing_user.is_some() {
-            error!("user {:?}/{:?} already exists", email, username);
-            return Err(ConduitError::ObjectConflict("username or email is taken"));
-        }
-
-        info!("creating password hash for user {:?}", email);
-        let argon_config = Config::default();
-        let hashed_password =
-            argon2::hash_encoded(password_bytes, salt.as_bytes(), &argon_config).unwrap();
-        let hashes_match = argon2::verify_encoded(&hashed_password, password_bytes).unwrap();
-
-        if !hashes_match {
-            error!("password hashes do not match, please verify the configuration");
-            return Err(ConduitError::InternalServerError);
-        }
-
-        let created_user = self
-            .repository
-            .create_user(&email, &username, &hashed_password)
-            .await?;
-
-        Ok(UserDto {
-            email: created_user.email,
-            username: created_user.username,
-            bio: created_user.bio,
-            image: String::from(""),
+/// Implements a mapping from our `UserEntity` into the view model `UserDto` to be consumed by API clients.
+impl From<UserEntity> for UserDto {
+    fn from(entity: UserEntity) -> Self {
+        UserDto {
+            email: entity.email,
+            username: entity.username,
+            bio: entity.bio,
+            image: entity.image,
             token: String::from(""),
-        })
-    }
-
-    async fn login_user(&self, _request: LoginUserDto) -> ConduitResult<UserDto> {
-        todo!()
+        }
     }
 }

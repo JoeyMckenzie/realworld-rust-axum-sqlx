@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 conduit-domain = { path = "../conduit-domain" }
-conduit-utilities = { path = "../conduit-utilities" }
 
 # axum HTTP dependencies
 tokio = { version = "1", features = ["full"] }
@@ -26,3 +25,4 @@ validator = { version = "0.15", features = ["derive"] }
 async-trait = "0.1"
 thiserror = "1"
 rust-argon2 = "1.0"
+clap = { version = "3", features = ["derive", "env"] }

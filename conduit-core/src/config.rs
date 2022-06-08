@@ -1,3 +1,7 @@
+use std::sync::Arc;
+
+pub type ConduitConfig = Arc<AppConfig>;
+
 #[derive(clap::Parser)]
 pub struct AppConfig {
     #[clap(long, env)]

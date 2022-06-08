@@ -1,9 +1,9 @@
 use anyhow::Context;
 use clap::Parser;
 use conduit_api::router::ConduitApplicationController;
-use conduit_core::infrastructure::connection_pool::ConduitConnectionManager;
-use conduit_core::infrastructure::service_register::ServiceRegister;
-use conduit_utilities::config::AppConfig;
+use conduit_core::config::AppConfig;
+use conduit_infrastructure::connection_pool::ConduitConnectionManager;
+use conduit_infrastructure::service_register::ServiceRegister;
 use tracing::info;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
@@ -25,10 +25,11 @@ async fn main() -> anyhow::Result<()> {
             .await
             .expect("could not initialize the database connection pool");
 
-    let service_register = ServiceRegister::new(pg_pool);
+    let port = config.port;
+    let service_register = ServiceRegister::new(pg_pool, config);
 
     info!("migrations successfully ran, initializing axum server...");
-    ConduitApplicationController::serve(config, service_register)
+    ConduitApplicationController::serve(port, service_register)
         .await
         .context("could not initialize application routes")?;
 

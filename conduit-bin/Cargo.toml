@@ -8,8 +8,8 @@ edition = "2021"
 [dependencies]
 conduit-api = { path = "../conduit-api" }
 conduit-domain = { path = "../conduit-domain" }
-conduit-utilities = { path = "../conduit-utilities" }
 conduit-core = { path = "../conduit-core" }
+conduit-infrastructure = { path = "../conduit-infrastructure" }
 
 sqlx = { version = "0.5", features = ["runtime-tokio-rustls", "postgres"] }
 anyhow = "1"

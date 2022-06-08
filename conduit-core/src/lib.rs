@@ -1,3 +1,4 @@
+pub mod config;
 pub mod errors;
-pub mod infrastructure;
+pub mod services;
 pub mod users;

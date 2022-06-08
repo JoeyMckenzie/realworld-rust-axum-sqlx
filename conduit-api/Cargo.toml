@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 conduit-core = { path = "../conduit-core" }
 conduit-domain = { path = "../conduit-domain" }
-conduit-utilities = { path = "../conduit-utilities" }
+conduit-infrastructure = { path = "../conduit-infrastructure" }
 
 sqlx = { version = "0.5", features = ["runtime-tokio-rustls", "postgres"] }
 axum = { version = "0.5.1", features = ["tower-log"] }
