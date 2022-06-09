@@ -1,7 +1,9 @@
-use std::time::Duration;
+use std::ops::Add;
+use std::time::{Duration, Instant, SystemTime};
 
-use jsonwebtoken::{encode, EncodingKey, Header};
+use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
+use time::OffsetDateTime;
 
 use conduit_core::config::ConduitConfig;
 use conduit_core::errors::{ConduitError, ConduitResult};
@@ -27,11 +29,12 @@ impl JwtService {
 
 impl TokenService for JwtService {
     fn new_token(&self, user_id: i64, email: &str) -> ConduitResult<String> {
-        let expires_in = Duration::from_secs(3600).as_secs();
+        let from_now = Duration::from_secs(3600);
+        let exp = OffsetDateTime::now_utc().add(from_now).unix_timestamp();
 
         let claims = Claims {
             sub: String::from(email),
-            exp: expires_in as usize,
+            exp: exp as usize,
             user_id,
         };
 
@@ -43,5 +46,16 @@ impl TokenService for JwtService {
         .map_err(|err| ConduitError::InternalServerErrorWithContext(err.to_string()))?;
 
         Ok(token)
+    }
+
+    fn verify_token(&self, token: String) -> ConduitResult<i64> {
+        let decoded_token = decode::<Claims>(
+            token.as_str(),
+            &DecodingKey::from_secret(self.config.token_secret.as_bytes()),
+            &Validation::new(Algorithm::HS256),
+        )
+        .map_err(|err| ConduitError::InternalServerErrorWithContext(err.to_string()))?;
+
+        Ok(decoded_token.claims.user_id)
     }
 }

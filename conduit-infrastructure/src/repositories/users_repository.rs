@@ -84,4 +84,19 @@ impl UsersRepository for PostgresUsersRepository {
         .await
         .context("user was not found")
     }
+
+    async fn get_user_by_id(&self, id: i64) -> anyhow::Result<UserEntity> {
+        query_as!(
+            UserEntity,
+            r#"
+        select *
+        from users
+        where id = $1
+            "#,
+            id,
+        )
+        .fetch_one(self.pool.as_ref())
+        .await
+        .context("user was not found")
+    }
 }

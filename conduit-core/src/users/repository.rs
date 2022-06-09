@@ -28,6 +28,8 @@ pub trait UsersRepository {
     ) -> anyhow::Result<UserEntity>;
 
     async fn get_user_by_email(&self, email: &str) -> anyhow::Result<UserEntity>;
+
+    async fn get_user_by_id(&self, id: i64) -> anyhow::Result<UserEntity>;
 }
 
 pub struct UserEntity {

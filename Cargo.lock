@@ -330,6 +330,7 @@ dependencies = [
  "rust-argon2",
  "serde",
  "sqlx",
+ "time 0.3.9",
  "tokio",
  "tracing",
 ]

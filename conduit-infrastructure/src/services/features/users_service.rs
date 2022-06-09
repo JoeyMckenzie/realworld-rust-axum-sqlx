@@ -92,6 +92,18 @@ impl UsersService for ConduitUsersService {
     }
 
     async fn get_current_user(&self, token: String) -> ConduitResult<UserDto> {
-        todo!()
+        info!("validating user token");
+        let user_id = self.token_service.verify_token(token)?;
+
+        info!("token is valid, retrieving user {:?}", user_id);
+        let user = self.repository.get_user_by_id(user_id).await?;
+
+        info!(
+            "user found with email {:?}, generating new token",
+            user.email
+        );
+        let token = self.token_service.new_token(user.id, user.email.as_str())?;
+
+        Ok(user.into_dto(token))
     }
 }
