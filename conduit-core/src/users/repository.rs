@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
+use mockall::automock;
 use sqlx::postgres::PgRow;
 use sqlx::types::time::PrimitiveDateTime;
 use sqlx::{FromRow, Row};
@@ -10,6 +11,7 @@ use conduit_domain::users::models::UserDto;
 /// Similar to above, we want to keep a reference count across threads so we can manage our connection pool.
 pub type DynUsersRepository = Arc<dyn UsersRepository + Send + Sync>;
 
+#[automock]
 #[async_trait]
 pub trait UsersRepository {
     async fn search_user_by_email_or_username(
@@ -63,6 +65,21 @@ impl UserEntity {
             bio: self.bio,
             image: self.image,
             token,
+        }
+    }
+}
+
+impl Default for UserEntity {
+    fn default() -> Self {
+        UserEntity {
+            id: 1,
+            bio: String::from("stub bio"),
+            created_at: PrimitiveDateTime::now(),
+            updated_at: PrimitiveDateTime::now(),
+            username: String::from("stub username"),
+            email: String::from("stub email"),
+            password: String::from("stub password"),
+            image: String::from("stub image"),
         }
     }
 }

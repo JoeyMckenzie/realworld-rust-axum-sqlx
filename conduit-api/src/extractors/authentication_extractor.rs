@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 use axum::extract::{FromRequest, RequestParts};
 use http::header::AUTHORIZATION;
+use tracing::error;
 
 use conduit_core::errors::ConduitError;
 
@@ -21,11 +22,14 @@ where
                 .map_err(|_| ConduitError::Unauthorized)?;
 
             if !header_value.contains("Token") {
+                error!("request does not contain valid 'Token' prefix for authorization");
                 return Err(ConduitError::Unauthorized);
             }
 
             let tokenized_value: Vec<_> = header_value.split(' ').collect();
+
             if tokenized_value.len() != 2 || tokenized_value.get(1).is_none() {
+                error!("request does not contain a valid token");
                 return Err(ConduitError::Unauthorized);
             }
 
