@@ -1,9 +1,12 @@
-use crate::connection_pool::ConduitConnectionPool;
+use std::sync::Arc;
+
 use anyhow::Context;
 use async_trait::async_trait;
-use conduit_core::users::repository::{UserEntity, UsersRepository};
 use sqlx::query_as;
-use std::sync::Arc;
+
+use conduit_core::users::repository::{UserEntity, UsersRepository};
+
+use crate::connection_pool::ConduitConnectionPool;
 
 #[derive(Clone)]
 pub struct PostgresUsersRepository {
@@ -18,7 +21,7 @@ impl PostgresUsersRepository {
 
 #[async_trait]
 impl UsersRepository for PostgresUsersRepository {
-    async fn get_user_by_email_or_username(
+    async fn search_user_by_email_or_username(
         &self,
         email: &str,
         username: &str,
@@ -42,7 +45,7 @@ impl UsersRepository for PostgresUsersRepository {
         )
         .fetch_optional(self.pool.as_ref())
         .await
-        .context("an unexpected error occured while retrieving the user")
+        .context("an unexpected error occured while search for users")
     }
 
     async fn create_user(
@@ -64,6 +67,21 @@ impl UsersRepository for PostgresUsersRepository {
         )
         .fetch_one(self.pool.as_ref())
         .await
-        .context("an unexpected error occured while retrieving the user")
+        .context("an unexpected error occured while creating the user")
+    }
+
+    async fn get_user_by_email(&self, email: &str) -> anyhow::Result<UserEntity> {
+        query_as!(
+            UserEntity,
+            r#"
+        select *
+        from users
+        where email = $1::varchar
+            "#,
+            email,
+        )
+        .fetch_one(self.pool.as_ref())
+        .await
+        .context("user was not found")
     }
 }

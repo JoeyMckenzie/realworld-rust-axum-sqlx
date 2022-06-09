@@ -10,6 +10,6 @@ pub trait SecurityService {
     fn verify_password(
         &self,
         stored_password: &str,
-        attempted_password: &str,
+        attempted_password: String,
     ) -> ConduitResult<bool>;
 }

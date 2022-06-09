@@ -39,7 +39,7 @@ impl UsersService for ConduitUsersService {
 
         let existing_user = self
             .repository
-            .get_user_by_email_or_username(&email, &username)
+            .search_user_by_email_or_username(&email, &username)
             .await?;
 
         if existing_user.is_some() {
@@ -66,7 +66,32 @@ impl UsersService for ConduitUsersService {
         Ok(created_user.into_dto(token))
     }
 
-    async fn login_user(&self, _request: LoginUserDto) -> ConduitResult<UserDto> {
+    async fn login_user(&self, request: LoginUserDto) -> ConduitResult<UserDto> {
+        let email = request.email.unwrap();
+        let attempted_password = request.password.unwrap();
+
+        info!("searching for existing user {:?}", email);
+        let existing_user = self.repository.get_user_by_email(&email).await?;
+
+        info!("user found, verifying password hash for user {:?}", email);
+        let is_valid_login_attempt = self
+            .security_service
+            .verify_password(&existing_user.password, attempted_password)?;
+
+        if !is_valid_login_attempt {
+            error!("invalid login attempt for user {:?}", email);
+            return Err(ConduitError::InvalidLoginAttmpt);
+        }
+
+        info!("user login successful, generating token");
+        let token = self
+            .token_service
+            .new_token(existing_user.id, &existing_user.email)?;
+
+        Ok(existing_user.into_dto(token))
+    }
+
+    async fn get_current_user(&self, token: String) -> ConduitResult<UserDto> {
         todo!()
     }
 }

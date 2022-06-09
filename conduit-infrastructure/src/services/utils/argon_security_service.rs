@@ -30,7 +30,7 @@ impl SecurityService for ArgonSecurityService {
     fn verify_password(
         &self,
         stored_password: &str,
-        attempted_password: &str,
+        attempted_password: String,
     ) -> ConduitResult<bool> {
         let hashes_match =
             argon2::verify_encoded(stored_password, attempted_password.as_bytes())

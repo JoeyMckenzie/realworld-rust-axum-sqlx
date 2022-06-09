@@ -1,16 +1,18 @@
+use std::sync::Arc;
+
 use async_trait::async_trait;
-use conduit_domain::users::models::UserDto;
 use sqlx::postgres::PgRow;
 use sqlx::types::time::PrimitiveDateTime;
 use sqlx::{FromRow, Row};
-use std::sync::Arc;
+
+use conduit_domain::users::models::UserDto;
 
 /// Similar to above, we want to keep a reference count across threads so we can manage our connection pool.
 pub type DynUsersRepository = Arc<dyn UsersRepository + Send + Sync>;
 
 #[async_trait]
 pub trait UsersRepository {
-    async fn get_user_by_email_or_username(
+    async fn search_user_by_email_or_username(
         &self,
         email: &str,
         username: &str,
@@ -22,6 +24,8 @@ pub trait UsersRepository {
         username: &str,
         hashed_password: &str,
     ) -> anyhow::Result<UserEntity>;
+
+    async fn get_user_by_email(&self, email: &str) -> anyhow::Result<UserEntity>;
 }
 
 pub struct UserEntity {

@@ -16,6 +16,8 @@ pub type ConduitErrorMap = HashMap<Cow<'static, str>, Vec<Cow<'static, str>>>;
 pub enum ConduitError {
     #[error("authentication is required to access this resource")]
     Unauthorized,
+    #[error("username or password is incorrect")]
+    InvalidLoginAttmpt,
     #[error("user does not have privilege to access this resource")]
     Forbidden,
     #[error("requested resource was not found")]
@@ -83,6 +85,11 @@ impl IntoResponse for ConduitError {
         let (status, error_message) = match self {
             Self::InternalServerErrorWithContext(err) => (StatusCode::INTERNAL_SERVER_ERROR, err),
             Self::ObjectConflict(err) => (StatusCode::CONFLICT, err),
+            Self::InvalidLoginAttmpt => (
+                StatusCode::BAD_REQUEST,
+                Self::InvalidLoginAttmpt.to_string(),
+            ),
+            Self::Unauthorized => (StatusCode::UNAUTHORIZED, Self::Unauthorized.to_string()),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 String::from("unexpected error occurred"),

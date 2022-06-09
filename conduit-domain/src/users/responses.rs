@@ -1,13 +1,13 @@
 use crate::users::models::UserDto;
 
 #[derive(serde::Serialize, Debug)]
-pub struct RegisterUserResponse {
+pub struct UserAuthenicationResponse {
     pub user: UserDto,
 }
 
-impl RegisterUserResponse {
+impl UserAuthenicationResponse {
     pub fn new(username: String, email: String, bio: String, image: String, token: String) -> Self {
-        RegisterUserResponse {
+        UserAuthenicationResponse {
             user: UserDto {
                 username,
                 email,

@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use conduit_core::config::AppConfig;
 use tracing::info;
 
+use conduit_core::config::AppConfig;
 use conduit_core::services::security_service::DynSecurityService;
 use conduit_core::services::token_service::DynTokenService;
 use conduit_core::users::repository::DynUsersRepository;
@@ -10,9 +10,9 @@ use conduit_core::users::service::DynUsersService;
 
 use crate::connection_pool::ConduitConnectionPool;
 use crate::repositories::users_repository::PostgresUsersRepository;
-use crate::services::argon_security_service::ArgonSecurityService;
-use crate::services::jwt_service::JwtService;
-use crate::services::users_service::ConduitUsersService;
+use crate::services::features::users_service::ConduitUsersService;
+use crate::services::utils::argon_security_service::ArgonSecurityService;
+use crate::services::utils::jwt_service::JwtService;
 
 pub struct ServiceRegister {
     pub users_service: DynUsersService,

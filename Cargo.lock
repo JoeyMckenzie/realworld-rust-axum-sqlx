@@ -250,6 +250,7 @@ dependencies = [
  "conduit-domain",
  "conduit-infrastructure",
  "dotenv",
+ "http",
  "http-body",
  "serde",
  "serde_json",
