@@ -1,6 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-make test
-make lint
+cargo test
+cargo clippy
 npx lint-staged
