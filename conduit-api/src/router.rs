@@ -20,10 +20,7 @@ pub struct ConduitApplicationController;
 impl ConduitApplicationController {
     pub async fn serve(port: u32, service_register: ServiceRegister) -> anyhow::Result<()> {
         let router = Router::new()
-            .nest(
-                "/api",
-                UsersRouter::new_router(service_register.users_service),
-            )
+            .nest("/api", UsersRouter::new_router(service_register))
             .layer(
                 ServiceBuilder::new()
                     .layer(TraceLayer::new_for_http())

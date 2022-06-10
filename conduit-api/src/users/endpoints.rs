@@ -3,7 +3,7 @@ use tracing::info;
 
 use conduit_core::errors::ConduitResult;
 use conduit_core::users::service::DynUsersService;
-use conduit_domain::users::requests::{LoginUserRequest, RegisterUserRequest};
+use conduit_domain::users::requests::{LoginUserRequest, RegisterUserRequest, UpdateUserRequest};
 use conduit_domain::users::responses::UserAuthenicationResponse;
 
 use crate::extractors::authentication_extractor::AuthenticationExtractor;
@@ -39,12 +39,24 @@ pub async fn login_user_endpoint(
 }
 
 pub async fn get_current_user_endpoint(
-    AuthenticationExtractor(authorization_token): AuthenticationExtractor,
+    AuthenticationExtractor(user_id): AuthenticationExtractor,
     Extension(users_service): Extension<DynUsersService>,
 ) -> ConduitResult<Json<UserAuthenicationResponse>> {
     info!("recieved request to retrieve current user");
 
-    let current_user = users_service.get_current_user(authorization_token).await?;
+    let current_user = users_service.get_current_user(user_id).await?;
 
     Ok(Json(UserAuthenicationResponse { user: current_user }))
+}
+
+pub async fn update_user_endpoint(
+    AuthenticationExtractor(user_id): AuthenticationExtractor,
+    Extension(users_service): Extension<DynUsersService>,
+    Json(request): Json<UpdateUserRequest>,
+) -> ConduitResult<Json<UserAuthenicationResponse>> {
+    info!("recieved request to update user");
+
+    let updated_user = users_service.updated_user(user_id, request.user).await?;
+
+    Ok(Json(UserAuthenicationResponse { user: updated_user }))
 }

@@ -1,21 +1,28 @@
 use async_trait::async_trait;
 use axum::extract::{FromRequest, RequestParts};
+use axum::Extension;
 use http::header::AUTHORIZATION;
 use tracing::error;
 
 use conduit_core::errors::ConduitError;
+use conduit_core::services::token_service::DynTokenService;
+use conduit_infrastructure::services::utils::jwt_service::JwtService;
 
 /// Extracts the JWT from the Authorization token header.
-pub struct AuthenticationExtractor(pub String);
+pub struct AuthenticationExtractor(pub i64);
 
 #[async_trait]
 impl<B> FromRequest<B> for AuthenticationExtractor
 where
-    B: Send,
+    B: Send + Sync,
 {
     type Rejection = ConduitError;
 
     async fn from_request(request: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
+        let Extension(token_service): Extension<DynTokenService> = Extension::from_request(request)
+            .await
+            .map_err(|err| ConduitError::InternalServerErrorWithContext(err.to_string()))?;
+
         if let Some(authorization_header) = request.headers().get(AUTHORIZATION) {
             let header_value = authorization_header
                 .to_str()
@@ -34,8 +41,11 @@ where
             }
 
             let token_value = tokenized_value.into_iter().nth(1).unwrap();
+            let user_id = token_service
+                .get_user_id_from_token(String::from(token_value))
+                .map_err(|_| ConduitError::Unauthorized)?;
 
-            Ok(AuthenticationExtractor(String::from(token_value)))
+            Ok(AuthenticationExtractor(user_id))
         } else {
             Err(ConduitError::Unauthorized)
         }

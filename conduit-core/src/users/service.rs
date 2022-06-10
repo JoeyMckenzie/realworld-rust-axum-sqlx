@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use mockall::automock;
 
 use conduit_domain::users::models::UserDto;
-use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto};
+use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto, UpdateUserDto};
 
 use crate::errors::ConduitResult;
 use crate::users::repository::UserEntity;
@@ -18,7 +18,8 @@ pub type DynUsersService = Arc<dyn UsersService + Send + Sync>;
 pub trait UsersService {
     async fn register_user(&self, request: RegisterUserDto) -> ConduitResult<UserDto>;
     async fn login_user(&self, request: LoginUserDto) -> ConduitResult<UserDto>;
-    async fn get_current_user(&self, token: String) -> ConduitResult<UserDto>;
+    async fn get_current_user(&self, user_id: i64) -> ConduitResult<UserDto>;
+    async fn updated_user(&self, user_id: i64, request: UpdateUserDto) -> ConduitResult<UserDto>;
 }
 
 /// Implements a mapping from our `UserEntity` into the view model `UserDto` to be consumed by API clients.

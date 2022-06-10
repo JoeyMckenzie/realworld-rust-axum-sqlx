@@ -13,6 +13,11 @@ pub struct LoginUserRequest {
     pub user: LoginUserDto,
 }
 
+#[derive(Deserialize, Debug)]
+pub struct UpdateUserRequest {
+    pub user: UpdateUserDto,
+}
+
 #[derive(Deserialize, Debug, Validate)]
 pub struct RegisterUserDto {
     #[validate(required)]
@@ -29,4 +34,13 @@ pub struct LoginUserDto {
     pub email: Option<String>,
     #[validate(required)]
     pub password: Option<String>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct UpdateUserDto {
+    pub email: Option<String>,
+    pub username: Option<String>,
+    pub password: Option<String>,
+    pub bio: Option<String>,
+    pub image: Option<String>,
 }

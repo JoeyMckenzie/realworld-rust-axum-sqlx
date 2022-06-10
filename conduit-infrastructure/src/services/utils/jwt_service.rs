@@ -48,7 +48,7 @@ impl TokenService for JwtService {
         Ok(token)
     }
 
-    fn verify_token(&self, token: String) -> ConduitResult<i64> {
+    fn get_user_id_from_token(&self, token: String) -> ConduitResult<i64> {
         let decoded_token = decode::<Claims>(
             token.as_str(),
             &DecodingKey::from_secret(self.config.token_secret.as_bytes()),

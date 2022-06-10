@@ -7,7 +7,9 @@ use conduit_core::services::token_service::DynTokenService;
 use conduit_core::users::repository::DynUsersRepository;
 use conduit_core::users::service::UsersService;
 use conduit_domain::users::models::UserDto;
-use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto};
+use conduit_domain::users::requests::{
+    LoginUserDto, RegisterUserDto, UpdateUserDto, UpdateUserRequest,
+};
 
 #[derive(Clone)]
 pub struct ConduitUsersService {
@@ -91,11 +93,21 @@ impl UsersService for ConduitUsersService {
         Ok(existing_user.into_dto(token))
     }
 
-    async fn get_current_user(&self, token: String) -> ConduitResult<UserDto> {
-        info!("validating user token");
-        let user_id = self.token_service.verify_token(token)?;
+    async fn get_current_user(&self, user_id: i64) -> ConduitResult<UserDto> {
+        info!("retrieving user {:?}", user_id);
+        let user = self.repository.get_user_by_id(user_id).await?;
 
-        info!("token is valid, retrieving user {:?}", user_id);
+        info!(
+            "user found with email {:?}, generating new token",
+            user.email
+        );
+        let token = self.token_service.new_token(user.id, user.email.as_str())?;
+
+        Ok(user.into_dto(token))
+    }
+
+    async fn updated_user(&self, user_id: i64, request: UpdateUserDto) -> ConduitResult<UserDto> {
+        info!("retrieving user {:?}", user_id);
         let user = self.repository.get_user_by_id(user_id).await?;
 
         info!(

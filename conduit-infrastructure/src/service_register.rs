@@ -16,6 +16,7 @@ use crate::services::utils::jwt_service::JwtService;
 
 pub struct ServiceRegister {
     pub users_service: DynUsersService,
+    pub token_service: DynTokenService,
 }
 
 impl ServiceRegister {
@@ -34,9 +35,12 @@ impl ServiceRegister {
         let users_service = Arc::new(ConduitUsersService::new(
             users_repository,
             security_service,
-            token_service,
+            token_service.clone(),
         )) as DynUsersService;
 
-        ServiceRegister { users_service }
+        ServiceRegister {
+            users_service,
+            token_service,
+        }
     }
 }
