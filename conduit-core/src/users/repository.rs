@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use std::time::SystemTime;
 
 use async_trait::async_trait;
 use mockall::automock;
@@ -76,8 +77,8 @@ impl Default for UserEntity {
         UserEntity {
             id: 1,
             bio: String::from("stub bio"),
-            created_at: PrimitiveDateTime::now(),
-            updated_at: PrimitiveDateTime::now(),
+            created_at: PrimitiveDateTime::from(SystemTime::now()),
+            updated_at: PrimitiveDateTime::from(SystemTime::now()),
             username: String::from("stub username"),
             email: String::from("stub email"),
             password: String::from("stub password"),

@@ -6,7 +6,6 @@ use tracing::error;
 
 use conduit_core::errors::ConduitError;
 use conduit_core::services::token_service::DynTokenService;
-use conduit_infrastructure::services::utils::jwt_service::JwtService;
 
 /// Extracts the JWT from the Authorization token header.
 pub struct AuthenticationExtractor(pub i64);

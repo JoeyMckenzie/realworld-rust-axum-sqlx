@@ -1,7 +1,6 @@
 use axum::routing::get;
 use axum::{routing::post, Extension, Router};
 
-use conduit_core::users::service::DynUsersService;
 use conduit_infrastructure::service_register::ServiceRegister;
 
 use crate::users::endpoints::{

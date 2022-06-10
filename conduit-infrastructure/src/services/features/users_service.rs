@@ -7,9 +7,7 @@ use conduit_core::services::token_service::DynTokenService;
 use conduit_core::users::repository::DynUsersRepository;
 use conduit_core::users::service::UsersService;
 use conduit_domain::users::models::UserDto;
-use conduit_domain::users::requests::{
-    LoginUserDto, RegisterUserDto, UpdateUserDto, UpdateUserRequest,
-};
+use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto, UpdateUserDto};
 
 #[derive(Clone)]
 pub struct ConduitUsersService {
@@ -106,7 +104,7 @@ impl UsersService for ConduitUsersService {
         Ok(user.into_dto(token))
     }
 
-    async fn updated_user(&self, user_id: i64, request: UpdateUserDto) -> ConduitResult<UserDto> {
+    async fn updated_user(&self, user_id: i64, _request: UpdateUserDto) -> ConduitResult<UserDto> {
         info!("retrieving user {:?}", user_id);
         let user = self.repository.get_user_by_id(user_id).await?;
 
