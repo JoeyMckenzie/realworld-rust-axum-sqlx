@@ -1,7 +1,3 @@
-use std::sync::Arc;
-
-pub type ConduitConfig = Arc<AppConfig>;
-
 #[derive(clap::Parser)]
 pub struct AppConfig {
     #[clap(long, env)]
@@ -18,6 +14,8 @@ pub struct AppConfig {
     pub port: u32,
     #[clap(long, env)]
     pub run_migrations: bool,
+    #[clap(long, env)]
+    pub seed: bool,
 }
 
 impl AppConfig {

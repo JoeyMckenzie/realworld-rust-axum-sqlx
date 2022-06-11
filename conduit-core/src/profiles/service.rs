@@ -16,7 +16,7 @@ pub type DynProfilesService = Arc<dyn ProfilesService + Send + Sync>;
 pub trait ProfilesService {
     async fn get_profile(
         &self,
-        username: &String,
-        current_user_id: i64,
+        username: &str,
+        current_user_id: Option<i64>,
     ) -> ConduitResult<ProfileDto>;
 }

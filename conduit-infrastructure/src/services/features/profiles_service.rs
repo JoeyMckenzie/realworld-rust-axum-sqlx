@@ -29,14 +29,11 @@ impl ConduitProfilesService {
 impl ProfilesService for ConduitProfilesService {
     async fn get_profile(
         &self,
-        username: &String,
-        current_user_id: i64,
+        username: &str,
+        current_user_id: Option<i64>,
     ) -> ConduitResult<ProfileDto> {
         info!("retrieving profile for user {:?}", username);
-        let user = self
-            .users_repository
-            .get_user_by_username(username.as_str())
-            .await?;
+        let user = self.users_repository.get_user_by_username(username).await?;
 
         if user.is_none() {
             return Err(ConduitError::NotFound(String::from(
@@ -44,7 +41,21 @@ impl ProfilesService for ConduitProfilesService {
             )));
         }
 
-        info!("retrieving followee list for user {:?}", username);
+        // in the case a token is passed and validly extracted, pull the list of users they're following to see if the profile is included
+        if let Some(user_id) = current_user_id {
+            info!("retrieving followee list for user {:?}", username);
+            let users_following_list = self.profiles_repository.get_user_followees(user_id).await?;
+
+            if users_following_list.is_empty() {
+                return Ok(user.unwrap().into_profile(false));
+            }
+
+            let is_following = users_following_list
+                .into_iter()
+                .any(|followee| followee.follower_id == user_id);
+
+            return Ok(user.unwrap().into_profile(is_following));
+        }
 
         Ok(user.unwrap().into_profile(false))
     }

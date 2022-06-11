@@ -1,18 +1,22 @@
+use std::sync::Arc;
+
 use anyhow::Context;
 use clap::Parser;
+use tracing::info;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
+
 use conduit_api::router::ConduitApplicationController;
 use conduit_core::config::AppConfig;
 use conduit_infrastructure::connection_pool::ConduitConnectionManager;
 use conduit_infrastructure::service_register::ServiceRegister;
-use tracing::info;
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
+use conduit_infrastructure::services::utils::conduit_seed_service::ConduitSeedService;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
 
-    let config = AppConfig::parse();
+    let config = Arc::new(AppConfig::parse());
 
     tracing_subscriber::registry()
         .with(tracing_subscriber::EnvFilter::new(&config.rust_log))
@@ -26,7 +30,15 @@ async fn main() -> anyhow::Result<()> {
             .expect("could not initialize the database connection pool");
 
     let port = config.port;
-    let service_register = ServiceRegister::new(pg_pool, config);
+    let service_register = ServiceRegister::new(pg_pool, config.clone());
+
+    if config.seed {
+        info!("seeding enabled, creating test data...");
+        ConduitSeedService::new(service_register.users_service.clone())
+            .seed()
+            .await
+            .expect("unexpected error occurred while seeding application data");
+    }
 
     info!("migrations successfully ran, initializing axum server...");
     ConduitApplicationController::serve(port, service_register)

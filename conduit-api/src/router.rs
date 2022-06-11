@@ -11,6 +11,7 @@ use tracing::info;
 
 use conduit_infrastructure::service_register::ServiceRegister;
 
+use crate::profiles::ProfilesRouter;
 use crate::users::UsersRouter;
 
 static HTTP_TIMEOUT: u64 = 30;
@@ -20,7 +21,8 @@ pub struct ConduitApplicationController;
 impl ConduitApplicationController {
     pub async fn serve(port: u32, service_register: ServiceRegister) -> anyhow::Result<()> {
         let router = Router::new()
-            .nest("/api", UsersRouter::new_router(service_register))
+            .nest("/api", UsersRouter::new_router(service_register.clone()))
+            .nest("/api", ProfilesRouter::new_router(service_register))
             .layer(
                 ServiceBuilder::new()
                     .layer(TraceLayer::new_for_http())

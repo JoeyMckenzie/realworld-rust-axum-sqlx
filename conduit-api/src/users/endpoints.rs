@@ -6,7 +6,7 @@ use conduit_core::users::service::DynUsersService;
 use conduit_domain::users::requests::{LoginUserRequest, RegisterUserRequest, UpdateUserRequest};
 use conduit_domain::users::responses::UserAuthenicationResponse;
 
-use crate::extractors::authentication_extractor::AuthenticationExtractor;
+use crate::extractors::required_authentication_extractor::RequiredAuthenticationExtractor;
 use crate::extractors::validation_extractor::ValidationExtractor;
 
 pub async fn register_user_endpoint(
@@ -39,7 +39,7 @@ pub async fn login_user_endpoint(
 }
 
 pub async fn get_current_user_endpoint(
-    AuthenticationExtractor(user_id): AuthenticationExtractor,
+    RequiredAuthenticationExtractor(user_id): RequiredAuthenticationExtractor,
     Extension(users_service): Extension<DynUsersService>,
 ) -> ConduitResult<Json<UserAuthenicationResponse>> {
     info!("recieved request to retrieve current user");
@@ -50,7 +50,7 @@ pub async fn get_current_user_endpoint(
 }
 
 pub async fn update_user_endpoint(
-    AuthenticationExtractor(user_id): AuthenticationExtractor,
+    RequiredAuthenticationExtractor(user_id): RequiredAuthenticationExtractor,
     Extension(users_service): Extension<DynUsersService>,
     Json(request): Json<UpdateUserRequest>,
 ) -> ConduitResult<Json<UserAuthenicationResponse>> {

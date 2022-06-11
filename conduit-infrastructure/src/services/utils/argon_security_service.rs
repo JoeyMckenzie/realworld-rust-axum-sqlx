@@ -1,15 +1,17 @@
+use std::sync::Arc;
+
 use argon2::Config;
 
-use conduit_core::config::ConduitConfig;
+use conduit_core::config::AppConfig;
 use conduit_core::errors::{ConduitError, ConduitResult};
 use conduit_core::utils::security_service::SecurityService;
 
 pub struct ArgonSecurityService {
-    config: ConduitConfig,
+    config: Arc<AppConfig>,
 }
 
 impl ArgonSecurityService {
-    pub fn new(config: ConduitConfig) -> Self {
+    pub fn new(config: Arc<AppConfig>) -> Self {
         Self { config }
     }
 }

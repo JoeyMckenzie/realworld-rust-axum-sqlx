@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use anyhow::Context;
 use async_trait::async_trait;
 use sqlx::query_as;
@@ -10,11 +8,11 @@ use crate::connection_pool::ConduitConnectionPool;
 
 #[derive(Clone)]
 pub struct PostgresUsersRepository {
-    pool: Arc<ConduitConnectionPool>,
+    pool: ConduitConnectionPool,
 }
 
 impl PostgresUsersRepository {
-    pub fn new(pool: Arc<ConduitConnectionPool>) -> Self {
+    pub fn new(pool: ConduitConnectionPool) -> Self {
         Self { pool }
     }
 }
@@ -43,7 +41,7 @@ impl UsersRepository for PostgresUsersRepository {
             email,
             username
         )
-        .fetch_optional(self.pool.as_ref())
+        .fetch_optional(&self.pool)
         .await
         .context("an unexpected error occured while search for users")
     }
@@ -65,7 +63,7 @@ impl UsersRepository for PostgresUsersRepository {
             email,
             hashed_password
         )
-        .fetch_one(self.pool.as_ref())
+        .fetch_one(&self.pool)
         .await
         .context("an unexpected error occured while creating the user")
     }
@@ -80,7 +78,7 @@ impl UsersRepository for PostgresUsersRepository {
             "#,
             email,
         )
-        .fetch_optional(self.pool.as_ref())
+        .fetch_optional(&self.pool)
         .await
         .context("unexpected error while querying for user by email")
     }
@@ -95,7 +93,7 @@ impl UsersRepository for PostgresUsersRepository {
             "#,
             username,
         )
-        .fetch_optional(self.pool.as_ref())
+        .fetch_optional(&self.pool)
         .await
         .context("unexpected error while querying for user by email")
     }
@@ -110,7 +108,7 @@ impl UsersRepository for PostgresUsersRepository {
             "#,
             id,
         )
-        .fetch_one(self.pool.as_ref())
+        .fetch_one(&self.pool)
         .await
         .context("user was not found")
     }
@@ -145,7 +143,7 @@ impl UsersRepository for PostgresUsersRepository {
             image,
             id
         )
-        .fetch_one(self.pool.as_ref())
+        .fetch_one(&self.pool)
         .await
         .context("could not update the user")
     }

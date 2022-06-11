@@ -1,11 +1,12 @@
 use std::ops::Add;
+use std::sync::Arc;
 use std::time::Duration;
 
+use conduit_core::config::AppConfig;
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
 
-use conduit_core::config::ConduitConfig;
 use conduit_core::errors::{ConduitError, ConduitResult};
 use conduit_core::utils::token_service::TokenService;
 
@@ -18,11 +19,11 @@ struct Claims {
 }
 
 pub struct JwtService {
-    config: ConduitConfig,
+    config: Arc<AppConfig>,
 }
 
 impl JwtService {
-    pub fn new(config: ConduitConfig) -> Self {
+    pub fn new(config: Arc<AppConfig>) -> Self {
         Self { config }
     }
 }

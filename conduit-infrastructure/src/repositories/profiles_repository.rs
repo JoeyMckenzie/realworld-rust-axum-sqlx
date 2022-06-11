@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use anyhow::Context;
 use async_trait::async_trait;
 use sqlx::query_as;
@@ -10,11 +8,11 @@ use crate::connection_pool::ConduitConnectionPool;
 
 #[derive(Clone)]
 pub struct PostgresProfilesRepository {
-    pool: Arc<ConduitConnectionPool>,
+    pool: ConduitConnectionPool,
 }
 
 impl PostgresProfilesRepository {
-    pub fn new(pool: Arc<ConduitConnectionPool>) -> Self {
+    pub fn new(pool: ConduitConnectionPool) -> Self {
         Self { pool }
     }
 }
@@ -33,7 +31,7 @@ impl ProfilesRepository for PostgresProfilesRepository {
         where followee_id = $1"#,
             user_id
         )
-        .fetch_all(self.pool.as_ref())
+        .fetch_all(&self.pool)
         .await
         .context("an unexpected error occured retrieving user follows")
     }
