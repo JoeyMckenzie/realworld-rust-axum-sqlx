@@ -7,18 +7,18 @@ DSN ?= $(shell sed -n 's/^CONNECTION_STRING=\(.*\)/\1/p' $(ENV_FILE))
 .PHONY: default
 default: help
 
-.PHONY: all
-all: ## build the rust binary
-	make build
-
 # generate help info from comments: thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .PHONY: help
 help: ## help information about make commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: start
-run: ## run the API server
-	@RUST_LOG=debug cargo run
+.PHONY: dev
+dev: ## run the API server
+	@ENVIRONMENT=development cargo run
+
+.PHONY: docker
+docker: ## build and run all docker containers
+	@docker compose -f ./docker-compose.postgres.yml -f ./docker-compose.conduit.yml up --build
 
 .PHONY: build
 build:  ## build the API server binary

@@ -1,4 +1,4 @@
-use crate::users::models::UserDto;
+use crate::users::UserDto;
 
 #[derive(serde::Serialize, Debug)]
 pub struct UserAuthenicationResponse {

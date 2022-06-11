@@ -5,7 +5,7 @@ use http::header::AUTHORIZATION;
 use tracing::error;
 
 use conduit_core::errors::ConduitError;
-use conduit_core::services::token_service::DynTokenService;
+use conduit_core::utils::token_service::DynTokenService;
 
 /// Extracts the JWT from the Authorization token header.
 pub struct AuthenticationExtractor(pub i64);

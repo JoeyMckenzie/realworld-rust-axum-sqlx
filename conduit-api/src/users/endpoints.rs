@@ -54,7 +54,7 @@ pub async fn update_user_endpoint(
     Extension(users_service): Extension<DynUsersService>,
     Json(request): Json<UpdateUserRequest>,
 ) -> ConduitResult<Json<UserAuthenicationResponse>> {
-    info!("recieved request to update user");
+    info!("recieved request to update user {:?}", user_id);
 
     let updated_user = users_service.updated_user(user_id, request.user).await?;
 

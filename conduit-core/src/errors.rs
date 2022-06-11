@@ -20,8 +20,8 @@ pub enum ConduitError {
     InvalidLoginAttmpt,
     #[error("user does not have privilege to access this resource")]
     Forbidden,
-    #[error("requested resource was not found")]
-    NotFound,
+    #[error("{0}")]
+    NotFound(String),
     #[error("{0}")]
     ApplicationStartup(String),
     #[error("{0}")]
@@ -84,6 +84,7 @@ impl IntoResponse for ConduitError {
 
         let (status, error_message) = match self {
             Self::InternalServerErrorWithContext(err) => (StatusCode::INTERNAL_SERVER_ERROR, err),
+            Self::NotFound(err) => (StatusCode::NOT_FOUND, err),
             Self::ObjectConflict(err) => (StatusCode::CONFLICT, err),
             Self::InvalidLoginAttmpt => (
                 StatusCode::BAD_REQUEST,

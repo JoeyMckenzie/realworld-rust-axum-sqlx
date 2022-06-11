@@ -2,7 +2,7 @@ use argon2::Config;
 
 use conduit_core::config::ConduitConfig;
 use conduit_core::errors::{ConduitError, ConduitResult};
-use conduit_core::services::security_service::SecurityService;
+use conduit_core::utils::security_service::SecurityService;
 
 pub struct ArgonSecurityService {
     config: ConduitConfig,

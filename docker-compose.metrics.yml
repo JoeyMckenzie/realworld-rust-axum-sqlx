@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  realworld_rust_axum_sqlx_metrics:
+    container_name: realworld_rust_axum_sqlx_metrics
+    image: prom/prometheus:latest
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: always

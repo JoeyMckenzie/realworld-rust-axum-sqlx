@@ -7,7 +7,7 @@ use time::OffsetDateTime;
 
 use conduit_core::config::ConduitConfig;
 use conduit_core::errors::{ConduitError, ConduitResult};
-use conduit_core::services::token_service::TokenService;
+use conduit_core::utils::token_service::TokenService;
 
 /// Our claims struct, it needs to derive `Serialize` and/or `Deserialize`
 #[derive(Debug, Serialize, Deserialize)]

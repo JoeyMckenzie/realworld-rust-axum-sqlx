@@ -2,10 +2,10 @@ use std::sync::Arc;
 
 use mockall::predicate::*;
 
-use conduit_core::services::security_service::{DynSecurityService, MockSecurityService};
-use conduit_core::services::token_service::{DynTokenService, MockTokenService};
 use conduit_core::users::repository::{DynUsersRepository, MockUsersRepository, UserEntity};
 use conduit_core::users::service::UsersService;
+use conduit_core::utils::security_service::{DynSecurityService, MockSecurityService};
+use conduit_core::utils::token_service::{DynTokenService, MockTokenService};
 use conduit_domain::users::requests::RegisterUserDto;
 
 use crate::services::features::users_service::ConduitUsersService;

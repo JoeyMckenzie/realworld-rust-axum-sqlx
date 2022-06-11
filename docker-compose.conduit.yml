@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  realworld_rust_axum_sqlx:
+    container_name: realworld_rust_axum_sqlx
+    build:
+      context: .
+      dockerfile: ./conduit-bin/src/Dockerfile
+    volumes:
+      - /tmp/app:/var/log/app
+    ports:
+      - '8080:8080'
+    env_file:
+      - .env
+    depends_on:
+      realworld_rust_axum_sqlx:
+        condition: service_healthy
