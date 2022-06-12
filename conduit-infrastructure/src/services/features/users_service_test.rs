@@ -10,7 +10,7 @@ use conduit_domain::users::requests::RegisterUserDto;
 
 use crate::services::features::users_service::ConduitUsersService;
 
-pub struct UsersServiceTestFixture {
+struct UsersServiceTestFixture {
     mock_repository: MockUsersRepository,
     mock_token_service: MockTokenService,
     mock_security_service: MockSecurityService,
@@ -86,23 +86,14 @@ async fn register_user_returns_error_when_user_exixsts() {
         .times(1)
         .return_once(move |_, _| Ok(Some(UserEntity::default())));
 
-    fixture
-        .mock_repository
-        .expect_create_user()
-        .with(eq("stub email"), eq("stub username"), eq("hashed password"))
-        .times(0);
+    fixture.mock_repository.expect_create_user().times(0);
 
     fixture
         .mock_security_service
         .expect_hash_password()
-        .with(eq("stub password"))
         .times(0);
 
-    fixture
-        .mock_token_service
-        .expect_new_token()
-        .with(eq(1), eq("stub email"))
-        .times(0);
+    fixture.mock_token_service.expect_new_token().times(0);
 
     let users_service = ConduitUsersService::new(
         Arc::new(fixture.mock_repository) as DynUsersRepository,

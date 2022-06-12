@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use std::time::SystemTime;
 
 use async_trait::async_trait;
 use mockall::automock;
@@ -37,5 +38,16 @@ impl<'a> FromRow<'a, PgRow> for UserFollowEntity {
             follower_id: row.get(2),
             followee_id: row.get(3),
         })
+    }
+}
+
+impl UserFollowEntity {
+    pub fn default() -> Self {
+        Self {
+            id: 1,
+            follower_id: 2,
+            followee_id: 1,
+            created_at: PrimitiveDateTime::from(SystemTime::now()),
+        }
     }
 }
