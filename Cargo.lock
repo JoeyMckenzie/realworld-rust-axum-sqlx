@@ -326,6 +326,7 @@ dependencies = [
  "conduit-core",
  "conduit-domain",
  "jsonwebtoken",
+ "lazy_static",
  "mockall",
  "rust-argon2",
  "serde",
