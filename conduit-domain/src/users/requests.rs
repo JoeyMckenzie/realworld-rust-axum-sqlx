@@ -44,3 +44,13 @@ pub struct UpdateUserDto {
     pub bio: Option<String>,
     pub image: Option<String>,
 }
+
+impl RegisterUserDto {
+    pub fn new_stub() -> Self {
+        Self {
+            username: Some(String::from("stub username")),
+            email: Some(String::from("stub email")),
+            password: Some(String::from("stub password")),
+        }
+    }
+}
