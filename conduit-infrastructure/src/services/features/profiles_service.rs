@@ -59,4 +59,76 @@ impl ProfilesService for ConduitProfilesService {
 
         Ok(user.unwrap().into_profile(false))
     }
+
+    async fn add_user_follow(
+        &self,
+        username: &str,
+        current_user_id: i64,
+    ) -> ConduitResult<ProfileDto> {
+        info!(
+            "add profile follow to user {:?} from user ID {:?}",
+            username, current_user_id
+        );
+        let user = self.users_repository.get_user_by_username(username).await?;
+
+        if user.is_none() {
+            return Err(ConduitError::NotFound(String::from(
+                "profile to follow was not found",
+            )));
+        }
+
+        let followed_user = user.unwrap();
+
+        // verify the user is not already following
+        let is_following = self
+            .profiles_repository
+            .get_user_followees(current_user_id)
+            .await?
+            .into_iter()
+            .any(|followee| followee.follower_id == current_user_id);
+
+        if !is_following {
+            self.profiles_repository
+                .add_user_follow(current_user_id, followed_user.id)
+                .await?;
+        }
+
+        Ok(followed_user.into_profile(true))
+    }
+
+    async fn remove_user_follow(
+        &self,
+        username: &str,
+        current_user_id: i64,
+    ) -> ConduitResult<ProfileDto> {
+        info!(
+            "removing profile follow to user {:?} from user ID {:?}",
+            username, current_user_id
+        );
+        let user = self.users_repository.get_user_by_username(username).await?;
+
+        if user.is_none() {
+            return Err(ConduitError::NotFound(String::from(
+                "profile to follow was not found",
+            )));
+        }
+
+        let followed_user = user.unwrap();
+
+        // verify the user is following
+        let is_following = self
+            .profiles_repository
+            .get_user_followees(current_user_id)
+            .await?
+            .into_iter()
+            .any(|followee| followee.follower_id == current_user_id);
+
+        if is_following {
+            self.profiles_repository
+                .remove_user_follow(current_user_id, followed_user.id)
+                .await?;
+        }
+
+        Ok(followed_user.into_profile(false))
+    }
 }

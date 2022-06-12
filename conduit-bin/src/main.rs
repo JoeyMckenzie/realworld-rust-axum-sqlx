@@ -34,7 +34,7 @@ async fn main() -> anyhow::Result<()> {
 
     if config.seed {
         info!("seeding enabled, creating test data...");
-        ConduitSeedService::new(service_register.users_service.clone())
+        ConduitSeedService::new(service_register.clone())
             .seed()
             .await
             .expect("unexpected error occurred while seeding application data");

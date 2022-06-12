@@ -6,9 +6,17 @@ pub struct UserAuthenicationResponse {
 }
 
 impl UserAuthenicationResponse {
-    pub fn new(username: String, email: String, bio: String, image: String, token: String) -> Self {
+    pub fn new(
+        id: i64,
+        username: String,
+        email: String,
+        bio: String,
+        image: String,
+        token: String,
+    ) -> Self {
         UserAuthenicationResponse {
             user: UserDto {
+                id,
                 username,
                 email,
                 bio,

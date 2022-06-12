@@ -19,4 +19,16 @@ pub trait ProfilesService {
         username: &str,
         current_user_id: Option<i64>,
     ) -> ConduitResult<ProfileDto>;
+
+    async fn add_user_follow(
+        &self,
+        username: &str,
+        current_user_id: i64,
+    ) -> ConduitResult<ProfileDto>;
+
+    async fn remove_user_follow(
+        &self,
+        username: &str,
+        current_user_id: i64,
+    ) -> ConduitResult<ProfileDto>;
 }

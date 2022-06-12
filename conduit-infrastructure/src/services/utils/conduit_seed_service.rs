@@ -2,9 +2,12 @@ use lazy_static::lazy_static;
 use tracing::info;
 
 use conduit_core::errors::ConduitResult;
+use conduit_core::profiles::service::DynProfilesService;
 use conduit_core::users::service::DynUsersService;
 use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto};
 use conduit_domain::users::UserDto;
+
+use crate::service_register::ServiceRegister;
 
 lazy_static! {
     static ref TEST_USER_1_USERNAME: &'static str = "testuser1";
@@ -20,11 +23,15 @@ lazy_static! {
 
 pub struct ConduitSeedService {
     users_service: DynUsersService,
+    profiles_service: DynProfilesService,
 }
 
 impl ConduitSeedService {
-    pub fn new(users_service: DynUsersService) -> Self {
-        Self { users_service }
+    pub fn new(service_register: ServiceRegister) -> Self {
+        Self {
+            users_service: service_register.users_service,
+            profiles_service: service_register.profiles_service,
+        }
     }
 
     pub async fn seed(&self) -> ConduitResult<()> {
@@ -43,24 +50,48 @@ impl ConduitSeedService {
             return Ok(());
         }
 
-        self.create_user(
-            *TEST_USER_1_USERNAME,
-            *TEST_USER_1_EMAIL,
-            *TEST_USER_1_PASSWORD,
-        )
-        .await?;
-        self.create_user(
-            *TEST_USER_2_USERNAME,
-            *TEST_USER_2_EMAIL,
-            *TEST_USER_2_PASSWORD,
-        )
-        .await?;
-        self.create_user(
-            *TEST_USER_3_USERNAME,
-            *TEST_USER_3_EMAIL,
-            *TEST_USER_3_PASSWORD,
-        )
-        .await?;
+        info!("seeding users...");
+        let created_user_1 = self
+            .create_user(
+                *TEST_USER_1_USERNAME,
+                *TEST_USER_1_EMAIL,
+                *TEST_USER_1_PASSWORD,
+            )
+            .await?;
+
+        let created_user_2 = self
+            .create_user(
+                *TEST_USER_2_USERNAME,
+                *TEST_USER_2_EMAIL,
+                *TEST_USER_2_PASSWORD,
+            )
+            .await?;
+
+        let created_user_3 = self
+            .create_user(
+                *TEST_USER_3_USERNAME,
+                *TEST_USER_3_EMAIL,
+                *TEST_USER_3_PASSWORD,
+            )
+            .await?;
+
+        info!("users created, seeding user follows...");
+        // user 2 follows user 1
+        self.profiles_service
+            .add_user_follow(&created_user_1.username, created_user_2.id)
+            .await?;
+
+        // user 3 follows user 1
+        self.profiles_service
+            .add_user_follow(&created_user_1.username, created_user_3.id)
+            .await?;
+
+        // user 3 follows user 2
+        self.profiles_service
+            .add_user_follow(&created_user_2.username, created_user_3.id)
+            .await?;
+
+        info!("seed ran successfully!");
 
         Ok(())
     }

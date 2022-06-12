@@ -2,12 +2,13 @@ use std::sync::Arc;
 use std::time::SystemTime;
 
 use async_trait::async_trait;
-use conduit_domain::profiles::ProfileDto;
-use conduit_domain::users::UserDto;
 use mockall::automock;
 use sqlx::postgres::PgRow;
 use sqlx::types::time::PrimitiveDateTime;
 use sqlx::{FromRow, Row};
+
+use conduit_domain::profiles::ProfileDto;
+use conduit_domain::users::UserDto;
 
 /// Similar to above, we want to keep a reference count across threads so we can manage our connection pool.
 pub type DynUsersRepository = Arc<dyn UsersRepository + Send + Sync>;
@@ -59,6 +60,7 @@ pub struct UserEntity {
 impl UserEntity {
     pub fn into_dto(self, token: String) -> UserDto {
         UserDto {
+            id: self.id,
             email: self.email,
             username: self.username,
             bio: self.bio,
