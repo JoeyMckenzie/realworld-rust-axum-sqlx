@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod responses;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ProfileDto {
     pub username: String,
     pub bio: String,

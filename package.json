@@ -1,10 +1,7 @@
 {
   "name": "realworld-rust-axum-sqlx",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"
   },
   "repository": {
@@ -18,7 +15,7 @@
   },
   "homepage": "https://github.com/joeymckenzie/realworld-rust-axum-sqlx#readme",
   "lint-staged": {
-    "*.rs": "cargo fmt"
+    "*.rs": "make format"
   },
   "devDependencies": {
     "husky": "^7.0.0",
