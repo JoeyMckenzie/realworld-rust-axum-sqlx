@@ -310,10 +310,8 @@ dependencies = [
 name = "conduit-domain"
 version = "0.1.0"
 dependencies = [
- "anyhow",
- "async-trait",
+ "lazy_static",
  "serde",
- "thiserror",
  "validator",
 ]
 
@@ -325,11 +323,13 @@ dependencies = [
  "async-trait",
  "conduit-core",
  "conduit-domain",
+ "itertools",
  "jsonwebtoken",
  "lazy_static",
  "mockall",
  "rust-argon2",
  "serde",
+ "slug",
  "sqlx",
  "time 0.3.9",
  "tokio",
@@ -401,6 +401,12 @@ dependencies = [
  "generic-array",
  "typenum",
 ]
+
+[[package]]
+name = "deunicode"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "850878694b7933ca4c9569d30a34b55031b9b139ee1fc7b94a527c4ef960d690"
 
 [[package]]
 name = "difflib"
@@ -1435,6 +1441,15 @@ dependencies = [
  "num-traits",
  "thiserror",
  "time 0.3.9",
+]
+
+[[package]]
+name = "slug"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b3bc762e6a4b6c6fcaade73e77f9ebc6991b676f88bb2358bddb56560f073373"
+dependencies = [
+ "deunicode",
 ]
 
 [[package]]

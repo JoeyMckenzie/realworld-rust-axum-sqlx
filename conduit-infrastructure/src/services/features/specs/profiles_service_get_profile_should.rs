@@ -13,7 +13,7 @@ use crate::services::features::specs::fixtures::ProfilesServiceTestFixture;
 #[tokio::test]
 async fn return_success_when_downstream_services_succeed_and_user_exists() {
     // arrange
-    let mut fixture = ProfilesServiceTestFixture::default();
+    let mut fixture = ProfilesServiceTestFixture::new();
 
     fixture
         .mock_users_repository
@@ -43,7 +43,7 @@ async fn return_success_when_downstream_services_succeed_and_user_exists() {
 #[tokio::test]
 async fn call_get_user_followees_when_id_is_valid() {
     // arrange
-    let mut fixture = ProfilesServiceTestFixture::default();
+    let mut fixture = ProfilesServiceTestFixture::new();
 
     let user_id = Some(2_i64);
 
@@ -77,7 +77,7 @@ async fn call_get_user_followees_when_id_is_valid() {
 #[tokio::test]
 async fn return_not_found_when_user_does_not_exist() {
     // arrange
-    let mut fixture = ProfilesServiceTestFixture::default();
+    let mut fixture = ProfilesServiceTestFixture::new();
 
     fixture
         .mock_users_repository

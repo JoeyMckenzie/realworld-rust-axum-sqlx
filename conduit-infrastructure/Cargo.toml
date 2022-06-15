@@ -18,6 +18,8 @@ rust-argon2 = "1.0"
 jsonwebtoken = "8"
 mockall = "0.11.1"
 lazy_static = "1.4.0"
+slug = "0.1.4"
+itertools = "0.10.2"
 
 # If you do not need pem decoding, you can disable the default feature `use_pem` that way:
 # jsonwebtoken = {version = "8", default-features = false }

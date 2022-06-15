@@ -8,4 +8,10 @@ create table if not exists users
     image      varchar   not null default '',
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp
-)
+);
+
+
+alter table users
+    add constraint users_id_pk primary key (id);
+
+create index if not exists users_email_idx on users (email);

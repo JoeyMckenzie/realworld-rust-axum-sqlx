@@ -4,4 +4,7 @@ create table if not exists user_favorites
     created_at timestamp not null default current_timestamp,
     user_id    bigint    not null,
     article_id bigint    not null
-)
+);
+
+alter table user_favorites
+    add constraint user_favorite_id_pk primary key (id);

@@ -4,6 +4,7 @@ use anyhow::Context;
 use axum::error_handling::HandleErrorLayer;
 use axum::http::StatusCode;
 use axum::{BoxError, Json, Router};
+use clap::lazy_static::lazy_static;
 use serde_json::json;
 use tower::ServiceBuilder;
 use tower_http::trace::TraceLayer;
@@ -11,10 +12,12 @@ use tracing::info;
 
 use conduit_infrastructure::service_register::ServiceRegister;
 
-use crate::profiles::ProfilesRouter;
-use crate::users::UsersRouter;
+use crate::endpoints::profiles_endpoints::ProfilesRouter;
+use crate::endpoints::users_endpoints::UsersRouter;
 
-static HTTP_TIMEOUT: u64 = 30;
+lazy_static! {
+    static ref HTTP_TIMEOUT: u64 = 30;
+}
 
 pub struct ConduitApplicationController;
 
@@ -27,7 +30,7 @@ impl ConduitApplicationController {
                 ServiceBuilder::new()
                     .layer(TraceLayer::new_for_http())
                     .layer(HandleErrorLayer::new(Self::handle_timeout_error))
-                    .timeout(Duration::from_secs(HTTP_TIMEOUT)),
+                    .timeout(Duration::from_secs(*HTTP_TIMEOUT)),
             );
 
         info!("routes initialized, listening on port {}", port);
@@ -48,7 +51,7 @@ impl ConduitApplicationController {
                     "error":
                         format!(
                             "request took longer than the configured {} second timeout",
-                            HTTP_TIMEOUT
+                            *HTTP_TIMEOUT
                         )
                 })),
             )

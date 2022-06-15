@@ -3,9 +3,8 @@ use std::time::SystemTime;
 
 use async_trait::async_trait;
 use mockall::automock;
-use sqlx::postgres::PgRow;
 use sqlx::types::time::PrimitiveDateTime;
-use sqlx::{FromRow, Row};
+use sqlx::FromRow;
 
 use conduit_domain::profiles::ProfileDto;
 use conduit_domain::users::UserDto;
@@ -46,6 +45,7 @@ pub trait UsersRepository {
     ) -> anyhow::Result<UserEntity>;
 }
 
+#[derive(FromRow)]
 pub struct UserEntity {
     pub id: i64,
     pub created_at: PrimitiveDateTime,
@@ -91,21 +91,5 @@ impl Default for UserEntity {
             password: String::from("stub password"),
             image: String::from("stub image"),
         }
-    }
-}
-
-/// Implements a row/type mapping for sqlx to map our user entity directly into a scanned struct from a query.
-impl<'a> FromRow<'a, PgRow> for UserEntity {
-    fn from_row(row: &'a PgRow) -> Result<Self, sqlx::Error> {
-        Ok(UserEntity {
-            id: row.get(0),
-            created_at: row.get(1),
-            updated_at: row.get(2),
-            username: row.get(3),
-            email: row.get(4),
-            password: row.get(5),
-            bio: row.get(6),
-            image: row.get(7),
-        })
     }
 }

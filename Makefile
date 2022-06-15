@@ -51,3 +51,9 @@ lint: ## run clippy on all rust package
 .PHONY: format
 format: ## run "cargo fmt" on all rust packages
 	@cargo fmt
+
+.PHONY: migrate
+migrate: ## runs sqlx migrations in the infrastructure project
+	@cd conduit-infrastructure/
+	@sqlx migrate run
+	@cd ../

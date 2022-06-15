@@ -1,15 +1,30 @@
 use std::collections::HashMap;
 
 use axum::extract::Path;
-use axum::{Extension, Json};
+use axum::routing::{delete, get, post};
+use axum::{Extension, Json, Router};
 use tracing::info;
 
 use conduit_core::errors::ConduitResult;
 use conduit_core::profiles::service::DynProfilesService;
 use conduit_domain::profiles::responses::ProfileResponse;
+use conduit_infrastructure::service_register::ServiceRegister;
 
 use crate::extractors::optional_authentication_extractor::OptionalAuthenticationExtractor;
 use crate::extractors::required_authentication_extractor::RequiredAuthenticationExtractor;
+
+pub struct ProfilesRouter;
+
+impl ProfilesRouter {
+    pub fn new_router(service_register: ServiceRegister) -> Router {
+        Router::new()
+            .route("/profiles/:username", get(get_profile))
+            .route("/profiles/:username/follow", post(follow_user))
+            .route("/profiles/:username/follow", delete(unfollow_user))
+            .layer(Extension(service_register.profiles_service))
+            .layer(Extension(service_register.token_service))
+    }
+}
 
 pub async fn get_profile(
     Path(params): Path<HashMap<String, String>>,

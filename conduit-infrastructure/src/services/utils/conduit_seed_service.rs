@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 use tracing::info;
 
+use conduit_core::articles::service::DynArticlesService;
 use conduit_core::errors::ConduitResult;
 use conduit_core::profiles::service::DynProfilesService;
 use conduit_core::users::service::DynUsersService;
@@ -24,6 +25,7 @@ lazy_static! {
 pub struct ConduitSeedService {
     users_service: DynUsersService,
     profiles_service: DynProfilesService,
+    articles_service: DynArticlesService,
 }
 
 impl ConduitSeedService {
@@ -31,6 +33,7 @@ impl ConduitSeedService {
         Self {
             users_service: service_register.users_service,
             profiles_service: service_register.profiles_service,
+            articles_service: service_register.articles_service,
         }
     }
 
@@ -89,6 +92,37 @@ impl ConduitSeedService {
         // user 3 follows user 2
         self.profiles_service
             .add_user_follow(&created_user_2.username, created_user_3.id)
+            .await?;
+
+        info!("user follows created, seeding articles...");
+        self.articles_service
+            .create_article(
+                created_user_1.id,
+                String::from("testuser1 article 1"),
+                String::from("testuser1 description 1"),
+                String::from("testuser1 body 1"),
+                vec![String::from("tag1"), String::from("tag2")],
+            )
+            .await?;
+
+        self.articles_service
+            .create_article(
+                created_user_1.id,
+                String::from("testuser1 article 2"),
+                String::from("testuser1 description 2"),
+                String::from("testuser1 body 2"),
+                vec![String::from("tag2"), String::from("tag3")],
+            )
+            .await?;
+
+        self.articles_service
+            .create_article(
+                created_user_2.id,
+                String::from("testuser2 article 1"),
+                String::from("testuser2 description 1"),
+                String::from("testuser2 body 1"),
+                vec![],
+            )
             .await?;
 
         info!("seed ran successfully!");

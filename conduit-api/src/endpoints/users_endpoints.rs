@@ -1,13 +1,29 @@
-use axum::{Extension, Json};
+use axum::routing::{get, post, put};
+use axum::{Extension, Json, Router};
 use tracing::info;
 
 use conduit_core::errors::ConduitResult;
 use conduit_core::users::service::DynUsersService;
 use conduit_domain::users::requests::{LoginUserRequest, RegisterUserRequest, UpdateUserRequest};
 use conduit_domain::users::responses::UserAuthenicationResponse;
+use conduit_infrastructure::service_register::ServiceRegister;
 
 use crate::extractors::required_authentication_extractor::RequiredAuthenticationExtractor;
 use crate::extractors::validation_extractor::ValidationExtractor;
+
+pub struct UsersRouter;
+
+impl UsersRouter {
+    pub fn new_router(service_register: ServiceRegister) -> Router {
+        Router::new()
+            .route("/users", post(register_user_endpoint))
+            .route("/users/login", post(login_user_endpoint))
+            .route("/user", get(get_current_user_endpoint))
+            .route("/user", put(update_user_endpoint))
+            .layer(Extension(service_register.users_service))
+            .layer(Extension(service_register.token_service))
+    }
+}
 
 pub async fn register_user_endpoint(
     ValidationExtractor(request): ValidationExtractor<RegisterUserRequest>,

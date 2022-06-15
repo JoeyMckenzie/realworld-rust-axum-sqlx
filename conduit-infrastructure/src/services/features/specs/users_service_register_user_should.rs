@@ -14,7 +14,7 @@ use crate::services::features::users_service::ConduitUsersService;
 #[tokio::test]
 async fn return_success_when_downstream_services_succeed() {
     // arrange
-    let mut fixture = UsersServiceTestFixture::default();
+    let mut fixture = UsersServiceTestFixture::new();
 
     fixture
         .mock_repository
@@ -62,7 +62,7 @@ async fn return_success_when_downstream_services_succeed() {
 #[tokio::test]
 async fn return_error_when_user_exixsts() {
     // arrange
-    let mut fixture = UsersServiceTestFixture::default();
+    let mut fixture = UsersServiceTestFixture::new();
 
     fixture
         .mock_repository

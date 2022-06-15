@@ -3,14 +3,12 @@ use conduit_core::users::repository::MockUsersRepository;
 use conduit_core::utils::security_service::MockSecurityService;
 use conduit_core::utils::token_service::MockTokenService;
 
-#[derive(Default)]
 pub struct UsersServiceTestFixture {
     pub mock_repository: MockUsersRepository,
     pub mock_token_service: MockTokenService,
     pub mock_security_service: MockSecurityService,
 }
 
-#[derive(Default)]
 pub struct ProfilesServiceTestFixture {
     pub mock_profiles_repository: MockProfilesRepository,
     pub mock_users_repository: MockUsersRepository,
