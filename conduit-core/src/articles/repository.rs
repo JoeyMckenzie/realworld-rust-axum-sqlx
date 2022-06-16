@@ -34,7 +34,7 @@ pub trait ArticlesRepository {
     async fn get_article_by_slug(
         &self,
         user_id: Option<i64>,
-        slug: &str,
+        slug: String,
     ) -> anyhow::Result<Option<GetArticleQuery>>;
 }
 
@@ -69,53 +69,10 @@ pub struct GetArticleQuery {
     pub author_bio: String,
 }
 
-impl From<GetArticleQuery> for ArticleDto {
-    fn from(query: GetArticleQuery) -> Self {
-        Self {
-            title: query.title,
-            body: query.body,
-            tag_list: vec![],
-            created_at: query.created_at.to_string(),
-            updated_at: query.updated_at.to_string(),
-            description: query.description,
-            slug: query.slug,
-            favorited: query.favorited,
-            favorites_count: query.favorites,
-            author: AuthorDto {
-                username: query.author_username,
-                bio: query.author_bio,
-                image: query.author_image,
-                following: query.following_author,
-            },
-        }
-    }
-}
-
-impl From<CreateArticleQuery> for ArticleDto {
-    fn from(query: CreateArticleQuery) -> Self {
-        Self {
-            title: query.title,
-            body: query.body,
-            tag_list: vec![],
-            created_at: query.created_at.to_string(),
-            updated_at: query.updated_at.to_string(),
-            description: query.description,
-            slug: query.slug,
-            favorited: false,
-            favorites_count: 0,
-            author: AuthorDto {
-                username: query.author_username,
-                bio: query.author_bio,
-                image: query.author_image,
-                following: false,
-            },
-        }
-    }
-}
-
 impl CreateArticleQuery {
     pub fn into_dto(self, tag_list: Vec<String>) -> ArticleDto {
         ArticleDto {
+            id: self.id,
             title: self.title,
             body: self.body,
             tag_list,
@@ -130,6 +87,29 @@ impl CreateArticleQuery {
                 bio: self.author_bio,
                 image: self.author_image,
                 following: false,
+            },
+        }
+    }
+}
+
+impl GetArticleQuery {
+    pub fn into_dto(self, tag_list: Vec<String>) -> ArticleDto {
+        ArticleDto {
+            id: self.id,
+            title: self.title,
+            body: self.body,
+            tag_list,
+            created_at: self.created_at.to_string(),
+            updated_at: self.updated_at.to_string(),
+            description: self.description,
+            slug: self.slug,
+            favorited: self.favorited,
+            favorites_count: self.favorites,
+            author: AuthorDto {
+                username: self.author_username,
+                bio: self.author_bio,
+                image: self.author_image,
+                following: self.following_author,
             },
         }
     }

@@ -92,18 +92,27 @@ impl ArticlesRepository for PostgresArticlesRepository {
                u.image as "author_image!"
         from articles a
         join users u on u.id = a.user_id
-        join article_tags at on at.article_id = a.id
-        join tags t on t.id = at.tag_id
-        join article_favorites af on a.id = af.article_id
-        where $2::varchar is null or $3::varchar = t.tag
-        and $3::varchar is null or $3::varchar = u.username -- filter on users for the author
-        and $4::varchar is null or $3::varchar = u.username -- filter again on users for the username, in theory this only returns zero or one given an author, consider it user error
+        -- filter on users for the author
+        where ($2::varchar is null or $2::varchar = u.username)
+        -- filter on tags, if applicable
+        and ($3::varchar is null or exists(
+            select 1 from tags t
+            join article_tags at on (t.id, a.id) = (at.tag_id, at.article_id)
+            where tag = $3::varchar
+        ))
+        -- filter on the favoriting user
+        and ($4::varchar is null or exists(
+            select 1 from users favoriting_user
+            join article_favorites f on favoriting_user.id = f.user_id
+            where favoriting_user.username = $4::varchar)
+        )
+        order by a.created_at desc
         limit $5
         offset $6
             "#,
             user_id,
-            tag,
             author,
+            tag,
             favorited,
             limit,
             offset)
@@ -115,7 +124,7 @@ impl ArticlesRepository for PostgresArticlesRepository {
     async fn get_article_by_slug(
         &self,
         user_id: Option<i64>,
-        slug: &str,
+        slug: String,
     ) -> anyhow::Result<Option<GetArticleQuery>> {
         query_as!(
             GetArticleQuery,
@@ -135,9 +144,6 @@ impl ArticlesRepository for PostgresArticlesRepository {
                u.image as "author_image!"
         from articles a
         join users u on u.id = a.user_id
-        join article_tags at on at.article_id = a.id
-        join tags t on t.id = at.tag_id
-        join article_favorites af on a.id = af.article_id
         where a.slug = $2::varchar
             "#,
             user_id,

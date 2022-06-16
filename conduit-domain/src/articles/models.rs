@@ -3,6 +3,8 @@ use validator::Validate;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ArticleDto {
+    #[serde(skip_serializing)]
+    pub id: i64,
     pub slug: String,
     pub title: String,
     pub description: String,

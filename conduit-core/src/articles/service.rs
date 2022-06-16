@@ -30,4 +30,6 @@ pub trait ArticlesService {
         limit: i64,
         offset: i64,
     ) -> ConduitResult<Vec<ArticleDto>>;
+
+    async fn get_article(&self, user_id: Option<i64>, slug: String) -> ConduitResult<ArticleDto>;
 }

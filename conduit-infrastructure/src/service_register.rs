@@ -63,7 +63,6 @@ impl ServiceRegister {
         let articles_service = Arc::new(ConduitArticlesService::new(
             articles_repository,
             tags_repository,
-            users_repository,
         )) as DynArticlesService;
 
         info!("feature services successfully initialized!");

@@ -12,6 +12,7 @@ use tracing::info;
 
 use conduit_infrastructure::service_register::ServiceRegister;
 
+use crate::endpoints::articles_endpoints::ArticlesRouter;
 use crate::endpoints::profiles_endpoints::ProfilesRouter;
 use crate::endpoints::users_endpoints::UsersRouter;
 
@@ -25,7 +26,8 @@ impl ConduitApplicationController {
     pub async fn serve(port: u32, service_register: ServiceRegister) -> anyhow::Result<()> {
         let router = Router::new()
             .nest("/api", UsersRouter::new_router(service_register.clone()))
-            .nest("/api", ProfilesRouter::new_router(service_register))
+            .nest("/api", ProfilesRouter::new_router(service_register.clone()))
+            .nest("/api", ArticlesRouter::new_router(service_register))
             .layer(
                 ServiceBuilder::new()
                     .layer(TraceLayer::new_for_http())

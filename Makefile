@@ -54,6 +54,5 @@ format: ## run "cargo fmt" on all rust packages
 
 .PHONY: migrate
 migrate: ## runs sqlx migrations in the infrastructure project
-	@cd conduit-infrastructure/
-	@sqlx migrate run
+	@cd conduit-infrastructure/ && sqlx migrate run
 	@cd ../

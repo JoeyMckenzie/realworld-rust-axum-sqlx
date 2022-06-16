@@ -4,7 +4,9 @@ use lazy_static::lazy_static;
 use sqlx::postgres::PgRow;
 use sqlx::{query_as, QueryBuilder, Row};
 
-use conduit_core::tags::repository::{ArticleTagEntity, TagEntity, TagsRepository};
+use conduit_core::tags::repository::{
+    ArticleTagEntity, ArticleTagQuery, TagEntity, TagsRepository,
+};
 
 use crate::connection_pool::ConduitConnectionPool;
 
@@ -26,12 +28,13 @@ impl PostgresTagsRepository {
 #[async_trait]
 impl TagsRepository for PostgresTagsRepository {
     async fn get_tags(&self, tags: Vec<String>) -> anyhow::Result<Vec<TagEntity>> {
-        let mut query_builder = QueryBuilder::new("select id, tag, created_at from tags");
+        let mut query_builder = QueryBuilder::new("select id, tag, created_at from tags ");
 
         if !tags.is_empty() {
             query_builder
-                .push("where tag in ($1::text[])")
-                .push_bind(tags);
+                .push("where tag = any(")
+                .push_bind(tags)
+                .push(")");
         }
 
         query_builder
@@ -66,15 +69,44 @@ impl TagsRepository for PostgresTagsRepository {
             .context("an unexpected error occurred while creating article tags")
     }
 
-    async fn get_article_tags(&self, article_id: i64) -> anyhow::Result<Vec<ArticleTagEntity>> {
+    async fn get_article_tags_by_article_id(
+        &self,
+        article_id: i64,
+    ) -> anyhow::Result<Vec<ArticleTagQuery>> {
         query_as!(
-            ArticleTagEntity,
+            ArticleTagQuery,
             r#"
-        select *
-        from article_tags
+        select at.id,
+               at.article_id,
+               at.tag_id,
+               t.tag
+        from article_tags at
+        join tags t on t.id = at.article_id
         where article_id = $1
             "#,
             article_id
+        )
+        .fetch_all(&self.pool)
+        .await
+        .context("an unexpected error occurred while retrieving tags")
+    }
+
+    async fn get_article_tags_article_ids(
+        &self,
+        article_ids: Vec<i64>,
+    ) -> anyhow::Result<Vec<ArticleTagQuery>> {
+        query_as!(
+            ArticleTagQuery,
+            r#"
+        select at.id as "id!",
+               at.tag_id as "tag_id!",
+               at.article_id as "article_id!",
+               t.tag as "tag!"
+        from article_tags at
+        join tags t on t.id = at.tag_id
+        where article_id = any($1)
+            "#,
+            article_ids.as_slice()
         )
         .fetch_all(&self.pool)
         .await
