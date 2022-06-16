@@ -30,7 +30,7 @@ async fn main() -> anyhow::Result<()> {
             .expect("could not initialize the database connection pool");
 
     let port = config.port;
-    let service_register = ServiceRegister::new(pg_pool, config.clone());
+    let service_register = ServiceRegister::try_new(pg_pool, config.clone()).await.expect("could not initialize application services");
 
     if config.seed {
         info!("seeding enabled, creating test data...");

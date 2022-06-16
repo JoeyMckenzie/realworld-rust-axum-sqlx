@@ -1,12 +1,11 @@
 use anyhow::Context;
 use async_trait::async_trait;
-use sqlx::query_as;
+use sqlx::{query_as};
 
 use conduit_core::users::repository::{UserEntity, UsersRepository};
 
 use crate::connection_pool::ConduitConnectionPool;
 
-#[derive(Clone)]
 pub struct PostgresUsersRepository {
     pool: ConduitConnectionPool,
 }
@@ -41,9 +40,9 @@ impl UsersRepository for PostgresUsersRepository {
             email,
             username
         )
-        .fetch_optional(&self.pool)
-        .await
-        .context("an unexpected error occured while search for users")
+            .fetch_optional(&self.pool)
+            .await
+            .context("an unexpected error occured while search for users")
     }
 
     async fn create_user(
@@ -63,9 +62,9 @@ impl UsersRepository for PostgresUsersRepository {
             email,
             hashed_password
         )
-        .fetch_one(&self.pool)
-        .await
-        .context("an unexpected error occured while creating the user")
+            .fetch_one(&self.pool)
+            .await
+            .context("an unexpected error occured while creating the user")
     }
 
     async fn get_user_by_email(&self, email: &str) -> anyhow::Result<Option<UserEntity>> {
@@ -78,9 +77,9 @@ impl UsersRepository for PostgresUsersRepository {
             "#,
             email,
         )
-        .fetch_optional(&self.pool)
-        .await
-        .context("unexpected error while querying for user by email")
+            .fetch_optional(&self.pool)
+            .await
+            .context("unexpected error while querying for user by email")
     }
 
     async fn get_user_by_username(&self, username: &str) -> anyhow::Result<Option<UserEntity>> {
@@ -93,9 +92,9 @@ impl UsersRepository for PostgresUsersRepository {
             "#,
             username,
         )
-        .fetch_optional(&self.pool)
-        .await
-        .context("unexpected error while querying for user by email")
+            .fetch_optional(&self.pool)
+            .await
+            .context("unexpected error while querying for user by email")
     }
 
     async fn get_user_by_id(&self, id: i64) -> anyhow::Result<UserEntity> {
@@ -108,9 +107,9 @@ impl UsersRepository for PostgresUsersRepository {
             "#,
             id,
         )
-        .fetch_one(&self.pool)
-        .await
-        .context("user was not found")
+            .fetch_one(&self.pool)
+            .await
+            .context("user was not found")
     }
 
     async fn update_user(
@@ -143,8 +142,8 @@ impl UsersRepository for PostgresUsersRepository {
             image,
             id
         )
-        .fetch_one(&self.pool)
-        .await
-        .context("could not update the user")
+            .fetch_one(&self.pool)
+            .await
+            .context("could not update the user")
     }
 }

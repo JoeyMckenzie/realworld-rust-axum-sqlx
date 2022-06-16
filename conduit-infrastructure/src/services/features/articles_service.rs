@@ -10,25 +10,17 @@ use conduit_core::articles::service::ArticlesService;
 use conduit_core::errors::ConduitResult;
 use conduit_core::tags::repository::DynTagsRepository;
 use conduit_core::users::repository::DynUsersRepository;
+use conduit_core::utils::unit_of_work::DynUnitOfWork;
 use conduit_domain::articles::models::ArticleDto;
-use conduit_domain::articles::requests::GetArticlesServiceRequest;
 
 pub struct ConduitArticlesService {
-    articles_repository: DynArticlesRepository,
-    tags_repository: DynTagsRepository,
-    users_repository: DynUsersRepository,
+    unit_of_work: DynUnitOfWork,
 }
 
 impl ConduitArticlesService {
-    pub fn new(
-        articles_repository: DynArticlesRepository,
-        tags_repository: DynTagsRepository,
-        users_repository: DynUsersRepository,
-    ) -> Self {
+    pub fn new(unit_of_work: DynUnitOfWork) -> Self {
         Self {
-            articles_repository,
-            tags_repository,
-            users_repository,
+            unit_of_work
         }
     }
 }
@@ -48,7 +40,8 @@ impl ArticlesService for ConduitArticlesService {
 
         // search for existing tags, as we want to create a new tag if the request contains a tag that doesn't exist in the database
         let existing_tags = self
-            .tags_repository
+            .unit_of_work
+            .tags_repository()
             .get_tags(deduped_tag_list.clone())
             .await?
             .into_iter()
@@ -68,20 +61,24 @@ impl ArticlesService for ConduitArticlesService {
         let slug = slugify(&title);
 
         let created_article = self
-            .articles_repository
+            .unit_of_work
+            .articles_repository()
             .create_article(user_id, title, slug, description, body)
             .await?;
 
         // if we detect new tags, create them
         if !tags_to_create.is_empty() {
-            self.tags_repository.create_tags(tags_to_create).await?;
+            self.unit_of_work
+                .tags_repository()
+                .create_tags(tags_to_create)
+                .await?;
         }
 
         // re-query the tags table to get all the existing tags with their associated IDs
         // while mapping them into a tuple of tag IDs and article ID so we can create
         // the related article tags for the article
-        let article_tags_to_create = self
-            .tags_repository
+        let article_tags_to_create = self.unit_of_work
+            .tags_repository()
             .get_tags(deduped_tag_list.clone())
             .await?
             .into_iter()
@@ -89,9 +86,12 @@ impl ArticlesService for ConduitArticlesService {
             .collect_vec();
 
         // finally, create the article tags
-        self.tags_repository
+        self.unit_of_work
+            .tags_repository()
             .create_article_tags(article_tags_to_create)
             .await?;
+
+        self.unit_of_work.commit().await?;
 
         Ok(created_article.into_dto(deduped_tag_list))
     }
@@ -106,9 +106,12 @@ impl ArticlesService for ConduitArticlesService {
         offset: i64,
     ) -> ConduitResult<Vec<ArticleDto>> {
         let articles = self
-            .articles_repository
+            .unit_of_work
+            .articles_repository()
             .get_articles(user_id, tag, author, favorited, limit, offset)
             .await?;
+
+        self.unit_of_work.commit().await?;
 
         info!("found {} articles", articles.len());
 

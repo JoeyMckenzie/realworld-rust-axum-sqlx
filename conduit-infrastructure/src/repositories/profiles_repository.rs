@@ -13,7 +13,7 @@ pub struct PostgresProfilesRepository {
 
 impl PostgresProfilesRepository {
     pub fn new(pool: ConduitConnectionPool) -> Self {
-        Self { pool }
+        Self { pool: pool }
     }
 }
 
@@ -32,9 +32,9 @@ impl ProfilesRepository for PostgresProfilesRepository {
         where follower_id = $1"#,
             user_id
         )
-        .fetch_all(&self.pool)
-        .await
-        .context("an unexpected error occured retrieving user followees")
+            .fetch_all(&self.pool)
+            .await
+            .context("an unexpected error occured retrieving user followees")
     }
 
     async fn get_user_followers(&self, user_id: i64) -> anyhow::Result<Vec<UserFollowEntity>> {
@@ -49,9 +49,9 @@ impl ProfilesRepository for PostgresProfilesRepository {
         where followee_id = $1"#,
             user_id
         )
-        .fetch_all(&self.pool)
-        .await
-        .context("an unexpected error occured retrieving user followers")
+            .fetch_all(&self.pool)
+            .await
+            .context("an unexpected error occured retrieving user followers")
     }
 
     async fn add_user_follow(
@@ -68,9 +68,9 @@ impl ProfilesRepository for PostgresProfilesRepository {
             follower_id,
             followee_id
         )
-        .fetch_one(&self.pool)
-        .await
-        .context("an unexpected error occured retrieving user follows")
+            .fetch_one(&self.pool)
+            .await
+            .context("an unexpected error occured retrieving user follows")
     }
 
     #[allow(unused_must_use)]
@@ -83,9 +83,9 @@ impl ProfilesRepository for PostgresProfilesRepository {
             follower_id,
             followee_id
         )
-        .execute(&self.pool)
-        .await
-        .context("an unexpected error occured retrieving user follows");
+            .execute(&self.pool)
+            .await
+            .context("an unexpected error occured retrieving user follows");
 
         Ok(())
     }

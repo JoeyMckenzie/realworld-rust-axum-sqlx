@@ -2,28 +2,28 @@ use async_trait::async_trait;
 use tracing::{error, info};
 
 use conduit_core::errors::{ConduitError, ConduitResult};
-use conduit_core::users::repository::DynUsersRepository;
 use conduit_core::users::service::UsersService;
 use conduit_core::utils::security_service::DynSecurityService;
 use conduit_core::utils::token_service::DynTokenService;
+use conduit_core::utils::unit_of_work::DynUnitOfWork;
 use conduit_domain::users::requests::{LoginUserDto, RegisterUserDto, UpdateUserDto};
 use conduit_domain::users::UserDto;
 
 #[derive(Clone)]
 pub struct ConduitUsersService {
-    repository: DynUsersRepository,
+    unit_of_work: DynUnitOfWork,
     security_service: DynSecurityService,
     token_service: DynTokenService,
 }
 
 impl ConduitUsersService {
     pub fn new(
-        repository: DynUsersRepository,
+        unit_of_work: DynUnitOfWork,
         security_service: DynSecurityService,
         token_service: DynTokenService,
     ) -> Self {
         Self {
-            repository,
+            unit_of_work,
             security_service,
             token_service,
         }
@@ -38,7 +38,8 @@ impl UsersService for ConduitUsersService {
         let password = request.password.unwrap();
 
         let existing_user = self
-            .repository
+            .unit_of_work
+            .users_repository()
             .search_user_by_email_or_username(&email, &username)
             .await?;
 
@@ -54,9 +55,12 @@ impl UsersService for ConduitUsersService {
 
         info!("password hashed successfully, creating user {:?}", email);
         let created_user = self
-            .repository
+            .unit_of_work
+            .users_repository()
             .create_user(&email, &username, &hashed_password)
             .await?;
+
+        self.unit_of_work.commit().await?;
 
         info!("user successfully created, generating token");
         let token = self
@@ -71,7 +75,12 @@ impl UsersService for ConduitUsersService {
         let attempted_password = request.password.unwrap();
 
         info!("searching for existing user {:?}", email);
-        let existing_user = self.repository.get_user_by_email(&email).await?;
+        let existing_user = self.unit_of_work
+            .users_repository()
+            .get_user_by_email(&email)
+            .await?;
+
+        self.unit_of_work.commit().await?;
 
         if existing_user.is_none() {
             return Err(ConduitError::NotFound(String::from(
@@ -99,7 +108,12 @@ impl UsersService for ConduitUsersService {
 
     async fn get_current_user(&self, user_id: i64) -> ConduitResult<UserDto> {
         info!("retrieving user {:?}", user_id);
-        let user = self.repository.get_user_by_id(user_id).await?;
+        let user = self.unit_of_work
+            .users_repository()
+            .get_user_by_id(user_id)
+            .await?;
+
+        self.unit_of_work.commit().await?;
 
         info!(
             "user found with email {:?}, generating new token",
@@ -112,7 +126,10 @@ impl UsersService for ConduitUsersService {
 
     async fn updated_user(&self, user_id: i64, request: UpdateUserDto) -> ConduitResult<UserDto> {
         info!("retrieving user {:?}", user_id);
-        let user = self.repository.get_user_by_id(user_id).await?;
+        let user = self.unit_of_work
+            .users_repository()
+            .get_user_by_id(user_id)
+            .await?;
 
         let updated_email = request.email.unwrap_or(user.email);
         let updated_username = request.username.unwrap_or(user.username);
@@ -129,7 +146,8 @@ impl UsersService for ConduitUsersService {
 
         info!("updating user {:?}", user_id);
         let updated_user = self
-            .repository
+            .unit_of_work
+            .users_repository()
             .update_user(
                 user_id,
                 updated_email.clone(),
@@ -139,6 +157,8 @@ impl UsersService for ConduitUsersService {
                 updated_image,
             )
             .await?;
+
+        self.unit_of_work.commit().await?;
 
         info!("user {:?} updated, generating a new token", user_id);
         let token = self

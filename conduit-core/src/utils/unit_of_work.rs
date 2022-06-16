@@ -19,7 +19,5 @@ pub trait UnitOfWork {
     fn profiles_repository(&self) -> DynProfilesRepository;
     fn articles_repository(&self) -> DynArticlesRepository;
     fn tags_repository(&self) -> DynTagsRepository;
-    async fn begin(&self) -> ConduitResult<()>;
-    async fn commit(&self) -> ConduitResult<()>;
-    async fn rollback(&self) -> ConduitResult<()>;
+    async fn commit(mut self) -> ConduitResult<()>;
 }

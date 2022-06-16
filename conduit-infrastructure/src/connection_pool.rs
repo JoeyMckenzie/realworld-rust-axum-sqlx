@@ -1,9 +1,12 @@
+use std::sync::Arc;
 use anyhow::Context;
+use sqlx::{Pool, Postgres, Transaction};
 use sqlx::postgres::PgPoolOptions;
-use sqlx::{Pool, Postgres};
 use tracing::info;
 
 pub type ConduitConnectionPool = Pool<Postgres>;
+
+pub type ConduitConnectionTransaction = Arc<Transaction<'static, Postgres>>;
 
 pub struct ConduitConnectionManager;
 
