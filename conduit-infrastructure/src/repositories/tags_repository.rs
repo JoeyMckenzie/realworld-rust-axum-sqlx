@@ -4,8 +4,7 @@ use lazy_static::lazy_static;
 use sqlx::postgres::PgRow;
 use sqlx::{query_as, QueryBuilder, Row};
 
-use conduit_core::tags::repository::{
-    ArticleTagEntity, ArticleTagQuery, TagEntity, TagsRepository,
+use conduit_core::tags::repository::{ArticleTagQuery, TagEntity, TagsRepository,
 };
 
 use crate::connection_pool::ConduitConnectionPool;
