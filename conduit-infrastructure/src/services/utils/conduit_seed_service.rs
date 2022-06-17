@@ -2,6 +2,7 @@ use lazy_static::lazy_static;
 use tracing::info;
 
 use conduit_core::articles::service::DynArticlesService;
+use conduit_core::comments::repository::DynCommentsRepository;
 use conduit_core::errors::ConduitResult;
 use conduit_core::profiles::service::DynProfilesService;
 use conduit_core::users::service::DynUsersService;
@@ -95,7 +96,8 @@ impl ConduitSeedService {
             .await?;
 
         info!("user follows created, seeding articles...");
-        self.articles_service
+        let article_1 = self
+            .articles_service
             .create_article(
                 created_user_1.id,
                 String::from("testuser1 article 1"),
@@ -105,7 +107,8 @@ impl ConduitSeedService {
             )
             .await?;
 
-        self.articles_service
+        let article_2 = self
+            .articles_service
             .create_article(
                 created_user_1.id,
                 String::from("testuser1 article 2"),
@@ -115,7 +118,8 @@ impl ConduitSeedService {
             )
             .await?;
 
-        self.articles_service
+        let article_3 = self
+            .articles_service
             .create_article(
                 created_user_2.id,
                 String::from("testuser2 article 1"),
@@ -124,6 +128,8 @@ impl ConduitSeedService {
                 vec![],
             )
             .await?;
+
+        info!("articles created, seeding comments...");
 
         info!("seed ran successfully!");
 

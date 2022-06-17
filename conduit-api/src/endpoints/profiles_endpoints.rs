@@ -10,8 +10,8 @@ use conduit_core::profiles::service::DynProfilesService;
 use conduit_domain::profiles::responses::ProfileResponse;
 use conduit_infrastructure::service_register::ServiceRegister;
 
-use crate::extractors::optional_authentication_extractor::OptionalAuthenticationExtractor;
-use crate::extractors::required_authentication_extractor::RequiredAuthenticationExtractor;
+use crate::extractors::optional_authentication_extractor::OptionalAuthentication;
+use crate::extractors::required_authentication_extractor::RequiredAuthentication;
 
 pub struct ProfilesRouter;
 
@@ -29,7 +29,7 @@ impl ProfilesRouter {
 pub async fn get_profile(
     Path(params): Path<HashMap<String, String>>,
     Extension(profiles_service): Extension<DynProfilesService>,
-    OptionalAuthenticationExtractor(user_id): OptionalAuthenticationExtractor,
+    OptionalAuthentication(user_id): OptionalAuthentication,
 ) -> ConduitResult<Json<ProfileResponse>> {
     let username = params.get("username").unwrap();
 
@@ -43,7 +43,7 @@ pub async fn get_profile(
 pub async fn follow_user(
     Path(params): Path<HashMap<String, String>>,
     Extension(profiles_service): Extension<DynProfilesService>,
-    RequiredAuthenticationExtractor(user_id): RequiredAuthenticationExtractor,
+    RequiredAuthentication(user_id): RequiredAuthentication,
 ) -> ConduitResult<Json<ProfileResponse>> {
     let username = params.get("username").unwrap();
 
@@ -60,7 +60,7 @@ pub async fn follow_user(
 pub async fn unfollow_user(
     Path(params): Path<HashMap<String, String>>,
     Extension(profiles_service): Extension<DynProfilesService>,
-    RequiredAuthenticationExtractor(user_id): RequiredAuthenticationExtractor,
+    RequiredAuthentication(user_id): RequiredAuthentication,
 ) -> ConduitResult<Json<ProfileResponse>> {
     let username = params.get("username").unwrap();
 

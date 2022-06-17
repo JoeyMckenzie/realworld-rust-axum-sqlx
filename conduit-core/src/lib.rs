@@ -1,4 +1,5 @@
 pub mod articles;
+pub mod comments;
 pub mod config;
 pub mod errors;
 pub mod profiles;

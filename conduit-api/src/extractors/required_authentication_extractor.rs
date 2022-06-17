@@ -8,10 +8,10 @@ use conduit_core::errors::ConduitError;
 use conduit_core::utils::token_service::DynTokenService;
 
 /// Extracts the JWT from the Authorization token header.
-pub struct RequiredAuthenticationExtractor(pub i64);
+pub struct RequiredAuthentication(pub i64);
 
 #[async_trait]
-impl<B> FromRequest<B> for RequiredAuthenticationExtractor
+impl<B> FromRequest<B> for RequiredAuthentication
 where
     B: Send + Sync,
 {
@@ -47,7 +47,7 @@ where
                     ConduitError::Unauthorized
                 })?;
 
-            Ok(RequiredAuthenticationExtractor(user_id))
+            Ok(RequiredAuthentication(user_id))
         } else {
             Err(ConduitError::Unauthorized)
         }

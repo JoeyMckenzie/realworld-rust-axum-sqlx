@@ -8,17 +8,17 @@ use conduit_core::errors::ConduitError;
 use conduit_core::utils::token_service::DynTokenService;
 
 /// Extracts the JWT from the Authorization token header, optional and will not return errors if none is found.
-pub struct OptionalAuthenticationExtractor(pub Option<i64>);
+pub struct OptionalAuthentication(pub Option<i64>);
 
 #[async_trait]
-impl<B> FromRequest<B> for OptionalAuthenticationExtractor
+impl<B> FromRequest<B> for OptionalAuthentication
 where
     B: Send + Sync,
 {
     type Rejection = ConduitError;
 
     async fn from_request(request: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        let optional_token_response = Ok(OptionalAuthenticationExtractor(None));
+        let optional_token_response = Ok(OptionalAuthentication(None));
 
         let Extension(token_service): Extension<DynTokenService> = Extension::from_request(request)
             .await
@@ -42,7 +42,7 @@ where
 
                 if let Ok(user_id) = token_service.get_user_id_from_token(String::from(token_value))
                 {
-                    return Ok(OptionalAuthenticationExtractor(Some(user_id)));
+                    return Ok(OptionalAuthentication(Some(user_id)));
                 }
             }
         }

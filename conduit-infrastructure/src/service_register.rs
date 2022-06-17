@@ -4,6 +4,8 @@ use tracing::info;
 
 use conduit_core::articles::repository::DynArticlesRepository;
 use conduit_core::articles::service::DynArticlesService;
+use conduit_core::comments::repository::DynCommentsRepository;
+use conduit_core::comments::service::DynCommentsService;
 use conduit_core::config::AppConfig;
 use conduit_core::profiles::repository::DynProfilesRepository;
 use conduit_core::profiles::service::DynProfilesService;
@@ -15,10 +17,12 @@ use conduit_core::utils::token_service::DynTokenService;
 
 use crate::connection_pool::ConduitConnectionPool;
 use crate::repositories::articles_repository::PostgresArticlesRepository;
+use crate::repositories::comments_repository::PostgresCommentsRepository;
 use crate::repositories::profiles_repository::PostgresProfilesRepository;
 use crate::repositories::tags_repository::PostgresTagsRepository;
 use crate::repositories::users_repository::PostgresUsersRepository;
 use crate::services::features::articles_service::ConduitArticlesService;
+use crate::services::features::comments_service::ConduitCommentsService;
 use crate::services::features::profiles_service::ConduitProfilesService;
 use crate::services::features::users_service::ConduitUsersService;
 use crate::services::utils::argon_security_service::ArgonSecurityService;
@@ -30,6 +34,7 @@ pub struct ServiceRegister {
     pub token_service: DynTokenService,
     pub profiles_service: DynProfilesService,
     pub articles_service: DynArticlesService,
+    pub comments_service: DynCommentsService,
 }
 
 /// A simple service container responsible for managing the various services our API endpoints will pull from through axum extensions.
@@ -59,11 +64,18 @@ impl ServiceRegister {
         let tags_repository =
             Arc::new(PostgresTagsRepository::new(pool.clone())) as DynTagsRepository;
         let articles_repository =
-            Arc::new(PostgresArticlesRepository::new(pool)) as DynArticlesRepository;
+            Arc::new(PostgresArticlesRepository::new(pool.clone())) as DynArticlesRepository;
         let articles_service = Arc::new(ConduitArticlesService::new(
-            articles_repository,
+            articles_repository.clone(),
             tags_repository,
         )) as DynArticlesService;
+
+        let comments_repository =
+            Arc::new(PostgresCommentsRepository::new(pool)) as DynCommentsRepository;
+        let comments_service = Arc::new(ConduitCommentsService::new(
+            comments_repository,
+            articles_repository,
+        )) as DynCommentsService;
 
         info!("feature services successfully initialized!");
 
@@ -72,6 +84,7 @@ impl ServiceRegister {
             token_service,
             profiles_service,
             articles_service,
+            comments_service,
         }
     }
 }
