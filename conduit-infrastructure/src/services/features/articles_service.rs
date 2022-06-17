@@ -249,6 +249,72 @@ impl ArticlesService for ConduitArticlesService {
             "article was not found",
         )))
     }
+
+    async fn favorite_article(&self, user_id: i64, slug: String) -> ConduitResult<ArticleDto> {
+        // verify the article exists before attempting to favorite
+        let article = self
+            .articles_repository
+            .get_article_by_slug(None, slug)
+            .await?;
+
+        if let Some(existing_article) = article {
+            info!(
+                "favoriting article {:?} for user {:?}",
+                existing_article.id, user_id
+            );
+            let updated_article = self
+                .articles_repository
+                .favorite_article(existing_article.id, user_id)
+                .await?;
+
+            let article_tags = self
+                .tags_repository
+                .get_article_tags_by_article_id(existing_article.id)
+                .await?
+                .into_iter()
+                .map(|article_tag| article_tag.tag)
+                .collect_vec();
+
+            return Ok(updated_article.into_dto(article_tags));
+        }
+
+        Err(ConduitError::NotFound(String::from(
+            "article was not found",
+        )))
+    }
+
+    async fn unfavorite_article(&self, user_id: i64, slug: String) -> ConduitResult<ArticleDto> {
+        // verify the article exists before attempting to unfavorite
+        let article = self
+            .articles_repository
+            .get_article_by_slug(None, slug)
+            .await?;
+
+        if let Some(existing_article) = article {
+            info!(
+                "unfavoriting article {:?} for user {:?}",
+                existing_article.id, user_id
+            );
+            let updated_article = self
+                .articles_repository
+                .unfavorite_article(existing_article.id, user_id)
+                .await?;
+
+            let article_tags = self
+                .tags_repository
+                .get_article_tags_by_article_id(existing_article.id)
+                .await?
+                .into_iter()
+                .map(|article_tag| article_tag.tag)
+                .collect_vec();
+
+            return Ok(updated_article.into_dto(article_tags));
+        }
+
+        Err(ConduitError::NotFound(String::from(
+            "article was not found",
+        )))
+    }
 }
 
 impl ConduitArticlesService {

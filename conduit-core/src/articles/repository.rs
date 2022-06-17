@@ -47,6 +47,18 @@ pub trait ArticlesRepository {
     ) -> anyhow::Result<Option<GetArticleQuery>>;
 
     async fn delete_article(&self, id: i64) -> anyhow::Result<()>;
+
+    async fn favorite_article(
+        &self,
+        article_id: i64,
+        user_id: i64,
+    ) -> anyhow::Result<GetArticleQuery>;
+
+    async fn unfavorite_article(
+        &self,
+        article_id: i64,
+        user_id: i64,
+    ) -> anyhow::Result<GetArticleQuery>;
 }
 
 #[derive(FromRow)]

@@ -50,4 +50,8 @@ pub trait ArticlesService {
     ) -> ConduitResult<Vec<ArticleDto>>;
 
     async fn delete_article(&self, user_id: i64, slug: String) -> ConduitResult<()>;
+
+    async fn favorite_article(&self, user_id: i64, slug: String) -> ConduitResult<ArticleDto>;
+
+    async fn unfavorite_article(&self, user_id: i64, slug: String) -> ConduitResult<ArticleDto>;
 }

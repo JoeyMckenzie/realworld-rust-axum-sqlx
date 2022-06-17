@@ -24,6 +24,8 @@ impl ArticlesRouter {
             .route("/articles/:slug", get(get_article))
             .route("/articles/:slug", put(update_article))
             .route("/articles/:slug", delete(delete_article))
+            .route("/articles/:slug/favorite", post(favorite_article))
+            .route("/articles/:slug/favorite", delete(unfavorite_article))
             .layer(Extension(service_register.articles_service))
             .layer(Extension(service_register.token_service))
     }
@@ -113,4 +115,28 @@ pub async fn delete_article(
     articles_service.delete_article(user_id, slug).await?;
 
     Ok(())
+}
+
+pub async fn favorite_article(
+    Path(slug): Path<String>,
+    Extension(articles_service): Extension<DynArticlesService>,
+    RequiredAuthenticationExtractor(user_id): RequiredAuthenticationExtractor,
+) -> ConduitResult<Json<ArticleResponse>> {
+    info!("recieved request to favorite article {:?}", slug);
+
+    let article = articles_service.favorite_article(user_id, slug).await?;
+
+    Ok(Json(ArticleResponse { article }))
+}
+
+pub async fn unfavorite_article(
+    Path(slug): Path<String>,
+    Extension(articles_service): Extension<DynArticlesService>,
+    RequiredAuthenticationExtractor(user_id): RequiredAuthenticationExtractor,
+) -> ConduitResult<Json<ArticleResponse>> {
+    info!("recieved request to unfavorite article {:?}", slug);
+
+    let article = articles_service.unfavorite_article(user_id, slug).await?;
+
+    Ok(Json(ArticleResponse { article }))
 }
