@@ -19,7 +19,16 @@ pub trait ArticlesRepository {
         slug: String,
         description: String,
         body: String,
-    ) -> anyhow::Result<CreateArticleQuery>;
+    ) -> anyhow::Result<UpsertArticleQuery>;
+
+    async fn update_article(
+        &self,
+        id: i64,
+        title: String,
+        slug: String,
+        description: String,
+        body: String,
+    ) -> anyhow::Result<UpsertArticleQuery>;
 
     async fn get_articles(
         &self,
@@ -36,10 +45,12 @@ pub trait ArticlesRepository {
         user_id: Option<i64>,
         slug: String,
     ) -> anyhow::Result<Option<GetArticleQuery>>;
+
+    async fn delete_article(&self, id: i64) -> anyhow::Result<()>;
 }
 
 #[derive(FromRow)]
-pub struct CreateArticleQuery {
+pub struct UpsertArticleQuery {
     pub id: i64,
     pub created_at: PrimitiveDateTime,
     pub updated_at: PrimitiveDateTime,
@@ -61,6 +72,7 @@ pub struct GetArticleQuery {
     pub body: String,
     pub description: String,
     pub slug: String,
+    pub user_id: i64,
     pub favorites: i64,
     pub favorited: bool,
     pub following_author: bool,
@@ -69,15 +81,15 @@ pub struct GetArticleQuery {
     pub author_bio: String,
 }
 
-impl CreateArticleQuery {
+impl UpsertArticleQuery {
     pub fn into_dto(self, tag_list: Vec<String>) -> ArticleDto {
         ArticleDto {
             id: self.id,
             title: self.title,
             body: self.body,
             tag_list,
-            created_at: self.created_at.to_string(),
-            updated_at: self.updated_at.to_string(),
+            created_at: self.created_at.assume_utc().to_string(),
+            updated_at: self.updated_at.assume_utc().to_string(),
             description: self.description,
             slug: self.slug,
             favorited: false,
@@ -99,8 +111,8 @@ impl GetArticleQuery {
             title: self.title,
             body: self.body,
             tag_list,
-            created_at: self.created_at.to_string(),
-            updated_at: self.updated_at.to_string(),
+            created_at: self.created_at.assume_utc().to_string(),
+            updated_at: self.updated_at.assume_utc().to_string(),
             description: self.description,
             slug: self.slug,
             favorited: self.favorited,

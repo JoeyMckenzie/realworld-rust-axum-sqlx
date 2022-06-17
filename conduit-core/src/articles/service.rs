@@ -21,6 +21,15 @@ pub trait ArticlesService {
         tag_list: Vec<String>,
     ) -> ConduitResult<ArticleDto>;
 
+    async fn update_article(
+        &self,
+        user_id: i64,
+        slug: String,
+        title: Option<String>,
+        description: Option<String>,
+        body: Option<String>,
+    ) -> ConduitResult<ArticleDto>;
+
     async fn get_articles(
         &self,
         user_id: Option<i64>,
@@ -32,4 +41,13 @@ pub trait ArticlesService {
     ) -> ConduitResult<Vec<ArticleDto>>;
 
     async fn get_article(&self, user_id: Option<i64>, slug: String) -> ConduitResult<ArticleDto>;
+
+    async fn get_feed(
+        &self,
+        user_id: i64,
+        limit: i64,
+        offset: i64,
+    ) -> ConduitResult<Vec<ArticleDto>>;
+
+    async fn delete_article(&self, user_id: i64, slug: String) -> ConduitResult<()>;
 }

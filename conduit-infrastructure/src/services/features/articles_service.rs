@@ -3,7 +3,7 @@ use itertools::Itertools;
 use slug::slugify;
 use tracing::info;
 
-use conduit_core::articles::repository::DynArticlesRepository;
+use conduit_core::articles::repository::{DynArticlesRepository, GetArticleQuery};
 use conduit_core::articles::service::ArticlesService;
 use conduit_core::errors::{ConduitError, ConduitResult};
 use conduit_core::tags::repository::DynTagsRepository;
@@ -41,6 +41,21 @@ impl ArticlesService for ConduitArticlesService {
         body: String,
         tag_list: Vec<String>,
     ) -> ConduitResult<ArticleDto> {
+        let slug = slugify(&title);
+
+        // verify an existing article does not exist with the request title
+        let article_title_exists = self
+            .articles_repository
+            .get_article_by_slug(None, slug.clone())
+            .await?
+            .is_some();
+
+        if article_title_exists {
+            return Err(ConduitError::ObjectConflict(String::from(
+                "article with that title exists",
+            )));
+        }
+
         // collect a unique list of the article tags to create
         let deduped_tag_list = tag_list.into_iter().unique().collect_vec();
 
@@ -63,8 +78,6 @@ impl ArticlesService for ConduitArticlesService {
         }
 
         // create the article so we can reference the created article tags
-        let slug = slugify(&title);
-
         let created_article = self
             .articles_repository
             .create_article(user_id, title, slug, description, body)
@@ -94,6 +107,68 @@ impl ArticlesService for ConduitArticlesService {
         Ok(created_article.into_dto(deduped_tag_list))
     }
 
+    async fn update_article(
+        &self,
+        user_id: i64,
+        slug: String,
+        title: Option<String>,
+        description: Option<String>,
+        body: Option<String>,
+    ) -> ConduitResult<ArticleDto> {
+        info!("retrieving article {:?} for user {:?}", user_id, title);
+        let article_to_update = self
+            .articles_repository
+            .get_article_by_slug(Some(user_id), slug)
+            .await?;
+
+        if let Some(existing_article) = article_to_update {
+            // verify the user IDs match, we could also query for the article based on user ID and slug as well
+            if existing_article.user_id != user_id {
+                return Err(ConduitError::Unauthorized);
+            }
+
+            let updated_description = description.unwrap_or(existing_article.description);
+            let updated_body = body.unwrap_or(existing_article.body);
+            let updated_title = title.unwrap_or(existing_article.title);
+            let updated_slug = slugify(&updated_title);
+
+            // verify an existing article does not already exist with the updated slug
+            let existing_article_with_slug = self
+                .articles_repository
+                .get_article_by_slug(None, updated_slug.clone())
+                .await?;
+
+            if existing_article_with_slug.is_some() {
+                return Err(ConduitError::ObjectConflict(String::from(
+                    "an article already exists with the requested title",
+                )));
+            }
+
+            let updated_article = self
+                .articles_repository
+                .update_article(
+                    existing_article.id,
+                    updated_title,
+                    updated_slug,
+                    updated_description,
+                    updated_body,
+                )
+                .await?;
+
+            let article_tags = self
+                .tags_repository
+                .get_article_tags_by_article_id(updated_article.id)
+                .await?
+                .into_iter()
+                .map(|tag| tag.tag)
+                .collect_vec();
+
+            return Ok(updated_article.into_dto(article_tags));
+        }
+
+        Err(ConduitError::NotFound(String::from("article not found")))
+    }
+
     async fn get_articles(
         &self,
         user_id: Option<i64>,
@@ -108,30 +183,7 @@ impl ArticlesService for ConduitArticlesService {
             .get_articles(user_id, tag, author, favorited, limit, offset)
             .await?;
 
-        info!("found {} articles", articles.len());
-
-        let mut mapped_articles: Vec<ArticleDto> = Vec::new();
-
-        if !articles.is_empty() {
-            let article_ids = articles.iter().map(|article| article.id).collect_vec();
-
-            let associated_article_tags = self
-                .tags_repository
-                .get_article_tags_article_ids(article_ids)
-                .await?;
-
-            for article in articles {
-                let article_tags = associated_article_tags
-                    .iter()
-                    .filter(|article_tag| article_tag.article_id == article.id)
-                    .map(|tag| tag.tag.clone())
-                    .collect_vec();
-
-                mapped_articles.push(article.into_dto(article_tags));
-            }
-        }
-
-        Ok(mapped_articles)
+        self.map_to_articles(articles).await
     }
 
     async fn get_article(&self, user_id: Option<i64>, slug: String) -> ConduitResult<ArticleDto> {
@@ -158,5 +210,75 @@ impl ArticlesService for ConduitArticlesService {
         }
 
         Err(ConduitError::NotFound(String::from("article not found")))
+    }
+
+    async fn get_feed(
+        &self,
+        user_id: i64,
+        limit: i64,
+        offset: i64,
+    ) -> ConduitResult<Vec<ArticleDto>> {
+        let articles = self
+            .articles_repository
+            .get_articles(Some(user_id), None, None, None, limit, offset)
+            .await?;
+
+        self.map_to_articles(articles).await
+    }
+
+    async fn delete_article(&self, user_id: i64, slug: String) -> ConduitResult<()> {
+        let article = self
+            .articles_repository
+            .get_article_by_slug(None, slug)
+            .await?;
+
+        if let Some(existing_article) = article {
+            // verify the user IDs match on the request and the article
+            if existing_article.user_id != user_id {
+                return Err(ConduitError::Unauthorized);
+            }
+
+            self.articles_repository
+                .delete_article(existing_article.id)
+                .await?;
+
+            return Ok(());
+        }
+
+        Err(ConduitError::NotFound(String::from(
+            "article was not found",
+        )))
+    }
+}
+
+impl ConduitArticlesService {
+    async fn map_to_articles(
+        &self,
+        articles: Vec<GetArticleQuery>,
+    ) -> ConduitResult<Vec<ArticleDto>> {
+        info!("found {} articles in feed", articles.len());
+
+        let mut mapped_articles: Vec<ArticleDto> = Vec::new();
+
+        if !articles.is_empty() {
+            let article_ids = articles.iter().map(|article| article.id).collect_vec();
+
+            let associated_article_tags = self
+                .tags_repository
+                .get_article_tags_article_ids(article_ids)
+                .await?;
+
+            for article in articles {
+                let article_tags = associated_article_tags
+                    .iter()
+                    .filter(|article_tag| article_tag.article_id == article.id)
+                    .map(|tag| tag.tag.clone())
+                    .collect_vec();
+
+                mapped_articles.push(article.into_dto(article_tags));
+            }
+        }
+
+        Ok(mapped_articles)
     }
 }

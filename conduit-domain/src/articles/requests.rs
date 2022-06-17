@@ -2,7 +2,7 @@ use lazy_static::lazy_static;
 use serde::Deserialize;
 use validator::Validate;
 
-use crate::articles::models::CreateArticleDto;
+use crate::articles::models::{CreateArticleDto, UpdateArticleDto};
 
 lazy_static! {
     pub static ref LIMIT: i64 = 20;
@@ -13,6 +13,11 @@ lazy_static! {
 pub struct CreateArticleRequest {
     #[validate]
     pub article: CreateArticleDto,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct UpdateArticleRequest {
+    pub article: UpdateArticleDto,
 }
 
 #[derive(Debug, Deserialize)]

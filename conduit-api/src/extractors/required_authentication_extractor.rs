@@ -42,7 +42,10 @@ where
             let token_value = tokenized_value.into_iter().nth(1).unwrap();
             let user_id = token_service
                 .get_user_id_from_token(String::from(token_value))
-                .map_err(|_| ConduitError::Unauthorized)?;
+                .map_err(|err| {
+                    error!("could not validate user ID from token: {:?}", err);
+                    ConduitError::Unauthorized
+                })?;
 
             Ok(RequiredAuthenticationExtractor(user_id))
         } else {

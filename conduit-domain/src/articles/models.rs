@@ -33,6 +33,13 @@ pub struct CreateArticleDto {
     pub description: Option<String>,
     #[validate(required)]
     pub body: Option<String>,
-    #[serde(rename = "camelCase")]
+    #[serde(rename = "tagList")]
     pub tag_list: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct UpdateArticleDto {
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub body: Option<String>,
 }

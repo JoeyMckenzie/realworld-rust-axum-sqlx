@@ -1,8 +1,8 @@
 use anyhow::Context;
 use async_trait::async_trait;
-use sqlx::query_as;
+use sqlx::{query, query_as};
 
-use conduit_core::articles::repository::{ArticlesRepository, CreateArticleQuery, GetArticleQuery};
+use conduit_core::articles::repository::{ArticlesRepository, GetArticleQuery, UpsertArticleQuery};
 
 use crate::connection_pool::ConduitConnectionPool;
 
@@ -26,21 +26,21 @@ impl ArticlesRepository for PostgresArticlesRepository {
         slug: String,
         description: String,
         body: String,
-    ) -> anyhow::Result<CreateArticleQuery> {
+    ) -> anyhow::Result<UpsertArticleQuery> {
         query_as!(
-            CreateArticleQuery,
+            UpsertArticleQuery,
             r#"
     with inserted_article_cte as (
-    insert into articles (created_at, updated_at, title, body, slug, description, user_id)
-    values (current_timestamp, current_timestamp, $1::varchar, $2::varchar, $3::varchar, $4::varchar, $5)
-    returning id as "id",
-              created_at as "created_at",
-              updated_at as "updated_at",
-              title as "title",
-              body as "body",
-              slug as "slug",
-              description as "description",
-              user_id as "user_id"
+        insert into articles (created_at, updated_at, title, body, slug, description, user_id)
+        values (current_timestamp, current_timestamp, $1::varchar, $2::varchar, $3::varchar, $4::varchar, $5)
+        returning id as "id",
+                  created_at as "created_at",
+                  updated_at as "updated_at",
+                  title as "title",
+                  body as "body",
+                  slug as "slug",
+                  description as "description",
+                  user_id as "user_id"
     ) select a.id as "id!",
            a.created_at as "created_at!",
            a.updated_at as "updated_at!",
@@ -65,6 +65,50 @@ impl ArticlesRepository for PostgresArticlesRepository {
             .context("an unexpected error occured creating article")
     }
 
+    async fn update_article(
+        &self,
+        id: i64,
+        title: String,
+        slug: String,
+        description: String,
+        body: String,
+    ) -> anyhow::Result<UpsertArticleQuery> {
+        query_as!(
+            UpsertArticleQuery,
+            r#"
+    with updated_article_cte as (
+        update articles
+        set updated_at = current_timestamp,
+            title = $1::varchar,
+            slug = $2::varchar,
+            description = $3::varchar,
+            body = $4::varchar
+        where id = $5
+        returning *
+    ) select a.id as "id!",
+             a.created_at as "created_at!",
+             a.updated_at as "updated_at!",
+             a.title as "title!",
+             a.body as "body!",
+             a.slug as "slug!",
+             a.description as "description!",
+             u.username as "author_username!",
+             u.bio as "author_bio!",
+             u.image as "author_image!"
+    from updated_article_cte a
+    join users u on u.id = a.user_id
+            "#,
+            title,
+            slug,
+            description,
+            body,
+            id
+        )
+        .fetch_one(&self.pool)
+        .await
+        .context("an unexpected error occured creating article")
+    }
+
     async fn get_articles(
         &self,
         user_id: Option<i64>,
@@ -84,6 +128,7 @@ impl ArticlesRepository for PostgresArticlesRepository {
                a.body as "body!",
                a.description as "description!",
                a.slug as "slug!",
+               u.id as "user_id!",
                exists(select 1 from article_favorites af where af.user_id = $1 and af.article_id = a.id) as "favorited!",
                (select count(*) from article_favorites where article_id = a.id) as "favorites!",
                exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) "following_author!",
@@ -136,6 +181,7 @@ impl ArticlesRepository for PostgresArticlesRepository {
                a.body as "body!",
                a.description as "description!",
                a.slug as "slug!",
+               u.id as "user_id!",
                exists(select 1 from article_favorites af where af.user_id = $1 and af.article_id = a.id) as "favorited!",
                (select count(*) from article_favorites where article_id = a.id) as "favorites!",
                exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) "following_author!",
@@ -151,5 +197,20 @@ impl ArticlesRepository for PostgresArticlesRepository {
             .fetch_optional(&self.pool)
             .await
             .context("an unexpected error occured retrieving articles")
+    }
+
+    async fn delete_article(&self, id: i64) -> anyhow::Result<()> {
+        query!(
+            r#"
+    delete from articles
+    where id = $1
+        "#,
+            id
+        )
+        .execute(&self.pool)
+        .await
+        .context("an unexpected error occurred deleting article")?;
+
+        Ok(())
     }
 }

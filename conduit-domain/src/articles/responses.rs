@@ -3,11 +3,11 @@ use serde::Serialize;
 use crate::articles::models::ArticleDto;
 
 #[derive(Debug, Serialize)]
-pub struct GetArticlesResponse {
+pub struct ArticlesResponse {
     pub articles: Vec<ArticleDto>,
 }
 
 #[derive(Debug, Serialize)]
-pub struct GetArticleResponse {
+pub struct ArticleResponse {
     pub article: ArticleDto,
 }
