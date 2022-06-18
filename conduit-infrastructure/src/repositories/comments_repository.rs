@@ -74,7 +74,7 @@ impl CommentsRepository for PostgresCommentsRepository {
             r#"
         with insert_comment_cte as (
             insert into comments (body, user_id, article_id, created_at, updated_at)
-            values ($1::varchar, $2, $3, current_timestamp, current_timestamp)
+            values ($1::varchar, $2::bigint, $3::bigint, current_timestamp, current_timestamp)
             returning *
         ) select c.id as "id!",
                  c.body as "body!",
@@ -86,7 +86,7 @@ impl CommentsRepository for PostgresCommentsRepository {
                  false as "following_author!"
         from insert_comment_cte c
         join users u on c.user_id = u.id
-        where c.article_id = $2
+        where c.article_id = $3::bigint
             "#,
             body,
             user_id,

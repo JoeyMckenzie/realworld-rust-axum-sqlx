@@ -10,6 +10,7 @@ use conduit_core::config::AppConfig;
 use conduit_core::profiles::repository::DynProfilesRepository;
 use conduit_core::profiles::service::DynProfilesService;
 use conduit_core::tags::repository::DynTagsRepository;
+use conduit_core::tags::service::DynTagsService;
 use conduit_core::users::repository::DynUsersRepository;
 use conduit_core::users::service::DynUsersService;
 use conduit_core::utils::security_service::DynSecurityService;
@@ -24,6 +25,7 @@ use crate::repositories::users_repository::PostgresUsersRepository;
 use crate::services::features::articles_service::ConduitArticlesService;
 use crate::services::features::comments_service::ConduitCommentsService;
 use crate::services::features::profiles_service::ConduitProfilesService;
+use crate::services::features::tags_service::ConduitTagsService;
 use crate::services::features::users_service::ConduitUsersService;
 use crate::services::utils::argon_security_service::ArgonSecurityService;
 use crate::services::utils::jwt_service::JwtService;
@@ -35,6 +37,7 @@ pub struct ServiceRegister {
     pub profiles_service: DynProfilesService,
     pub articles_service: DynArticlesService,
     pub comments_service: DynCommentsService,
+    pub tags_service: DynTagsService,
 }
 
 /// A simple service container responsible for managing the various services our API endpoints will pull from through axum extensions.
@@ -63,6 +66,9 @@ impl ServiceRegister {
 
         let tags_repository =
             Arc::new(PostgresTagsRepository::new(pool.clone())) as DynTagsRepository;
+        let tags_service =
+            Arc::new(ConduitTagsService::new(tags_repository.clone())) as DynTagsService;
+
         let articles_repository =
             Arc::new(PostgresArticlesRepository::new(pool.clone())) as DynArticlesRepository;
         let articles_service = Arc::new(ConduitArticlesService::new(
@@ -85,6 +91,7 @@ impl ServiceRegister {
             profiles_service,
             articles_service,
             comments_service,
+            tags_service,
         }
     }
 }

@@ -2,7 +2,7 @@ use lazy_static::lazy_static;
 use tracing::info;
 
 use conduit_core::articles::service::DynArticlesService;
-use conduit_core::comments::repository::DynCommentsRepository;
+use conduit_core::comments::service::DynCommentsService;
 use conduit_core::errors::ConduitResult;
 use conduit_core::profiles::service::DynProfilesService;
 use conduit_core::users::service::DynUsersService;
@@ -27,6 +27,7 @@ pub struct ConduitSeedService {
     users_service: DynUsersService,
     profiles_service: DynProfilesService,
     articles_service: DynArticlesService,
+    comments_service: DynCommentsService,
 }
 
 impl ConduitSeedService {
@@ -35,6 +36,7 @@ impl ConduitSeedService {
             users_service: service_register.users_service,
             profiles_service: service_register.profiles_service,
             articles_service: service_register.articles_service,
+            comments_service: service_register.comments_service,
         }
     }
 
@@ -130,6 +132,24 @@ impl ConduitSeedService {
             .await?;
 
         info!("articles created, seeding comments...");
+
+        // user 2 comments on user 1's article 1
+        self.comments_service
+            .add_comment(
+                created_user_2.id,
+                article_1.slug.clone(),
+                String::from("testuser2 comments on article 1"),
+            )
+            .await?;
+
+        // user 2 comments on user 1's article 2
+        self.comments_service
+            .add_comment(
+                created_user_2.id,
+                article_1.slug,
+                String::from("testuser2 comments on article 2"),
+            )
+            .await?;
 
         info!("seed ran successfully!");
 

@@ -45,3 +45,9 @@ pub struct ArticleTagQuery {
     pub article_id: i64,
     pub tag: String,
 }
+
+impl From<TagEntity> for String {
+    fn from(entity: TagEntity) -> Self {
+        entity.tag
+    }
+}
