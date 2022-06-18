@@ -275,15 +275,25 @@ impl ArticlesService for ConduitArticlesService {
             .get_article_by_slug(None, slug)
             .await?;
 
-        if let Some(existing_article) = article {
-            info!(
-                "favoriting article {:?} for user {:?}",
-                existing_article.id, user_id
-            );
-            let updated_article = self
+        if let Some(mut existing_article) = article {
+            // verify the user has not already favorited the article - alternatively, query for the article favorite by user ID and article ID
+            let has_favorited = self
                 .articles_repository
-                .favorite_article(existing_article.id, user_id)
-                .await?;
+                .get_user_favorites(existing_article.id)
+                .await?
+                .into_iter()
+                .any(|favorite| favorite.user_id == user_id);
+
+            if !has_favorited {
+                info!(
+                    "favoriting article {:?} for user {:?}",
+                    existing_article.id, user_id
+                );
+                existing_article = self
+                    .articles_repository
+                    .favorite_article(existing_article.id, user_id)
+                    .await?;
+            }
 
             let article_tags = self
                 .tags_repository
@@ -293,7 +303,7 @@ impl ArticlesService for ConduitArticlesService {
                 .map(|article_tag| article_tag.tag)
                 .collect_vec();
 
-            return Ok(updated_article.into_dto(article_tags));
+            return Ok(existing_article.into_dto(article_tags));
         }
 
         Err(ConduitError::NotFound(String::from(

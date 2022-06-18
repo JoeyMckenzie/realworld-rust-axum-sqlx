@@ -25,6 +25,7 @@ impl ArticlesRouter {
         Router::new()
             .route("/articles", get(get_articles))
             .route("/articles", post(create_article))
+            .route("/articles/feed", get(get_article_feed))
             .route("/articles/:slug", get(get_article))
             .route("/articles/:slug", put(update_article))
             .route("/articles/:slug", delete(delete_article))
@@ -52,6 +53,32 @@ pub async fn get_articles(
             query_params.0.tag,
             query_params.0.author,
             query_params.0.favorited,
+            query_params.0.limit.unwrap_or_else(|| LIMIT.abs()),
+            query_params.0.offset.unwrap_or_else(|| OFFSET.abs()),
+        )
+        .await?;
+
+    let articles_count = articles.len();
+
+    Ok(Json(ArticlesResponse {
+        articles,
+        articles_count,
+    }))
+}
+
+pub async fn get_article_feed(
+    query_params: Query<GetArticlesApiRequest>,
+    Extension(articles_service): Extension<DynArticlesService>,
+    RequiredAuthentication(user_id): RequiredAuthentication,
+) -> ConduitResult<Json<ArticlesResponse>> {
+    info!(
+        "recieved request to retrieve article feed for user {:?}",
+        user_id
+    );
+
+    let articles = articles_service
+        .get_feed(
+            user_id,
             query_params.0.limit.unwrap_or_else(|| LIMIT.abs()),
             query_params.0.offset.unwrap_or_else(|| OFFSET.abs()),
         )

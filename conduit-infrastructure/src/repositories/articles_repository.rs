@@ -2,7 +2,9 @@ use anyhow::Context;
 use async_trait::async_trait;
 use sqlx::{query, query_as};
 
-use conduit_core::articles::repository::{ArticlesRepository, GetArticleQuery, UpsertArticleQuery};
+use conduit_core::articles::repository::{
+    ArticlesRepository, GetArticleFavoritesQuery, GetArticleQuery, UpsertArticleQuery,
+};
 
 use crate::connection_pool::ConduitConnectionPool;
 
@@ -129,8 +131,8 @@ impl ArticlesRepository for PostgresArticlesRepository {
                a.description as "description!",
                a.slug as "slug!",
                u.id as "user_id!",
-               exists(select 1 from article_favorites af where af.user_id = $1 and af.article_id = a.id) as "favorited!",
-               (select count(*) from article_favorites where article_id = a.id) as "favorites!",
+               exists(select 1 from user_favorites af where af.user_id = $1 and af.article_id = a.id) as "favorited!",
+               (select count(*) from user_favorites where article_id = a.id) as "favorites!",
                exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) "following_author!",
                u.username as "author_username!",
                u.bio as "author_bio!",
@@ -148,7 +150,7 @@ impl ArticlesRepository for PostgresArticlesRepository {
         -- filter on the favoriting user
         and ($4::varchar is null or exists(
             select 1 from users favoriting_user
-            join article_favorites f on favoriting_user.id = f.user_id
+            join user_favorites f on favoriting_user.id = f.user_id
             where favoriting_user.username = $4::varchar)
         )
         order by a.created_at desc
@@ -182,8 +184,8 @@ impl ArticlesRepository for PostgresArticlesRepository {
                a.description as "description!",
                a.slug as "slug!",
                u.id as "user_id!",
-               exists(select 1 from article_favorites af where af.user_id = $1 and af.article_id = a.id) as "favorited!",
-               (select count(*) from article_favorites where article_id = a.id) as "favorites!",
+               exists(select 1 from user_favorites af where af.user_id = $1 and af.article_id = a.id) as "favorited!",
+               (select count(*) from user_favorites where article_id = a.id) as "favorites!",
                exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) "following_author!",
                u.username as "author_username!",
                u.bio as "author_bio!",
@@ -235,7 +237,7 @@ impl ArticlesRepository for PostgresArticlesRepository {
                  a.slug as "slug!",
                  u.id as "user_id!",
                  true as "favorited!",
-                 (select count(*) from article_favorites where article_id = a.id) as "favorites!",
+                 (select count(*) + 1 from user_favorites where article_id = a.id) as "favorites!",
                  exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) "following_author!",
                  u.username as "author_username!",
                  u.bio as "author_bio!",
@@ -273,7 +275,7 @@ impl ArticlesRepository for PostgresArticlesRepository {
                  a.slug as "slug!",
                  u.id as "user_id!",
                  false as "favorited!",
-                 (select count(*) from article_favorites where article_id = a.id) as "favorites!",
+                 (select count(*) - 1 from user_favorites where article_id = a.id) as "favorites!",
                  exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) "following_author!",
                  u.username as "author_username!",
                  u.bio as "author_bio!",
@@ -288,5 +290,25 @@ impl ArticlesRepository for PostgresArticlesRepository {
             .fetch_one(&self.pool)
             .await
             .context("an unexpected error occurred while adding user favorite for the article")
+    }
+
+    async fn get_user_favorites(
+        &self,
+        article_id: i64,
+    ) -> anyhow::Result<Vec<GetArticleFavoritesQuery>> {
+        query_as!(
+            GetArticleFavoritesQuery,
+            r#"
+        select id,
+               article_id,
+               user_id
+        from user_favorites
+        where article_id = $1::bigint
+            "#,
+            article_id
+        )
+        .fetch_all(&self.pool)
+        .await
+        .context("an unexpected error occured retrieving article favorites")
     }
 }

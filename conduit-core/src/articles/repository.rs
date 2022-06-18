@@ -60,6 +60,11 @@ pub trait ArticlesRepository {
         article_id: i64,
         user_id: i64,
     ) -> anyhow::Result<GetArticleQuery>;
+
+    async fn get_user_favorites(
+        &self,
+        article_id: i64,
+    ) -> anyhow::Result<Vec<GetArticleFavoritesQuery>>;
 }
 
 #[derive(FromRow)]
@@ -92,6 +97,13 @@ pub struct GetArticleQuery {
     pub author_username: String,
     pub author_image: String,
     pub author_bio: String,
+}
+
+#[derive(FromRow)]
+pub struct GetArticleFavoritesQuery {
+    pub id: i64,
+    pub article_id: i64,
+    pub user_id: i64,
 }
 
 impl UpsertArticleQuery {

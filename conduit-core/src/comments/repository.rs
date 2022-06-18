@@ -4,6 +4,7 @@ use async_trait::async_trait;
 use mockall::automock;
 use sqlx::types::time::OffsetDateTime;
 use sqlx::FromRow;
+use time::Format;
 
 use conduit_domain::articles::models::AuthorDto;
 use conduit_domain::comments::CommentDto;
@@ -54,8 +55,8 @@ impl From<CommentQuery> for CommentDto {
     fn from(query: CommentQuery) -> Self {
         Self {
             id: query.id,
-            created_at: query.created_at.offset().to_string(),
-            updated_at: query.updated_at.offset().to_string(),
+            created_at: query.created_at.lazy_format(Format::Rfc3339).to_string(),
+            updated_at: query.updated_at.lazy_format(Format::Rfc3339).to_string(),
             body: query.body,
             author: AuthorDto {
                 username: query.author_username,
