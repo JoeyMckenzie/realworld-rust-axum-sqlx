@@ -56,6 +56,7 @@ impl From<CommentQuery> for CommentDto {
             id: query.id,
             created_at: query.created_at.assume_utc().to_string(),
             updated_at: query.created_at.assume_utc().to_string(),
+            body: query.body,
             author: AuthorDto {
                 username: query.author_username,
                 bio: query.author_bio,

@@ -36,6 +36,10 @@ fix: ## remove temporary files
 test: ## run all rust unit tests
 	@cargo test
 
+.PHONY: integration
+integration: ## run the Postman tests
+	@./tests/run-postman-tests.sh
+
 .PHONY: version
 version: ## display the version of the API server
 	@echo $(VERSION)

@@ -9,10 +9,14 @@ pub struct ArticleDto {
     pub title: String,
     pub description: String,
     pub body: String,
+    #[serde(rename = "tagList")]
     pub tag_list: Vec<String>,
+    #[serde(rename = "createdAt")]
     pub created_at: String,
+    #[serde(rename = "updatedAt")]
     pub updated_at: String,
     pub favorited: bool,
+    #[serde(rename = "favoritesCount")]
     pub favorites_count: i64,
     pub author: AuthorDto,
 }

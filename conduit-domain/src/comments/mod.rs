@@ -13,6 +13,7 @@ pub struct CommentDto {
     pub created_at: String,
     #[serde(rename = "updatedAt")]
     pub updated_at: String,
+    pub body: String,
     pub author: AuthorDto,
 }
 

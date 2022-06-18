@@ -57,7 +57,12 @@ pub async fn get_articles(
         )
         .await?;
 
-    Ok(Json(ArticlesResponse { articles }))
+    let articles_count = articles.len();
+
+    Ok(Json(ArticlesResponse {
+        articles,
+        articles_count,
+    }))
 }
 
 pub async fn get_article(
