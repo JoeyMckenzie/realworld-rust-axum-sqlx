@@ -4,14 +4,14 @@ use std::time::SystemTime;
 use async_trait::async_trait;
 use mockall::automock;
 use sqlx::postgres::PgRow;
-use sqlx::types::time::PrimitiveDateTime;
+use sqlx::types::time::OffsetDateTime;
 use sqlx::{FromRow, Row};
 
 pub type DynProfilesRepository = Arc<dyn ProfilesRepository + Send + Sync>;
 
 pub struct UserFollowEntity {
     pub id: i64,
-    pub created_at: PrimitiveDateTime,
+    pub created_at: OffsetDateTime,
     pub follower_id: i64,
     pub followee_id: i64,
 }
@@ -50,7 +50,7 @@ impl UserFollowEntity {
             id: 1,
             follower_id: 2,
             followee_id: 1,
-            created_at: PrimitiveDateTime::from(SystemTime::now()),
+            created_at: OffsetDateTime::from(SystemTime::now()),
         }
     }
 }

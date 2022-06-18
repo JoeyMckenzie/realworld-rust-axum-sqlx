@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use mockall::automock;
-use sqlx::types::time::PrimitiveDateTime;
+use sqlx::types::time::OffsetDateTime;
 
 pub type DynTagsRepository = Arc<dyn TagsRepository + Send + Sync>;
 
@@ -29,14 +29,14 @@ pub trait TagsRepository {
 pub struct TagEntity {
     pub id: i64,
     pub tag: String,
-    pub created_at: PrimitiveDateTime,
+    pub created_at: OffsetDateTime,
 }
 
 pub struct ArticleTagEntity {
     pub id: i64,
     pub tag_id: i64,
     pub article_id: i64,
-    pub created_at: PrimitiveDateTime,
+    pub created_at: OffsetDateTime,
 }
 
 pub struct ArticleTagQuery {

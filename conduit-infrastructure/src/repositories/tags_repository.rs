@@ -36,6 +36,7 @@ impl TagsRepository for PostgresTagsRepository {
         }
 
         query_builder
+            .push("order by tag")
             .build()
             .map(|row: PgRow| TagEntity {
                 id: row.get(0),
@@ -81,6 +82,7 @@ impl TagsRepository for PostgresTagsRepository {
         from article_tags at
         join tags t on t.id = at.article_id
         where article_id = $1
+        order by t.tag
             "#,
             article_id
         )
@@ -103,6 +105,7 @@ impl TagsRepository for PostgresTagsRepository {
         from article_tags at
         join tags t on t.id = at.tag_id
         where article_id = any($1)
+        order by t.tag
             "#,
             article_ids.as_slice()
         )

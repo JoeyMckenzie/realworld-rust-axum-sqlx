@@ -3,7 +3,7 @@ use std::time::SystemTime;
 
 use async_trait::async_trait;
 use mockall::automock;
-use sqlx::types::time::PrimitiveDateTime;
+use sqlx::types::time::OffsetDateTime;
 use sqlx::FromRow;
 
 use conduit_domain::profiles::ProfileDto;
@@ -48,8 +48,8 @@ pub trait UsersRepository {
 #[derive(FromRow)]
 pub struct UserEntity {
     pub id: i64,
-    pub created_at: PrimitiveDateTime,
-    pub updated_at: PrimitiveDateTime,
+    pub created_at: OffsetDateTime,
+    pub updated_at: OffsetDateTime,
     pub username: String,
     pub email: String,
     pub password: String,
@@ -84,8 +84,8 @@ impl Default for UserEntity {
         UserEntity {
             id: 1,
             bio: String::from("stub bio"),
-            created_at: PrimitiveDateTime::from(SystemTime::now()),
-            updated_at: PrimitiveDateTime::from(SystemTime::now()),
+            created_at: OffsetDateTime::from(SystemTime::now()),
+            updated_at: OffsetDateTime::from(SystemTime::now()),
             username: String::from("stub username"),
             email: String::from("stub email"),
             password: String::from("stub password"),

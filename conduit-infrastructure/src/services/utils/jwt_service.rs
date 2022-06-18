@@ -1,12 +1,12 @@
 use std::ops::Add;
 use std::sync::Arc;
-use std::time::Duration;
+use std::time::{Duration, SystemTime};
 
-use conduit_core::config::AppConfig;
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
-use time::OffsetDateTime;
+use sqlx::types::time::OffsetDateTime;
 
+use conduit_core::config::AppConfig;
 use conduit_core::errors::{ConduitError, ConduitResult};
 use conduit_core::utils::token_service::TokenService;
 
@@ -31,11 +31,12 @@ impl JwtService {
 impl TokenService for JwtService {
     fn new_token(&self, user_id: i64, email: &str) -> ConduitResult<String> {
         let from_now = Duration::from_secs(3600);
-        let exp = OffsetDateTime::now_utc().add(from_now).unix_timestamp();
+        let expired_future_time = SystemTime::now().add(from_now);
+        let exp = OffsetDateTime::from(expired_future_time);
 
         let claims = Claims {
             sub: String::from(email),
-            exp: exp as usize,
+            exp: exp.unix_timestamp() as usize,
             user_id,
         };
 

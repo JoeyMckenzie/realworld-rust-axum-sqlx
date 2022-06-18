@@ -2,8 +2,9 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use mockall::automock;
-use sqlx::types::time::PrimitiveDateTime;
+use sqlx::types::time::OffsetDateTime;
 use sqlx::FromRow;
+use time::Format;
 
 use conduit_domain::articles::models::{ArticleDto, AuthorDto};
 
@@ -64,8 +65,8 @@ pub trait ArticlesRepository {
 #[derive(FromRow)]
 pub struct UpsertArticleQuery {
     pub id: i64,
-    pub created_at: PrimitiveDateTime,
-    pub updated_at: PrimitiveDateTime,
+    pub created_at: OffsetDateTime,
+    pub updated_at: OffsetDateTime,
     pub title: String,
     pub body: String,
     pub description: String,
@@ -78,8 +79,8 @@ pub struct UpsertArticleQuery {
 #[derive(FromRow)]
 pub struct GetArticleQuery {
     pub id: i64,
-    pub created_at: PrimitiveDateTime,
-    pub updated_at: PrimitiveDateTime,
+    pub created_at: OffsetDateTime,
+    pub updated_at: OffsetDateTime,
     pub title: String,
     pub body: String,
     pub description: String,
@@ -100,8 +101,8 @@ impl UpsertArticleQuery {
             title: self.title,
             body: self.body,
             tag_list,
-            created_at: self.created_at.assume_utc().to_string(),
-            updated_at: self.updated_at.assume_utc().to_string(),
+            created_at: self.created_at.lazy_format(Format::Rfc3339).to_string(),
+            updated_at: self.updated_at.lazy_format(Format::Rfc3339).to_string(),
             description: self.description,
             slug: self.slug,
             favorited: false,
@@ -123,8 +124,8 @@ impl GetArticleQuery {
             title: self.title,
             body: self.body,
             tag_list,
-            created_at: self.created_at.assume_utc().to_string(),
-            updated_at: self.updated_at.assume_utc().to_string(),
+            created_at: self.created_at.lazy_format(Format::Rfc3339).to_string(),
+            updated_at: self.updated_at.lazy_format(Format::Rfc3339).to_string(),
             description: self.description,
             slug: self.slug,
             favorited: self.favorited,

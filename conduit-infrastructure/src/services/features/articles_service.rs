@@ -115,7 +115,32 @@ impl ArticlesService for ConduitArticlesService {
         description: Option<String>,
         body: Option<String>,
     ) -> ConduitResult<ArticleDto> {
-        info!("retrieving article {:?} for user {:?}", user_id, title);
+        // verify first that an article with the updated title does not already exists, as slugs are indexed
+        let mut updated_title: String = String::from("");
+
+        if let Some(new_title) = title {
+            updated_title = new_title;
+
+            info!(
+                "verifying article {:?} does not already exist",
+                updated_title
+            );
+
+            let article_with_updated_slug_exists = self
+                .articles_repository
+                .get_article_by_slug(None, slugify(&updated_title))
+                .await?
+                .is_some();
+
+            if article_with_updated_slug_exists {
+                return Err(ConduitError::ObjectConflict(String::from(
+                    "article with updated title already exists",
+                )));
+            }
+        }
+
+        info!("retrieving article {:?} for user {:?}", slug, user_id);
+
         let article_to_update = self
             .articles_repository
             .get_article_by_slug(Some(user_id), slug)
@@ -129,20 +154,13 @@ impl ArticlesService for ConduitArticlesService {
 
             let updated_description = description.unwrap_or(existing_article.description);
             let updated_body = body.unwrap_or(existing_article.body);
-            let updated_title = title.unwrap_or(existing_article.title);
-            let updated_slug = slugify(&updated_title);
 
-            // verify an existing article does not already exist with the updated slug
-            let existing_article_with_slug = self
-                .articles_repository
-                .get_article_by_slug(None, updated_slug.clone())
-                .await?;
-
-            if existing_article_with_slug.is_some() {
-                return Err(ConduitError::ObjectConflict(String::from(
-                    "an article already exists with the requested title",
-                )));
+            // if the slug has yet to be initialized, as the title was not updated, assign it back to the original slug
+            if updated_title.is_empty() {
+                updated_title = existing_article.slug;
             }
+
+            let updated_slug = slugify(&updated_title);
 
             let updated_article = self
                 .articles_repository

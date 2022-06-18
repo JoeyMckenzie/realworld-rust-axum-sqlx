@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use mockall::automock;
-use sqlx::types::time::PrimitiveDateTime;
+use sqlx::types::time::OffsetDateTime;
 use sqlx::FromRow;
 
 use conduit_domain::articles::models::AuthorDto;
@@ -34,15 +34,15 @@ pub struct CommentEntity {
     pub body: String,
     pub user_id: i64,
     pub article_id: i64,
-    pub created_at: PrimitiveDateTime,
-    pub updated_at: PrimitiveDateTime,
+    pub created_at: OffsetDateTime,
+    pub updated_at: OffsetDateTime,
 }
 
 #[derive(FromRow)]
 pub struct CommentQuery {
     pub id: i64,
-    pub created_at: PrimitiveDateTime,
-    pub updated_at: PrimitiveDateTime,
+    pub created_at: OffsetDateTime,
+    pub updated_at: OffsetDateTime,
     pub body: String,
     pub author_username: String,
     pub author_bio: String,
@@ -54,8 +54,8 @@ impl From<CommentQuery> for CommentDto {
     fn from(query: CommentQuery) -> Self {
         Self {
             id: query.id,
-            created_at: query.created_at.assume_utc().to_string(),
-            updated_at: query.created_at.assume_utc().to_string(),
+            created_at: query.created_at.offset().to_string(),
+            updated_at: query.updated_at.offset().to_string(),
             body: query.body,
             author: AuthorDto {
                 username: query.author_username,
