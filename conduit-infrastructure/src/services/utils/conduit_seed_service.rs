@@ -109,8 +109,7 @@ impl ConduitSeedService {
             )
             .await?;
 
-        let article_2 = self
-            .articles_service
+        self.articles_service
             .create_article(
                 created_user_1.id,
                 String::from("testuser1 article 2"),
@@ -120,8 +119,7 @@ impl ConduitSeedService {
             )
             .await?;
 
-        let article_3 = self
-            .articles_service
+        self.articles_service
             .create_article(
                 created_user_2.id,
                 String::from("testuser2 article 1"),

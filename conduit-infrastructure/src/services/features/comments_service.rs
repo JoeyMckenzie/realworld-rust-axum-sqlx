@@ -1,8 +1,8 @@
 use async_trait::async_trait;
 use itertools::Itertools;
 
-use conduit_core::articles::repository::{ArticlesRepository, DynArticlesRepository};
-use conduit_core::comments::repository::{CommentsRepository, DynCommentsRepository};
+use conduit_core::articles::repository::DynArticlesRepository;
+use conduit_core::comments::repository::DynCommentsRepository;
 use conduit_core::comments::service::CommentsService;
 use conduit_core::errors::{ConduitError, ConduitResult};
 use conduit_domain::comments::CommentDto;
