@@ -55,6 +55,12 @@ of bringing on a TS-based frontend sometime in the future to have the true RealW
 pre-commit hooks will format, lint, and test all code so that each commit ensure that tests are passing and code does
 not contain any obvious errors.
 
+To bypass the included hooks, simply pass a `--no-verify` flag while committing cod
+
+```bash
+git commit -m "feat(core): add some amazing unit tests" --no-verify
+```
+
 ## Using Docker
 
 The project utilizes Docker containers for Postgres and prometheus metrics. For example, when starting the
