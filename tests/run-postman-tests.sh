@@ -8,10 +8,17 @@ USERNAME=${USERNAME:-u`date +%s`}
 EMAIL=${EMAIL:-$USERNAME@mail.com}
 PASSWORD=${PASSWORD:-password}
 
-npx newman run $SCRIPTDIR/Conduit.postman_collection.json \
---delay-request 500 \
---global-var "APIURL=$APIURL" \
---global-var "USERNAME=$USERNAME" \
---global-var "EMAIL=$EMAIL" \
---global-var "PASSWORD=$PASSWORD" \
-"$@"
+# for fun, set ITERATIONS to run the integration test script so we
+# can simulate light web traffic and get a nice looking prometheus graph!
+ITERATIONS=1
+
+for ((ITERATIONS = 1; ITERATIONS <= 5; ITERATIONS++))
+do
+  npx newman run $SCRIPTDIR/Conduit.postman_collection.json \
+  --delay-request 500 \
+  --global-var "APIURL=$APIURL" \
+  --global-var "USERNAME=$USERNAME" \
+  --global-var "EMAIL=$EMAIL" \
+  --global-var "PASSWORD=$PASSWORD" \
+  "$@"
+done

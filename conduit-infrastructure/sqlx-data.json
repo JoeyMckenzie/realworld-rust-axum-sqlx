@@ -1,0 +1,1376 @@
+{
+  "db": "PostgreSQL",
+  "01276a29c8eec0f3244845edf042abc1cc98a6db974701b0292824d54f1c08b0": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at!",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at!",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "title!",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "body!",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "description!",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "slug!",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "user_id!",
+          "ordinal": 7,
+          "type_info": "Int8"
+        },
+        {
+          "name": "favorited!",
+          "ordinal": 8,
+          "type_info": "Bool"
+        },
+        {
+          "name": "favorites!",
+          "ordinal": 9,
+          "type_info": "Int8"
+        },
+        {
+          "name": "following_author!",
+          "ordinal": 10,
+          "type_info": "Bool"
+        },
+        {
+          "name": "author_username!",
+          "ordinal": 11,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_bio!",
+          "ordinal": 12,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_image!",
+          "ordinal": 13,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null,
+        null,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        with favorited_article_cte as (\n            insert into user_favorites (created_at, user_id, article_id)\n            values (current_timestamp, $1, $2)\n            returning *\n        ) select a.id as \"id!\",\n                 a.created_at as \"created_at!\",\n                 a.updated_at as \"updated_at!\",\n                 a.title as \"title!\",\n                 a.body as \"body!\",\n                 a.description as \"description!\",\n                 a.slug as \"slug!\",\n                 u.id as \"user_id!\",\n                 true as \"favorited!\",\n                 (select count(*) + 1 from user_favorites where article_id = a.id) as \"favorites!\",\n                 exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) \"following_author!\",\n                 u.username as \"author_username!\",\n                 u.bio as \"author_bio!\",\n                 u.image as \"author_image!\"\n        from favorited_article_cte fa\n        join users u on fa.user_id = u.id\n        join articles a on fa.article_id = a.id\n        where a.id = $2\n            "
+  },
+  "05a1591b0551b645bd337cc2a802dc971595c4ad878e5a43c6b2a8a83ebd6044": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n    delete from articles\n    where id = $1\n        "
+  },
+  "2967c6df34d518913bac639afeec2106fb1e7a27b08e0fc7e05214a46fd0acb5": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "username",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "email",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "password",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "bio",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "image",
+          "ordinal": 7,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Varchar"
+        ]
+      }
+    },
+    "query": "\n        select id,\n               created_at,\n               updated_at,\n               username,\n               email,\n               password,\n               bio,\n               image\n        from users\n        where email = $1::varchar\n        or username = $2::varchar"
+  },
+  "2cf1f6d9811d9213a0e640e1d97197d262c0024c27df6f5730aa02f7f6f01640": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "username",
+          "ordinal": 1,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "email",
+          "ordinal": 2,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "password",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "bio",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "image",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 6,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "ordinal": 7,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        select *\n        from users\n        where id = $1\n            "
+  },
+  "3433283c36f15c79087bbbb4e291f7c2ec9d794b94d834cd98ca1474c38d4ea0": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "body!",
+          "ordinal": 1,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "created_at!",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at!",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "author_username!",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_bio!",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_image!",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "following_author!",
+          "ordinal": 7,
+          "type_info": "Bool"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        select c.id as \"id!\",\n               c.body as \"body!\",\n               c.created_at as \"created_at!\",\n               c.updated_at as \"updated_at!\",\n               u.username as \"author_username!\",\n               u.bio as \"author_bio!\",\n               u.image as \"author_image!\",\n               exists(select 1 from user_follows uf where (\n                   $1::bigint is null or (uf.followee_id, uf.follower_id) = ($1::bigint, c.user_id))\n               ) as \"following_author!\"\n        from comments c\n        join users u on c.user_id = u.id\n        where c.article_id = $2\n            "
+  },
+  "3d3496a1a7cb49b581a97e73e41126f79448cf07462e24bd76a4a5b47bd5275b": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at!",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at!",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "title!",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "body!",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "slug!",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "description!",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_username!",
+          "ordinal": 7,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_bio!",
+          "ordinal": 8,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_image!",
+          "ordinal": 9,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n    with updated_article_cte as (\n        update articles\n        set updated_at = current_timestamp,\n            title = $1::varchar,\n            slug = $2::varchar,\n            description = $3::varchar,\n            body = $4::varchar\n        where id = $5\n        returning *\n    ) select a.id as \"id!\",\n             a.created_at as \"created_at!\",\n             a.updated_at as \"updated_at!\",\n             a.title as \"title!\",\n             a.body as \"body!\",\n             a.slug as \"slug!\",\n             a.description as \"description!\",\n             u.username as \"author_username!\",\n             u.bio as \"author_bio!\",\n             u.image as \"author_image!\"\n    from updated_article_cte a\n    join users u on u.id = a.user_id\n            "
+  },
+  "47f2bab4a7715a86562caafa224e4f9e37a49a31cf83c1ce61d3de8e35a7ce7c": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "username",
+          "ordinal": 1,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "email",
+          "ordinal": 2,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "password",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "bio",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "image",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 6,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "ordinal": 7,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar"
+        ]
+      }
+    },
+    "query": "\n        select *\n        from users\n        where username = $1::varchar\n            "
+  },
+  "48093525bd961b70c2cb2ffcd0bcd31ca24b43269c12b352e2d479582b043b15": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "follower_id",
+          "ordinal": 2,
+          "type_info": "Int8"
+        },
+        {
+          "name": "followee_id",
+          "ordinal": 3,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        select id,\n               created_at,\n               follower_id,\n               followee_id\n        from user_follows\n        where followee_id = $1"
+  },
+  "5267fff4537f62ba1646d7de94ed1ed946d3843b4fa4d394e1ddd75516abdb99": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "follower_id",
+          "ordinal": 2,
+          "type_info": "Int8"
+        },
+        {
+          "name": "followee_id",
+          "ordinal": 3,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        select id,\n               created_at,\n               follower_id,\n               followee_id\n        from user_follows\n        where follower_id = $1"
+  },
+  "5593031728bed84bb9b2ff77497a204b5b82a0a2699bbe36afa03a68e2736057": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "article_id",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "user_id",
+          "ordinal": 2,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        select id,\n               article_id,\n               user_id\n        from user_favorites\n        where article_id = $1::bigint\n            "
+  },
+  "5d8ec439b44ae9a70c5f424800f5b71f74e8774bb9e0f2e3756f3ebd5aa6b03a": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at!",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at!",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "title!",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "body!",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "description!",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "slug!",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "user_id!",
+          "ordinal": 7,
+          "type_info": "Int8"
+        },
+        {
+          "name": "favorited!",
+          "ordinal": 8,
+          "type_info": "Bool"
+        },
+        {
+          "name": "favorites!",
+          "ordinal": 9,
+          "type_info": "Int8"
+        },
+        {
+          "name": "following_author!",
+          "ordinal": 10,
+          "type_info": "Bool"
+        },
+        {
+          "name": "author_username!",
+          "ordinal": 11,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_bio!",
+          "ordinal": 12,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_image!",
+          "ordinal": 13,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null,
+        null,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Varchar"
+        ]
+      }
+    },
+    "query": "\n        select a.id as \"id!\",\n               a.created_at as \"created_at!\",\n               a.updated_at as \"updated_at!\",\n               a.title as \"title!\",\n               a.body as \"body!\",\n               a.description as \"description!\",\n               a.slug as \"slug!\",\n               u.id as \"user_id!\",\n               exists(select 1 from user_favorites af where af.user_id = $1 and af.article_id = a.id) as \"favorited!\",\n               (select count(*) from user_favorites where article_id = a.id) as \"favorites!\",\n               exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) \"following_author!\",\n               u.username as \"author_username!\",\n               u.bio as \"author_bio!\",\n               u.image as \"author_image!\"\n        from articles a\n        join users u on u.id = a.user_id\n        where a.slug = $2::varchar\n            "
+  },
+  "6ae4afb2c573f74d972cd395a3d8f25c3a1bfd7b61ca584e939a49f4709fa044": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "follower_id",
+          "ordinal": 2,
+          "type_info": "Int8"
+        },
+        {
+          "name": "followee_id",
+          "ordinal": 3,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        insert into user_follows (created_at, follower_id, followee_id)\n        values (current_timestamp, $1, $2)\n        returning *"
+  },
+  "7465ec01d55904fe90236b8ac9092da78641100fcca3e79327200e299db8fd23": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        delete from user_follows\n        where (follower_id, followee_id) = ($1, $2)\n            "
+  },
+  "7621c75e352828d1c2424e2cf85952cade2be867fbf9c163b42e92cac3dd0387": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "body!",
+          "ordinal": 1,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "created_at!",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at!",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "author_username!",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_bio!",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_image!",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "following_author!",
+          "ordinal": 7,
+          "type_info": "Bool"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        with insert_comment_cte as (\n            insert into comments (body, user_id, article_id, created_at, updated_at)\n            values ($1::varchar, $2::bigint, $3::bigint, current_timestamp, current_timestamp)\n            returning *\n        ) select c.id as \"id!\",\n                 c.body as \"body!\",\n                 c.created_at as \"created_at!\",\n                 c.updated_at as \"updated_at!\",\n                 u.username as \"author_username!\",\n                 u.bio as \"author_bio!\",\n                 u.image as \"author_image!\",\n                 false as \"following_author!\"\n        from insert_comment_cte c\n        join users u on c.user_id = u.id\n        where c.article_id = $3::bigint\n            "
+  },
+  "7e15d5d5c2467c52196249d2f2066353ac7843169906ac389494dd51038822be": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "article_id",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "tag_id",
+          "ordinal": 2,
+          "type_info": "Int8"
+        },
+        {
+          "name": "tag",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        select at.id,\n               at.article_id,\n               at.tag_id,\n               t.tag\n        from article_tags at\n        join tags t on t.id = at.article_id\n        where article_id = $1\n        order by t.tag\n            "
+  },
+  "86ab0a848480fa5c07de5165f17ae2f685e73a2cdaaa207407d809082b3f101f": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "username",
+          "ordinal": 1,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "email",
+          "ordinal": 2,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "password",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "bio",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "image",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 6,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "ordinal": 7,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        update users\n        set\n            username = $1::varchar,\n            email = $2::varchar,\n            password = $3::varchar,\n            bio = $4::varchar,\n            image = $5::varchar,\n            updated_at = current_timestamp\n        where id = $6\n        returning *\n            "
+  },
+  "89143052eddefe936cc800fd549b30ecc5f1f6518159b1e5c105c00599002a52": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "username",
+          "ordinal": 1,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "email",
+          "ordinal": 2,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "password",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "bio",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "image",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 6,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "ordinal": 7,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Varchar",
+          "Varchar"
+        ]
+      }
+    },
+    "query": "\n        insert into users (created_at, updated_at, username, email, password, bio, image)\n        values (current_timestamp, current_timestamp, $1::varchar, $2::varchar, $3::varchar, '', '')\n        returning *\n            "
+  },
+  "9bbc0afec98c632e00c85feeb4dcb5ccaea88339f7e20ebb61a9ecd8ead8d0f4": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at!",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at!",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "title!",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "body!",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "slug!",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "description!",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_username!",
+          "ordinal": 7,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_bio!",
+          "ordinal": 8,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_image!",
+          "ordinal": 9,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n    with inserted_article_cte as (\n        insert into articles (created_at, updated_at, title, body, slug, description, user_id)\n        values (current_timestamp, current_timestamp, $1::varchar, $2::varchar, $3::varchar, $4::varchar, $5)\n        returning id as \"id\",\n                  created_at as \"created_at\",\n                  updated_at as \"updated_at\",\n                  title as \"title\",\n                  body as \"body\",\n                  slug as \"slug\",\n                  description as \"description\",\n                  user_id as \"user_id\"\n    ) select a.id as \"id!\",\n           a.created_at as \"created_at!\",\n           a.updated_at as \"updated_at!\",\n           a.title as \"title!\",\n           a.body as \"body!\",\n           a.slug as \"slug!\",\n           a.description as \"description!\",\n           u.username as \"author_username!\",\n           u.bio as \"author_bio!\",\n           u.image as \"author_image!\"\n    from inserted_article_cte a\n    join users u on u.id = a.user_id\n            "
+  },
+  "a8865d4eff71d9c91add28658d80e0cb8d55cc90a7fe1bc5507cf94852d2576b": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at!",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at!",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "title!",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "body!",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "description!",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "slug!",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "user_id!",
+          "ordinal": 7,
+          "type_info": "Int8"
+        },
+        {
+          "name": "favorited!",
+          "ordinal": 8,
+          "type_info": "Bool"
+        },
+        {
+          "name": "favorites!",
+          "ordinal": 9,
+          "type_info": "Int8"
+        },
+        {
+          "name": "following_author!",
+          "ordinal": 10,
+          "type_info": "Bool"
+        },
+        {
+          "name": "author_username!",
+          "ordinal": 11,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_bio!",
+          "ordinal": 12,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_image!",
+          "ordinal": 13,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null,
+        null,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        with unfavorited_article_cte as (\n            delete from user_favorites\n            where (user_id, article_id) = ($1, $2)\n        ) select a.id as \"id!\",\n                 a.created_at as \"created_at!\",\n                 a.updated_at as \"updated_at!\",\n                 a.title as \"title!\",\n                 a.body as \"body!\",\n                 a.description as \"description!\",\n                 a.slug as \"slug!\",\n                 u.id as \"user_id!\",\n                 false as \"favorited!\",\n                 (select count(*) - 1 from user_favorites where article_id = a.id) as \"favorites!\",\n                 exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) \"following_author!\",\n                 u.username as \"author_username!\",\n                 u.bio as \"author_bio!\",\n                 u.image as \"author_image!\"\n        from articles a\n        join users u on a.user_id = u.id\n        where a.id = $2\n            "
+  },
+  "b66a50e50c360ace41273cd456bf90c41e495b6c5799f06185f59b93211c5c28": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n       delete from comments\n       where id = $1\n            "
+  },
+  "cd402bcb8ad0a75a419345f933aa96616866cad66c7ec067fa5ff6c54d34932e": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "body",
+          "ordinal": 1,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "user_id",
+          "ordinal": 2,
+          "type_info": "Int8"
+        },
+        {
+          "name": "article_id",
+          "ordinal": 3,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 4,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "ordinal": 5,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        select *\n        from comments\n        where id = $1::bigint\n            "
+  },
+  "ded3a2c7f97b29c1f811ffa2f4edc600e6ae67bd55229e1ad3dec679b79a7f35": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at!",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at!",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "title!",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "body!",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "description!",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "slug!",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "user_id!",
+          "ordinal": 7,
+          "type_info": "Int8"
+        },
+        {
+          "name": "favorited!",
+          "ordinal": 8,
+          "type_info": "Bool"
+        },
+        {
+          "name": "favorites!",
+          "ordinal": 9,
+          "type_info": "Int8"
+        },
+        {
+          "name": "following_author!",
+          "ordinal": 10,
+          "type_info": "Bool"
+        },
+        {
+          "name": "author_username!",
+          "ordinal": 11,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_bio!",
+          "ordinal": 12,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_image!",
+          "ordinal": 13,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null,
+        null,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        select a.id as \"id!\",\n               a.created_at as \"created_at!\",\n               a.updated_at as \"updated_at!\",\n               a.title as \"title!\",\n               a.body as \"body!\",\n               a.description as \"description!\",\n               a.slug as \"slug!\",\n               u.id as \"user_id!\",\n               exists(select 1 from user_favorites af where af.user_id = $1 and af.article_id = a.id) as \"favorited!\",\n               (select count(*) from user_favorites where article_id = a.id) as \"favorites!\",\n               exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) \"following_author!\",\n               u.username as \"author_username!\",\n               u.bio as \"author_bio!\",\n               u.image as \"author_image!\"\n        from articles a\n        join users u on u.id = a.user_id\n        -- filter on users for the author\n        where ($2::varchar is null or $2::varchar = u.username)\n        -- filter on tags, if applicable\n        and ($3::varchar is null or exists(\n            select 1 from tags t\n            join article_tags at on (t.id, a.id) = (at.tag_id, at.article_id)\n            where tag = $3::varchar\n        ))\n        -- filter on the favoriting user\n        and ($4::varchar is null or exists(\n            select 1 from users favoriting_user\n            join user_favorites f on favoriting_user.id = f.user_id\n            where favoriting_user.username = $4::varchar)\n        )\n        order by a.created_at desc\n        limit $5\n        offset $6\n            "
+  },
+  "e25e699f9ddee9face6b78dcf55203c1b59753f8aa33d2fed31298c729cc8207": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "tag_id!",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "article_id!",
+          "ordinal": 2,
+          "type_info": "Int8"
+        },
+        {
+          "name": "tag!",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8Array"
+        ]
+      }
+    },
+    "query": "\n        select at.id as \"id!\",\n               at.tag_id as \"tag_id!\",\n               at.article_id as \"article_id!\",\n               t.tag as \"tag!\"\n        from article_tags at\n        join tags t on t.id = at.tag_id\n        where article_id = any($1)\n        order by t.tag\n            "
+  },
+  "e742c1a6b6b055b46344fd5ddfa4a1e9755d61d2f9cd5c78d399a1afd962ce43": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "username",
+          "ordinal": 1,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "email",
+          "ordinal": 2,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "password",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "bio",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "image",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 6,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at",
+          "ordinal": 7,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar"
+        ]
+      }
+    },
+    "query": "\n        select *\n        from users\n        where email = $1::varchar\n            "
+  }
+}

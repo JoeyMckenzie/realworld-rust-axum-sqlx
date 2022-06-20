@@ -18,7 +18,10 @@ dev: ## run the API server
 
 .PHONY: docker
 docker: ## build and run all docker containers
-	@docker compose -f ./docker-compose.postgres.yml -f ./docker-compose.conduit.yml up --build
+	@docker compose \
+ 		-f ./docker-compose.metrics.yml \
+ 		-f ./docker-compose.postgres.yml \
+ 		-f ./docker-compose.conduit.yml up --build
 
 .PHONY: build
 build:  ## build the API server binary
@@ -46,7 +49,9 @@ version: ## display the version of the API server
 
 .PHONY: start-db
 start-db: ## start the database server
-	@docker compose -f ./docker-compose.postgres.yml up --build
+	@docker compose \
+ 		-f ./docker-compose.postgres.yml \
+ 		-f ./docker-compose.metrics.yml up --build --remove-orphans
 
 .PHONY: lint
 lint: ## run clippy on all rust package
