@@ -2,13 +2,13 @@ use std::future::ready;
 use std::time::{Duration, Instant};
 
 use anyhow::Context;
+use axum::{BoxError, Json, middleware, Router};
 use axum::error_handling::HandleErrorLayer;
 use axum::extract::MatchedPath;
 use axum::http::StatusCode;
 use axum::middleware::Next;
 use axum::response::IntoResponse;
 use axum::routing::get;
-use axum::{middleware, BoxError, Json, Router};
 use clap::lazy_static::lazy_static;
 use http::Request;
 use metrics_exporter_prometheus::{Matcher, PrometheusBuilder, PrometheusHandle};
@@ -26,8 +26,10 @@ use crate::endpoints::users_endpoints::UsersRouter;
 
 lazy_static! {
     static ref HTTP_TIMEOUT: u64 = 30;
-    static ref EXPONENTIAL_SECONDS: &'static [f64] =
-        &[0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0,];
+
+    static ref EXPONENTIAL_SECONDS: &'static [f64] = &[
+            0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0,
+    ];
 }
 
 pub struct ConduitApplicationController;

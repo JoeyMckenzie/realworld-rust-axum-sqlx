@@ -1,7 +1,7 @@
 ![realworld_logo](/realworld-dual-mode.png)
 
 An implementation of the RealWorld project using Rust
-alongsidge [axum](https://github.com/tokio-rs/axum) and [sqlx](https://github.com/launchbadge/sqlx).
+alongside [axum](https://github.com/tokio-rs/axum) and [sqlx](https://github.com/launchbadge/sqlx).
 
 To get started, install [Docker](https://www.docker.com/) and [make](https://www.gnu.org/software/make/)
 on your local machine (Windows users may want to use WSL for ease of development), then clone/fork the repository. Once
@@ -77,3 +77,7 @@ make dev # or cargo run
 
 If you're starting the application for the first time, it will attempt to seed a bit of data that is also used for
 testing.
+
+# TODO
+
+There's a lot more unit tests to write...
