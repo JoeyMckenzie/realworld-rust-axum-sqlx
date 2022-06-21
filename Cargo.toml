@@ -6,3 +6,6 @@ members = [
     "conduit-domain",
     "conduit-infrastructure",
 ]
+
+[profile.release]
+debug = true
