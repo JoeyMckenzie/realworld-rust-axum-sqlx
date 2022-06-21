@@ -1,11 +1,44 @@
 [workspace]
 members = [
+    ".",
     "conduit-api",
-    "conduit-bin",
     "conduit-core",
     "conduit-domain",
     "conduit-infrastructure",
 ]
+
+[package]
+authors = ["JoeyMckenzie <joey.mckenzie27@gmail.com>"]
+name = "realworld-rust-axum-sqlx"
+version = "0.1.0"
+edition = "2021"
+license = "Unlicense OR MIT"
+
+homepage = "https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx"
+repository = "https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx"
+documentation = "https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx"
+
+description = "An implementation of the Realworld spec using Rust, axum, and sqlx."
+
+readme = "README.md"
+keywords = ["demo", "realworld", "axum", "sqlx"]
+categories = ["web"]
+
+[dependencies]
+conduit-api = { path = "./conduit-api" }
+conduit-domain = { path = "./conduit-domain" }
+conduit-core = { path = "./conduit-core" }
+conduit-infrastructure = { path = "./conduit-infrastructure" }
+
+sqlx = { version = "0.5", features = ["runtime-tokio-rustls", "postgres"] }
+anyhow = "1"
+axum = { version = "0.5.1", features = ["tower-log"] }
+tokio = { version = "1.17.0", features = ["full"] }
+clap = "3"
+dotenv = "0.15.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tower-http = { version = "0.3.0", features = ["trace"] }
 
 [profile.release]
 debug = true

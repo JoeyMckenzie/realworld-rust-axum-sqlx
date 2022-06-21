@@ -5,7 +5,7 @@ services:
     container_name: realworld_rust_axum_sqlx_conduit
     build:
       context: .
-      dockerfile: ./conduit-bin/src/Dockerfile
+      dockerfile: src/Dockerfile
     volumes:
       - /tmp/app:/var/log/app
     ports:

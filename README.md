@@ -35,8 +35,6 @@ We utilize [cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-works
 project-specific logic/domains, with a rough organization strategy as follows:
 
 - `conduit-api` - web project housing axum specific setup, endpoints, routing, request/response marshalling, etc.
-- `conduit-bin` - the application entry point, consisting of a single `main.rs` file to drive startup and wire library
-  dependencies together
 - `conduit-core` - core logic and contract definitions between domains, services, and repository
 - `conduit-domain` - a simple project to house PORS (plain old rust structs) used for API request and responses,
   services, etc.

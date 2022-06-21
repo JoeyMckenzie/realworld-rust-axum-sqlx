@@ -12,8 +12,8 @@ COPY ./rust-toolchain ./
 COPY ./Cargo.lock ./
 COPY ./Cargo.toml ./
 COPY ./.env.docker ./.env
+COPY ./src/main.rs ./src/main.rs
 COPY ./conduit-api ./conduit-api
-COPY ./conduit-bin ./conduit-bin
 COPY ./conduit-core ./conduit-core
 COPY ./conduit-domain ./conduit-domain
 COPY ./conduit-infrastructure ./conduit-infrastructure
@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/app/target \
     set -eux; \
     rustup install stable; \
     cargo build --workspace --release; \
-    objcopy --compress-debug-sections target/release/conduit-bin ./conduit
+    objcopy --compress-debug-sections target/release/realworld-rust-axum-sqlx ./conduit
 
 # stage two - we'll utilize a second container to run our built binary from our first container - slim containers!
 FROM debian:11.3-slim as deploy
