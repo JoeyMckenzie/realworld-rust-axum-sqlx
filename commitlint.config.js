@@ -7,7 +7,6 @@ module.exports = {
         }
     },
     rules: {
-        "references-empty": [2, "never"],
         "scope-empty": [1, "never"],
     },
     helpUrl:
