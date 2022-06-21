@@ -14,6 +14,12 @@ pub struct ProfilesServiceTestFixture {
     pub mock_users_repository: MockUsersRepository,
 }
 
+impl Default for UsersServiceTestFixture {
+    fn default() -> Self {
+        UsersServiceTestFixture::new()
+    }
+}
+
 impl UsersServiceTestFixture {
     pub fn new() -> Self {
         Self {
@@ -30,5 +36,11 @@ impl ProfilesServiceTestFixture {
             mock_profiles_repository: MockProfilesRepository::new(),
             mock_users_repository: MockUsersRepository::new(),
         }
+    }
+}
+
+impl Default for ProfilesServiceTestFixture {
+    fn default() -> Self {
+        ProfilesServiceTestFixture::new()
     }
 }

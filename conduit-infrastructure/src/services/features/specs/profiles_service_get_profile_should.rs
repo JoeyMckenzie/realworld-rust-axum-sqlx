@@ -13,7 +13,7 @@ use crate::services::features::specs::fixtures::ProfilesServiceTestFixture;
 #[tokio::test]
 async fn return_success_when_downstream_services_succeed_and_user_exists() {
     // arrange
-    let mut fixture = ProfilesServiceTestFixture::new();
+    let mut fixture = ProfilesServiceTestFixture::default();
 
     fixture
         .mock_users_repository
@@ -22,10 +22,7 @@ async fn return_success_when_downstream_services_succeed_and_user_exists() {
         .times(1)
         .return_once(move |_| Ok(Some(UserEntity::default())));
 
-    fixture
-        .mock_profiles_repository
-        .expect_get_user_followees()
-        .times(0);
+    fixture.mock_profiles_repository.expect_get_user_followees().times(0);
 
     let profiles_service = ConduitProfilesService::new(
         Arc::new(fixture.mock_users_repository) as DynUsersRepository,
@@ -43,7 +40,7 @@ async fn return_success_when_downstream_services_succeed_and_user_exists() {
 #[tokio::test]
 async fn call_get_user_followees_when_id_is_valid() {
     // arrange
-    let mut fixture = ProfilesServiceTestFixture::new();
+    let mut fixture = ProfilesServiceTestFixture::default();
 
     let user_id = Some(2_i64);
 
@@ -77,7 +74,7 @@ async fn call_get_user_followees_when_id_is_valid() {
 #[tokio::test]
 async fn return_not_found_when_user_does_not_exist() {
     // arrange
-    let mut fixture = ProfilesServiceTestFixture::new();
+    let mut fixture = ProfilesServiceTestFixture::default();
 
     fixture
         .mock_users_repository
@@ -86,10 +83,7 @@ async fn return_not_found_when_user_does_not_exist() {
         .times(1)
         .return_once(move |_| Ok(None));
 
-    fixture
-        .mock_profiles_repository
-        .expect_get_user_followees()
-        .times(0);
+    fixture.mock_profiles_repository.expect_get_user_followees().times(0);
 
     let profiles_service = ConduitProfilesService::new(
         Arc::new(fixture.mock_users_repository) as DynUsersRepository,

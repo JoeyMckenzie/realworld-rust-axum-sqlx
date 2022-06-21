@@ -10,7 +10,6 @@ create table if not exists users
     updated_at timestamptz not null default current_timestamp
 );
 
-
 alter table users
     add constraint users_id_pk primary key (id);
 

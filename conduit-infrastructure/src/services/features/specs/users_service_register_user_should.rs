@@ -14,7 +14,7 @@ use crate::services::features::users_service::ConduitUsersService;
 #[tokio::test]
 async fn return_success_when_downstream_services_succeed() {
     // arrange
-    let mut fixture = UsersServiceTestFixture::new();
+    let mut fixture = UsersServiceTestFixture::default();
 
     fixture
         .mock_repository
@@ -51,9 +51,7 @@ async fn return_success_when_downstream_services_succeed() {
     );
 
     // act
-    let response = users_service
-        .register_user(RegisterUserDto::new_stub())
-        .await;
+    let response = users_service.register_user(RegisterUserDto::new_stub()).await;
 
     // assert
     assert!(response.is_ok());
@@ -62,7 +60,7 @@ async fn return_success_when_downstream_services_succeed() {
 #[tokio::test]
 async fn return_error_when_user_exixsts() {
     // arrange
-    let mut fixture = UsersServiceTestFixture::new();
+    let mut fixture = UsersServiceTestFixture::default();
 
     fixture
         .mock_repository
@@ -73,10 +71,7 @@ async fn return_error_when_user_exixsts() {
 
     fixture.mock_repository.expect_create_user().times(0);
 
-    fixture
-        .mock_security_service
-        .expect_hash_password()
-        .times(0);
+    fixture.mock_security_service.expect_hash_password().times(0);
 
     fixture.mock_token_service.expect_new_token().times(0);
 
@@ -87,9 +82,7 @@ async fn return_error_when_user_exixsts() {
     );
 
     // act
-    let response = users_service
-        .register_user(RegisterUserDto::new_stub())
-        .await;
+    let response = users_service.register_user(RegisterUserDto::new_stub()).await;
 
     // assert
     assert!(response.is_err());

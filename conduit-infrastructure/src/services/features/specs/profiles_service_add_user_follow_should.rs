@@ -12,7 +12,7 @@ use crate::services::features::specs::fixtures::ProfilesServiceTestFixture;
 #[tokio::test]
 async fn return_success_when_downstream_services_succeed_and_user_exists() {
     // arrange
-    let mut fixture = ProfilesServiceTestFixture::new();
+    let mut fixture = ProfilesServiceTestFixture::default();
 
     fixture
         .mock_users_repository
@@ -40,9 +40,7 @@ async fn return_success_when_downstream_services_succeed_and_user_exists() {
     );
 
     // act
-    let response = profiles_service
-        .add_user_follow("stub username", 2_i64)
-        .await;
+    let response = profiles_service.add_user_follow("stub username", 2_i64).await;
 
     // assert
     assert!(response.is_ok());
