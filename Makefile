@@ -1,9 +1,3 @@
-MODULE = $(shell go list -m)
-VERSION ?= $(shell git describe --tags --always --dirty --match=v* 2> /dev/null || echo "1.0.0")
-
-ENV_FILE ?= .env
-DSN ?= $(shell sed -n 's/^CONNECTION_STRING=\(.*\)/\1/p' $(ENV_FILE))
-
 .PHONY: default
 default: help
 
