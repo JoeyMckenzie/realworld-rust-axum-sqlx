@@ -55,7 +55,7 @@ of bringing on a TS-based frontend sometime in the future to have the true RealW
 pre-commit hooks will format, lint, and test all code so that each commit ensure that tests are passing and code does
 not contain any obvious errors.
 
-To bypass the included hooks, simply pass a `--no-verify` flag while committing cod
+To bypass the included hooks, simply pass a `--no-verify` flag while committing code
 
 ```bash
 git commit -m "feat(core): add some amazing unit tests" --no-verify
@@ -63,11 +63,12 @@ git commit -m "feat(core): add some amazing unit tests" --no-verify
 
 ## Using Docker
 
-The project utilizes Docker containers for Postgres and prometheus metrics. For example, when starting the
-application with `make docker`, navigating to `localhost:9090` will bring you to the prometheus metrics page.
-From there, running integration tests with `make integration` to simulate traffic to the API will allow you the various
-metrics
-that are recorded in the service layer: request count, request latency, and histograms of service request intervals.
+The project utilizes Docker containers for Postgres and Prometheus metrics. For example, when starting the
+application with `make docker`, navigating to `localhost:9090` will bring you to the Prometheus metrics page.
+From there, running integration tests with `make integration` to simulate traffic to the API allows one to observe the
+various
+metrics that are recorded in the service layer: request count, request latency, and histograms of service request
+intervals.
 
 To start the API outside the Docker context, ensure that Postgres is running before booting up:
 
