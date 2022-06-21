@@ -62,9 +62,9 @@ impl ArticlesRepository for PostgresArticlesRepository {
             description,
             user_id
         )
-            .fetch_one(&self.pool)
-            .await
-            .context("an unexpected error occured creating article")
+        .fetch_one(&self.pool)
+        .await
+        .context("an unexpected error occured creating article")
     }
 
     async fn update_article(
@@ -168,11 +168,7 @@ impl ArticlesRepository for PostgresArticlesRepository {
             .context("an unexpected error occured retrieving articles")
     }
 
-    async fn get_article_by_slug(
-        &self,
-        user_id: Option<i64>,
-        slug: String,
-    ) -> anyhow::Result<Option<GetArticleQuery>> {
+    async fn get_article_by_slug(&self, user_id: Option<i64>, slug: String) -> anyhow::Result<Option<GetArticleQuery>> {
         query_as!(
             GetArticleQuery,
             r#"
@@ -216,11 +212,7 @@ impl ArticlesRepository for PostgresArticlesRepository {
         Ok(())
     }
 
-    async fn favorite_article(
-        &self,
-        article_id: i64,
-        user_id: i64,
-    ) -> anyhow::Result<GetArticleQuery> {
+    async fn favorite_article(&self, article_id: i64, user_id: i64) -> anyhow::Result<GetArticleQuery> {
         query_as!(
             GetArticleQuery,
             r#"
@@ -255,11 +247,7 @@ impl ArticlesRepository for PostgresArticlesRepository {
             .context("an unexpected error occurred while adding user favorite for the article")
     }
 
-    async fn unfavorite_article(
-        &self,
-        article_id: i64,
-        user_id: i64,
-    ) -> anyhow::Result<GetArticleQuery> {
+    async fn unfavorite_article(&self, article_id: i64, user_id: i64) -> anyhow::Result<GetArticleQuery> {
         query_as!(
             GetArticleQuery,
             r#"
@@ -292,10 +280,7 @@ impl ArticlesRepository for PostgresArticlesRepository {
             .context("an unexpected error occurred while adding user favorite for the article")
     }
 
-    async fn get_user_favorites(
-        &self,
-        article_id: i64,
-    ) -> anyhow::Result<Vec<GetArticleFavoritesQuery>> {
+    async fn get_user_favorites(&self, article_id: i64) -> anyhow::Result<Vec<GetArticleFavoritesQuery>> {
         query_as!(
             GetArticleFavoritesQuery,
             r#"

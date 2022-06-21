@@ -86,10 +86,7 @@ impl IntoResponse for ConduitError {
             Self::InternalServerErrorWithContext(err) => (StatusCode::INTERNAL_SERVER_ERROR, err),
             Self::NotFound(err) => (StatusCode::NOT_FOUND, err),
             Self::ObjectConflict(err) => (StatusCode::CONFLICT, err),
-            Self::InvalidLoginAttmpt => (
-                StatusCode::BAD_REQUEST,
-                Self::InvalidLoginAttmpt.to_string(),
-            ),
+            Self::InvalidLoginAttmpt => (StatusCode::BAD_REQUEST, Self::InvalidLoginAttmpt.to_string()),
             Self::Unauthorized => (StatusCode::UNAUTHORIZED, Self::Unauthorized.to_string()),
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,

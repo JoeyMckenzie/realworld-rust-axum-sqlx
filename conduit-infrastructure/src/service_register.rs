@@ -44,44 +44,35 @@ pub struct ServiceRegister {
 impl ServiceRegister {
     pub fn new(pool: ConduitConnectionPool, config: Arc<AppConfig>) -> Self {
         info!("initializing utility services...");
-        let security_service =
-            Arc::new(ArgonSecurityService::new(config.clone())) as DynSecurityService;
+        let security_service = Arc::new(ArgonSecurityService::new(config.clone())) as DynSecurityService;
         let token_service = Arc::new(JwtService::new(config)) as DynTokenService;
 
         info!("utility services initialized, building feature services...");
-        let users_repository =
-            Arc::new(PostgresUsersRepository::new(pool.clone())) as DynUsersRepository;
+        let users_repository = Arc::new(PostgresUsersRepository::new(pool.clone())) as DynUsersRepository;
         let users_service = Arc::new(ConduitUsersService::new(
             users_repository.clone(),
             security_service,
             token_service.clone(),
         )) as DynUsersService;
 
-        let profiles_repository =
-            Arc::new(PostgresProfilesRepository::new(pool.clone())) as DynProfilesRepository;
+        let profiles_repository = Arc::new(PostgresProfilesRepository::new(pool.clone())) as DynProfilesRepository;
         let profiles_service = Arc::new(ConduitProfilesService::new(
             users_repository.clone(),
             profiles_repository,
         )) as DynProfilesService;
 
-        let tags_repository =
-            Arc::new(PostgresTagsRepository::new(pool.clone())) as DynTagsRepository;
-        let tags_service =
-            Arc::new(ConduitTagsService::new(tags_repository.clone())) as DynTagsService;
+        let tags_repository = Arc::new(PostgresTagsRepository::new(pool.clone())) as DynTagsRepository;
+        let tags_service = Arc::new(ConduitTagsService::new(tags_repository.clone())) as DynTagsService;
 
-        let articles_repository =
-            Arc::new(PostgresArticlesRepository::new(pool.clone())) as DynArticlesRepository;
+        let articles_repository = Arc::new(PostgresArticlesRepository::new(pool.clone())) as DynArticlesRepository;
         let articles_service = Arc::new(ConduitArticlesService::new(
             articles_repository.clone(),
             tags_repository,
         )) as DynArticlesService;
 
-        let comments_repository =
-            Arc::new(PostgresCommentsRepository::new(pool)) as DynCommentsRepository;
-        let comments_service = Arc::new(ConduitCommentsService::new(
-            comments_repository,
-            articles_repository,
-        )) as DynCommentsService;
+        let comments_repository = Arc::new(PostgresCommentsRepository::new(pool)) as DynCommentsRepository;
+        let comments_service =
+            Arc::new(ConduitCommentsService::new(comments_repository, articles_repository)) as DynCommentsService;
 
         info!("feature services successfully initialized!");
 

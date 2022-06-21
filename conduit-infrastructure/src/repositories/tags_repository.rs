@@ -29,10 +29,7 @@ impl TagsRepository for PostgresTagsRepository {
         let mut query_builder = QueryBuilder::new("select id, tag, created_at from tags ");
 
         if !tags.is_empty() {
-            query_builder
-                .push("where tag = any(")
-                .push_bind(tags)
-                .push(")");
+            query_builder.push("where tag = any(").push_bind(tags).push(")");
         }
 
         query_builder
@@ -68,10 +65,7 @@ impl TagsRepository for PostgresTagsRepository {
             .context("an unexpected error occurred while creating article tags")
     }
 
-    async fn get_article_tags_by_article_id(
-        &self,
-        article_id: i64,
-    ) -> anyhow::Result<Vec<ArticleTagQuery>> {
+    async fn get_article_tags_by_article_id(&self, article_id: i64) -> anyhow::Result<Vec<ArticleTagQuery>> {
         query_as!(
             ArticleTagQuery,
             r#"
@@ -91,10 +85,7 @@ impl TagsRepository for PostgresTagsRepository {
         .context("an unexpected error occurred while retrieving tags")
     }
 
-    async fn get_article_tags_article_ids(
-        &self,
-        article_ids: Vec<i64>,
-    ) -> anyhow::Result<Vec<ArticleTagQuery>> {
+    async fn get_article_tags_article_ids(&self, article_ids: Vec<i64>) -> anyhow::Result<Vec<ArticleTagQuery>> {
         query_as!(
             ArticleTagQuery,
             r#"
@@ -115,8 +106,7 @@ impl TagsRepository for PostgresTagsRepository {
     }
 
     async fn create_article_tags(&self, tags: Vec<(i64, i64)>) -> anyhow::Result<()> {
-        let mut query_builder =
-            QueryBuilder::new("insert into article_tags (tag_id, article_id, created_at) ");
+        let mut query_builder = QueryBuilder::new("insert into article_tags (tag_id, article_id, created_at) ");
 
         query_builder.push_values(tags, |mut builder, (tag_id, article_id)| {
             builder

@@ -10,9 +10,6 @@ pub type DynSecurityService = Arc<dyn SecurityService + Send + Sync>;
 #[automock]
 pub trait SecurityService {
     fn hash_password(&self, raw_password: &str) -> ConduitResult<String>;
-    fn verify_password(
-        &self,
-        stored_password: &str,
-        attempted_password: String,
-    ) -> ConduitResult<bool>;
+
+    fn verify_password(&self, stored_password: &str, attempted_password: String) -> ConduitResult<bool>;
 }

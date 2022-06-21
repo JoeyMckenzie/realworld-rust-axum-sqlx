@@ -44,24 +44,17 @@ impl UsersService for ConduitUsersService {
 
         if existing_user.is_some() {
             error!("user {:?}/{:?} already exists", email, username);
-            return Err(ConduitError::ObjectConflict(String::from(
-                "username or email is taken",
-            )));
+            return Err(ConduitError::ObjectConflict(String::from("username or email is taken")));
         }
 
         info!("creating password hash for user {:?}", email);
         let hashed_password = self.security_service.hash_password(&password)?;
 
         info!("password hashed successfully, creating user {:?}", email);
-        let created_user = self
-            .repository
-            .create_user(&email, &username, &hashed_password)
-            .await?;
+        let created_user = self.repository.create_user(&email, &username, &hashed_password).await?;
 
         info!("user successfully created, generating token");
-        let token = self
-            .token_service
-            .new_token(created_user.id, &created_user.email)?;
+        let token = self.token_service.new_token(created_user.id, &created_user.email)?;
 
         Ok(created_user.into_dto(token))
     }
@@ -74,9 +67,7 @@ impl UsersService for ConduitUsersService {
         let existing_user = self.repository.get_user_by_email(&email).await?;
 
         if existing_user.is_none() {
-            return Err(ConduitError::NotFound(String::from(
-                "user email does not exist",
-            )));
+            return Err(ConduitError::NotFound(String::from("user email does not exist")));
         }
 
         let user = existing_user.unwrap();
@@ -101,10 +92,7 @@ impl UsersService for ConduitUsersService {
         info!("retrieving user {:?}", user_id);
         let user = self.repository.get_user_by_id(user_id).await?;
 
-        info!(
-            "user found with email {:?}, generating new token",
-            user.email
-        );
+        info!("user found with email {:?}, generating new token", user.email);
         let token = self.token_service.new_token(user.id, user.email.as_str())?;
 
         Ok(user.into_dto(token))
@@ -141,9 +129,7 @@ impl UsersService for ConduitUsersService {
             .await?;
 
         info!("user {:?} updated, generating a new token", user_id);
-        let token = self
-            .token_service
-            .new_token(user_id, updated_email.as_str())?;
+        let token = self.token_service.new_token(user_id, updated_email.as_str())?;
 
         Ok(updated_user.into_dto(token))
     }

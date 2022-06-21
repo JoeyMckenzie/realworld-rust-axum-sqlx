@@ -54,11 +54,7 @@ impl ProfilesRepository for PostgresProfilesRepository {
         .context("an unexpected error occured retrieving user followers")
     }
 
-    async fn add_user_follow(
-        &self,
-        follower_id: i64,
-        followee_id: i64,
-    ) -> anyhow::Result<UserFollowEntity> {
+    async fn add_user_follow(&self, follower_id: i64, followee_id: i64) -> anyhow::Result<UserFollowEntity> {
         query_as!(
             UserFollowEntity,
             r#"

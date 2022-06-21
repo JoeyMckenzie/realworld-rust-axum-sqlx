@@ -40,8 +40,7 @@ where
 
                 let token_value = tokenized_value.into_iter().nth(1).unwrap();
 
-                if let Ok(user_id) = token_service.get_user_id_from_token(String::from(token_value))
-                {
+                if let Ok(user_id) = token_service.get_user_id_from_token(String::from(token_value)) {
                     return Ok(OptionalAuthentication(Some(user_id)));
                 }
             }

@@ -15,10 +15,7 @@ pub struct ConduitArticlesService {
 }
 
 impl ConduitArticlesService {
-    pub fn new(
-        articles_repository: DynArticlesRepository,
-        tags_repository: DynTagsRepository,
-    ) -> Self {
+    pub fn new(articles_repository: DynArticlesRepository, tags_repository: DynTagsRepository) -> Self {
         Self {
             articles_repository,
             tags_repository,
@@ -100,9 +97,7 @@ impl ArticlesService for ConduitArticlesService {
             .collect_vec();
 
         // finally, create the article tags
-        self.tags_repository
-            .create_article_tags(article_tags_to_create)
-            .await?;
+        self.tags_repository.create_article_tags(article_tags_to_create).await?;
 
         Ok(created_article.into_dto(deduped_tag_list))
     }
@@ -121,10 +116,7 @@ impl ArticlesService for ConduitArticlesService {
         if let Some(new_title) = title {
             updated_title = new_title;
 
-            info!(
-                "verifying article {:?} does not already exist",
-                updated_title
-            );
+            info!("verifying article {:?} does not already exist", updated_title);
 
             let article_with_updated_slug_exists = self
                 .articles_repository
@@ -206,16 +198,10 @@ impl ArticlesService for ConduitArticlesService {
 
     async fn get_article(&self, user_id: Option<i64>, slug: String) -> ConduitResult<ArticleDto> {
         info!("retrieving article {:?}", slug);
-        let article = self
-            .articles_repository
-            .get_article_by_slug(user_id, slug)
-            .await?;
+        let article = self.articles_repository.get_article_by_slug(user_id, slug).await?;
 
         if let Some(existing_article) = article {
-            info!(
-                "retrieving article tags for article {:?}",
-                existing_article.id
-            );
+            info!("retrieving article tags for article {:?}", existing_article.id);
             let article_tags = self
                 .tags_repository
                 .get_article_tags_by_article_id(existing_article.id)
@@ -230,12 +216,7 @@ impl ArticlesService for ConduitArticlesService {
         Err(ConduitError::NotFound(String::from("article not found")))
     }
 
-    async fn get_feed(
-        &self,
-        user_id: i64,
-        limit: i64,
-        offset: i64,
-    ) -> ConduitResult<Vec<ArticleDto>> {
+    async fn get_feed(&self, user_id: i64, limit: i64, offset: i64) -> ConduitResult<Vec<ArticleDto>> {
         let articles = self
             .articles_repository
             .get_articles(Some(user_id), None, None, None, limit, offset)
@@ -245,10 +226,7 @@ impl ArticlesService for ConduitArticlesService {
     }
 
     async fn delete_article(&self, user_id: i64, slug: String) -> ConduitResult<()> {
-        let article = self
-            .articles_repository
-            .get_article_by_slug(None, slug)
-            .await?;
+        let article = self.articles_repository.get_article_by_slug(None, slug).await?;
 
         if let Some(existing_article) = article {
             // verify the user IDs match on the request and the article
@@ -256,24 +234,17 @@ impl ArticlesService for ConduitArticlesService {
                 return Err(ConduitError::Unauthorized);
             }
 
-            self.articles_repository
-                .delete_article(existing_article.id)
-                .await?;
+            self.articles_repository.delete_article(existing_article.id).await?;
 
             return Ok(());
         }
 
-        Err(ConduitError::NotFound(String::from(
-            "article was not found",
-        )))
+        Err(ConduitError::NotFound(String::from("article was not found")))
     }
 
     async fn favorite_article(&self, user_id: i64, slug: String) -> ConduitResult<ArticleDto> {
         // verify the article exists before attempting to favorite
-        let article = self
-            .articles_repository
-            .get_article_by_slug(None, slug)
-            .await?;
+        let article = self.articles_repository.get_article_by_slug(None, slug).await?;
 
         if let Some(mut existing_article) = article {
             // verify the user has not already favorited the article - alternatively, query for the article favorite by user ID and article ID
@@ -285,10 +256,7 @@ impl ArticlesService for ConduitArticlesService {
                 .any(|favorite| favorite.user_id == user_id);
 
             if !has_favorited {
-                info!(
-                    "favoriting article {:?} for user {:?}",
-                    existing_article.id, user_id
-                );
+                info!("favoriting article {:?} for user {:?}", existing_article.id, user_id);
                 existing_article = self
                     .articles_repository
                     .favorite_article(existing_article.id, user_id)
@@ -306,23 +274,15 @@ impl ArticlesService for ConduitArticlesService {
             return Ok(existing_article.into_dto(article_tags));
         }
 
-        Err(ConduitError::NotFound(String::from(
-            "article was not found",
-        )))
+        Err(ConduitError::NotFound(String::from("article was not found")))
     }
 
     async fn unfavorite_article(&self, user_id: i64, slug: String) -> ConduitResult<ArticleDto> {
         // verify the article exists before attempting to unfavorite
-        let article = self
-            .articles_repository
-            .get_article_by_slug(None, slug)
-            .await?;
+        let article = self.articles_repository.get_article_by_slug(None, slug).await?;
 
         if let Some(existing_article) = article {
-            info!(
-                "unfavoriting article {:?} for user {:?}",
-                existing_article.id, user_id
-            );
+            info!("unfavoriting article {:?} for user {:?}", existing_article.id, user_id);
             let updated_article = self
                 .articles_repository
                 .unfavorite_article(existing_article.id, user_id)
@@ -339,17 +299,12 @@ impl ArticlesService for ConduitArticlesService {
             return Ok(updated_article.into_dto(article_tags));
         }
 
-        Err(ConduitError::NotFound(String::from(
-            "article was not found",
-        )))
+        Err(ConduitError::NotFound(String::from("article was not found")))
     }
 }
 
 impl ConduitArticlesService {
-    async fn map_to_articles(
-        &self,
-        articles: Vec<GetArticleQuery>,
-    ) -> ConduitResult<Vec<ArticleDto>> {
+    async fn map_to_articles(&self, articles: Vec<GetArticleQuery>) -> ConduitResult<Vec<ArticleDto>> {
         info!("found {} articles in feed", articles.len());
 
         let mut mapped_articles: Vec<ArticleDto> = Vec::new();
@@ -357,10 +312,7 @@ impl ConduitArticlesService {
         if !articles.is_empty() {
             let article_ids = articles.iter().map(|article| article.id).collect_vec();
 
-            let associated_article_tags = self
-                .tags_repository
-                .get_article_tags_article_ids(article_ids)
-                .await?;
+            let associated_article_tags = self.tags_repository.get_article_tags_article_ids(article_ids).await?;
 
             for article in articles {
                 let article_tags = associated_article_tags

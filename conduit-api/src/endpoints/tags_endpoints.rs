@@ -17,9 +17,7 @@ impl TagsRouter {
     }
 }
 
-pub async fn get_tags(
-    Extension(tags_service): Extension<DynTagsService>,
-) -> ConduitResult<Json<TagsResponse>> {
+pub async fn get_tags(Extension(tags_service): Extension<DynTagsService>) -> ConduitResult<Json<TagsResponse>> {
     info!("recieved request to retrieve all tags");
 
     let tags = tags_service.get_tags().await?;

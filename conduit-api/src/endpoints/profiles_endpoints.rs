@@ -69,9 +69,7 @@ pub async fn unfollow_user(
         username, user_id
     );
 
-    let profile = profiles_service
-        .remove_user_follow(username, user_id)
-        .await?;
+    let profile = profiles_service.remove_user_follow(username, user_id).await?;
 
     Ok(Json(ProfileResponse { profile }))
 }

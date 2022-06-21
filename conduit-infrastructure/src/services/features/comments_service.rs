@@ -13,10 +13,7 @@ pub struct ConduitCommentsService {
 }
 
 impl ConduitCommentsService {
-    pub fn new(
-        comments_repository: DynCommentsRepository,
-        articles_repository: DynArticlesRepository,
-    ) -> Self {
+    pub fn new(comments_repository: DynCommentsRepository, articles_repository: DynArticlesRepository) -> Self {
         Self {
             comments_repository,
             articles_repository,
@@ -26,16 +23,9 @@ impl ConduitCommentsService {
 
 #[async_trait]
 impl CommentsService for ConduitCommentsService {
-    async fn get_comments(
-        &self,
-        user_id: Option<i64>,
-        slug: String,
-    ) -> ConduitResult<Vec<CommentDto>> {
+    async fn get_comments(&self, user_id: Option<i64>, slug: String) -> ConduitResult<Vec<CommentDto>> {
         // verify the article exists before adding comments
-        let article = self
-            .articles_repository
-            .get_article_by_slug(None, slug)
-            .await?;
+        let article = self.articles_repository.get_article_by_slug(None, slug).await?;
 
         if let Some(existing_article) = article {
             let comments = self
@@ -49,22 +39,12 @@ impl CommentsService for ConduitCommentsService {
             return Ok(comments);
         }
 
-        return Err(ConduitError::NotFound(String::from(
-            "article not found for comments",
-        )));
+        return Err(ConduitError::NotFound(String::from("article not found for comments")));
     }
 
-    async fn add_comment(
-        &self,
-        user_id: i64,
-        slug: String,
-        body: String,
-    ) -> ConduitResult<CommentDto> {
+    async fn add_comment(&self, user_id: i64, slug: String, body: String) -> ConduitResult<CommentDto> {
         // verify the article exists before adding comments
-        let article = self
-            .articles_repository
-            .get_article_by_slug(None, slug)
-            .await?;
+        let article = self.articles_repository.get_article_by_slug(None, slug).await?;
 
         if let Some(existing_article) = article {
             let comments = self
@@ -76,9 +56,7 @@ impl CommentsService for ConduitCommentsService {
             return Ok(comments);
         }
 
-        return Err(ConduitError::NotFound(String::from(
-            "article not found for comments",
-        )));
+        return Err(ConduitError::NotFound(String::from("article not found for comments")));
     }
 
     async fn remove_comment(&self, user_id: i64, comment_id: i64) -> ConduitResult<()> {

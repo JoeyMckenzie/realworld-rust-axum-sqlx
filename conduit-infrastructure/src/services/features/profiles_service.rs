@@ -14,10 +14,7 @@ pub struct ConduitProfilesService {
 }
 
 impl ConduitProfilesService {
-    pub fn new(
-        users_repository: DynUsersRepository,
-        profiles_repository: DynProfilesRepository,
-    ) -> Self {
+    pub fn new(users_repository: DynUsersRepository, profiles_repository: DynProfilesRepository) -> Self {
         Self {
             users_repository,
             profiles_repository,
@@ -27,18 +24,12 @@ impl ConduitProfilesService {
 
 #[async_trait]
 impl ProfilesService for ConduitProfilesService {
-    async fn get_profile(
-        &self,
-        username: &str,
-        current_user_id: Option<i64>,
-    ) -> ConduitResult<ProfileDto> {
+    async fn get_profile(&self, username: &str, current_user_id: Option<i64>) -> ConduitResult<ProfileDto> {
         info!("retrieving profile for user {:?}", username);
         let user = self.users_repository.get_user_by_username(username).await?;
 
         if user.is_none() {
-            return Err(ConduitError::NotFound(String::from(
-                "profile was not found",
-            )));
+            return Err(ConduitError::NotFound(String::from("profile was not found")));
         }
 
         // in the case a token is passed and validly extracted, pull the list of users they're following to see if the profile is included
@@ -60,11 +51,7 @@ impl ProfilesService for ConduitProfilesService {
         Ok(user.unwrap().into_profile(false))
     }
 
-    async fn add_user_follow(
-        &self,
-        username: &str,
-        current_user_id: i64,
-    ) -> ConduitResult<ProfileDto> {
+    async fn add_user_follow(&self, username: &str, current_user_id: i64) -> ConduitResult<ProfileDto> {
         info!(
             "add profile follow to user {:?} from user ID {:?}",
             username, current_user_id
@@ -72,9 +59,7 @@ impl ProfilesService for ConduitProfilesService {
         let user = self.users_repository.get_user_by_username(username).await?;
 
         if user.is_none() {
-            return Err(ConduitError::NotFound(String::from(
-                "profile to follow was not found",
-            )));
+            return Err(ConduitError::NotFound(String::from("profile to follow was not found")));
         }
 
         let followed_user = user.unwrap();
@@ -96,11 +81,7 @@ impl ProfilesService for ConduitProfilesService {
         Ok(followed_user.into_profile(true))
     }
 
-    async fn remove_user_follow(
-        &self,
-        username: &str,
-        current_user_id: i64,
-    ) -> ConduitResult<ProfileDto> {
+    async fn remove_user_follow(&self, username: &str, current_user_id: i64) -> ConduitResult<ProfileDto> {
         info!(
             "removing profile follow to user {:?} from user ID {:?}",
             username, current_user_id
@@ -108,9 +89,7 @@ impl ProfilesService for ConduitProfilesService {
         let user = self.users_repository.get_user_by_username(username).await?;
 
         if user.is_none() {
-            return Err(ConduitError::NotFound(String::from(
-                "profile to follow was not found",
-            )));
+            return Err(ConduitError::NotFound(String::from("profile to follow was not found")));
         }
 
         let followed_user = user.unwrap();

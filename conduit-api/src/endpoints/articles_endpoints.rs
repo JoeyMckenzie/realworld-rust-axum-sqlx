@@ -71,10 +71,7 @@ pub async fn get_article_feed(
     Extension(articles_service): Extension<DynArticlesService>,
     RequiredAuthentication(user_id): RequiredAuthentication,
 ) -> ConduitResult<Json<ArticlesResponse>> {
-    info!(
-        "recieved request to retrieve article feed for user {:?}",
-        user_id
-    );
+    info!("recieved request to retrieve article feed for user {:?}", user_id);
 
     let articles = articles_service
         .get_feed(
@@ -186,10 +183,7 @@ pub async fn get_comments(
     Extension(comments_service): Extension<DynCommentsService>,
     OptionalAuthentication(user_id): OptionalAuthentication,
 ) -> ConduitResult<Json<CommentsResponse>> {
-    info!(
-        "recieved request to retrieve comments for article {:?}",
-        slug
-    );
+    info!("recieved request to retrieve comments for article {:?}", slug);
 
     let comments = comments_service.get_comments(user_id, slug).await?;
 

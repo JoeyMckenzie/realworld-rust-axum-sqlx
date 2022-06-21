@@ -23,9 +23,7 @@ where
             .map_err(|err| ConduitError::InternalServerErrorWithContext(err.to_string()))?;
 
         if let Some(authorization_header) = request.headers().get(AUTHORIZATION) {
-            let header_value = authorization_header
-                .to_str()
-                .map_err(|_| ConduitError::Unauthorized)?;
+            let header_value = authorization_header.to_str().map_err(|_| ConduitError::Unauthorized)?;
 
             if !header_value.contains("Token") {
                 error!("request does not contain valid 'Token' prefix for authorization");

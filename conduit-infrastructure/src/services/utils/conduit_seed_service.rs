@@ -58,27 +58,15 @@ impl ConduitSeedService {
 
         info!("seeding users...");
         let created_user_1 = self
-            .create_user(
-                *TEST_USER_1_USERNAME,
-                *TEST_USER_1_EMAIL,
-                *TEST_USER_1_PASSWORD,
-            )
+            .create_user(*TEST_USER_1_USERNAME, *TEST_USER_1_EMAIL, *TEST_USER_1_PASSWORD)
             .await?;
 
         let created_user_2 = self
-            .create_user(
-                *TEST_USER_2_USERNAME,
-                *TEST_USER_2_EMAIL,
-                *TEST_USER_2_PASSWORD,
-            )
+            .create_user(*TEST_USER_2_USERNAME, *TEST_USER_2_EMAIL, *TEST_USER_2_PASSWORD)
             .await?;
 
         let created_user_3 = self
-            .create_user(
-                *TEST_USER_3_USERNAME,
-                *TEST_USER_3_EMAIL,
-                *TEST_USER_3_PASSWORD,
-            )
+            .create_user(*TEST_USER_3_USERNAME, *TEST_USER_3_EMAIL, *TEST_USER_3_PASSWORD)
             .await?;
 
         info!("users created, seeding user follows...");

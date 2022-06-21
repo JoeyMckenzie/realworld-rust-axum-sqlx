@@ -46,12 +46,7 @@ impl UsersRepository for PostgresUsersRepository {
         .context("an unexpected error occured while search for users")
     }
 
-    async fn create_user(
-        &self,
-        email: &str,
-        username: &str,
-        hashed_password: &str,
-    ) -> anyhow::Result<UserEntity> {
+    async fn create_user(&self, email: &str, username: &str, hashed_password: &str) -> anyhow::Result<UserEntity> {
         query_as!(
             UserEntity,
             r#"

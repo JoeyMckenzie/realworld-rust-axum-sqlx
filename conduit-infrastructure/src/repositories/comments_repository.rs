@@ -18,11 +18,7 @@ impl PostgresCommentsRepository {
 
 #[async_trait]
 impl CommentsRepository for PostgresCommentsRepository {
-    async fn get_comments(
-        &self,
-        user_id: Option<i64>,
-        article_id: i64,
-    ) -> anyhow::Result<Vec<CommentQuery>> {
+    async fn get_comments(&self, user_id: Option<i64>, article_id: i64) -> anyhow::Result<Vec<CommentQuery>> {
         query_as!(
             CommentQuery,
             r#"
@@ -63,12 +59,7 @@ impl CommentsRepository for PostgresCommentsRepository {
         .context("an unexpected error occurred while creating comment")
     }
 
-    async fn create_comment(
-        &self,
-        article_id: i64,
-        user_id: i64,
-        body: String,
-    ) -> anyhow::Result<CommentQuery> {
+    async fn create_comment(&self, article_id: i64, user_id: i64, body: String) -> anyhow::Result<CommentQuery> {
         query_as!(
             CommentQuery,
             r#"

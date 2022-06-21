@@ -41,30 +41,15 @@ pub trait ArticlesRepository {
         offset: i64,
     ) -> anyhow::Result<Vec<GetArticleQuery>>;
 
-    async fn get_article_by_slug(
-        &self,
-        user_id: Option<i64>,
-        slug: String,
-    ) -> anyhow::Result<Option<GetArticleQuery>>;
+    async fn get_article_by_slug(&self, user_id: Option<i64>, slug: String) -> anyhow::Result<Option<GetArticleQuery>>;
 
     async fn delete_article(&self, id: i64) -> anyhow::Result<()>;
 
-    async fn favorite_article(
-        &self,
-        article_id: i64,
-        user_id: i64,
-    ) -> anyhow::Result<GetArticleQuery>;
+    async fn favorite_article(&self, article_id: i64, user_id: i64) -> anyhow::Result<GetArticleQuery>;
 
-    async fn unfavorite_article(
-        &self,
-        article_id: i64,
-        user_id: i64,
-    ) -> anyhow::Result<GetArticleQuery>;
+    async fn unfavorite_article(&self, article_id: i64, user_id: i64) -> anyhow::Result<GetArticleQuery>;
 
-    async fn get_user_favorites(
-        &self,
-        article_id: i64,
-    ) -> anyhow::Result<Vec<GetArticleFavoritesQuery>>;
+    async fn get_user_favorites(&self, article_id: i64) -> anyhow::Result<Vec<GetArticleFavoritesQuery>>;
 }
 
 #[derive(FromRow)]

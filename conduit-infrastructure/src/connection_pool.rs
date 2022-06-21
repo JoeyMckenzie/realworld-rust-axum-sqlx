@@ -8,10 +8,7 @@ pub type ConduitConnectionPool = Pool<Postgres>;
 pub struct ConduitConnectionManager;
 
 impl ConduitConnectionManager {
-    pub async fn new_pool(
-        connection_string: &str,
-        run_migrations: bool,
-    ) -> anyhow::Result<ConduitConnectionPool> {
+    pub async fn new_pool(connection_string: &str, run_migrations: bool) -> anyhow::Result<ConduitConnectionPool> {
         let pool = PgPoolOptions::new()
             .max_connections(5)
             .connect(connection_string)
