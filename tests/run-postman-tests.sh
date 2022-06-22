@@ -14,11 +14,11 @@ ITERATIONS=1
 
 for ((current_iteration = 1; current_iteration <= ITERATIONS; current_iteration++))
 do
- npx newman run "$SCRIPTDIR"/Conduit.postman_collection.json \
- --delay-request 500 \
- --global-var "APIURL=$APIURL" \
- --global-var "USERNAME=$USERNAME" \
- --global-var "EMAIL=$EMAIL" \
- --global-var "PASSWORD=$PASSWORD" \
- "$@"
+  npx newman run "$SCRIPTDIR"/Conduit.postman_collection.json \
+  --delay-request 500 \
+  --global-var "APIURL=$APIURL" \
+  --global-var "USERNAME=$USERNAME" \
+  --global-var "EMAIL=$EMAIL" \
+  --global-var "PASSWORD=$PASSWORD" \
+  "$@"
 done
