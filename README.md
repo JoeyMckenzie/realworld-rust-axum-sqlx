@@ -85,10 +85,6 @@ make dev # or cargo run
 If you're starting the application for the first time, it will attempt to seed a bit of data that is also used for
 testing.
 
-## Running integration tests
-
-The Postan integration tests are
-
 ## TODO
 
 There's a lot more unit tests to write...
