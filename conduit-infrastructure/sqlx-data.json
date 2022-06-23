@@ -236,6 +236,105 @@
     },
     "query": "\n        select *\n        from users\n        where id = $1\n            "
   },
+  "32795420ebbbe531e0cd2ebae8e6e2306aafd5533a4310053c1ee298ec429aff": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at!",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at!",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "title!",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "body!",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "description!",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "slug!",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "user_id!",
+          "ordinal": 7,
+          "type_info": "Int8"
+        },
+        {
+          "name": "favorited!",
+          "ordinal": 8,
+          "type_info": "Bool"
+        },
+        {
+          "name": "favorites!",
+          "ordinal": 9,
+          "type_info": "Int8"
+        },
+        {
+          "name": "following_author!",
+          "ordinal": 10,
+          "type_info": "Bool"
+        },
+        {
+          "name": "author_username!",
+          "ordinal": 11,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_bio!",
+          "ordinal": 12,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_image!",
+          "ordinal": 13,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null,
+        null,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Varchar"
+        ]
+      }
+    },
+    "query": "select a.id                                                          as \"id!\",\r\n       a.created_at                                                  as \"created_at!\",\r\n       a.updated_at                                                  as \"updated_at!\",\r\n       a.title                                                       as \"title!\",\r\n       a.body                                                        as \"body!\",\r\n       a.description                                                 as \"description!\",\r\n       a.slug                                                        as \"slug!\",\r\n       u.id                                                          as \"user_id!\",\r\n       exists(\r\n               select 1 from user_favorites af where af.user_id = $1::bigint and af.article_id = a.id\r\n           )                                                         as \"favorited!\",\r\n       (select count(*) from user_favorites where article_id = a.id) as \"favorites!\",\r\n       exists(select 1\r\n              from user_follows\r\n              where followee_id = a.user_id\r\n                and follower_id = $1::bigint)                           \"following_author!\",\r\n       u.username                                                    as \"author_username!\",\r\n       u.bio                                                         as \"author_bio!\",\r\n       u.image                                                       as \"author_image!\"\r\nfrom articles a\r\n         join users u on u.id = a.user_id\r\nwhere a.slug = $2::varchar;"
+  },
   "3433283c36f15c79087bbbb4e291f7c2ec9d794b94d834cd98ca1474c38d4ea0": {
     "describe": {
       "columns": [
@@ -298,84 +397,6 @@
       }
     },
     "query": "\n        select c.id as \"id!\",\n               c.body as \"body!\",\n               c.created_at as \"created_at!\",\n               c.updated_at as \"updated_at!\",\n               u.username as \"author_username!\",\n               u.bio as \"author_bio!\",\n               u.image as \"author_image!\",\n               exists(select 1 from user_follows uf where (\n                   $1::bigint is null or (uf.followee_id, uf.follower_id) = ($1::bigint, c.user_id))\n               ) as \"following_author!\"\n        from comments c\n        join users u on c.user_id = u.id\n        where c.article_id = $2\n            "
-  },
-  "3d3496a1a7cb49b581a97e73e41126f79448cf07462e24bd76a4a5b47bd5275b": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id!",
-          "ordinal": 0,
-          "type_info": "Int8"
-        },
-        {
-          "name": "created_at!",
-          "ordinal": 1,
-          "type_info": "Timestamptz"
-        },
-        {
-          "name": "updated_at!",
-          "ordinal": 2,
-          "type_info": "Timestamptz"
-        },
-        {
-          "name": "title!",
-          "ordinal": 3,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "body!",
-          "ordinal": 4,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "slug!",
-          "ordinal": 5,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "description!",
-          "ordinal": 6,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "author_username!",
-          "ordinal": 7,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "author_bio!",
-          "ordinal": 8,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "author_image!",
-          "ordinal": 9,
-          "type_info": "Varchar"
-        }
-      ],
-      "nullable": [
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true,
-        true
-      ],
-      "parameters": {
-        "Left": [
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Int8"
-        ]
-      }
-    },
-    "query": "\n    with updated_article_cte as (\n        update articles\n        set updated_at = current_timestamp,\n            title = $1::varchar,\n            slug = $2::varchar,\n            description = $3::varchar,\n            body = $4::varchar\n        where id = $5\n        returning *\n    ) select a.id as \"id!\",\n             a.created_at as \"created_at!\",\n             a.updated_at as \"updated_at!\",\n             a.title as \"title!\",\n             a.body as \"body!\",\n             a.slug as \"slug!\",\n             a.description as \"description!\",\n             u.username as \"author_username!\",\n             u.bio as \"author_bio!\",\n             u.image as \"author_image!\"\n    from updated_article_cte a\n    join users u on u.id = a.user_id\n            "
   },
   "47f2bab4a7715a86562caafa224e4f9e37a49a31cf83c1ce61d3de8e35a7ce7c": {
     "describe": {
@@ -547,7 +568,7 @@
     },
     "query": "\n        select id,\n               article_id,\n               user_id\n        from user_favorites\n        where article_id = $1::bigint\n            "
   },
-  "5d8ec439b44ae9a70c5f424800f5b71f74e8774bb9e0f2e3756f3ebd5aa6b03a": {
+  "5ebf2578d2d2994c92e65d6360e228e17e411939b9ebe43dd1803a858031d266": {
     "describe": {
       "columns": [
         {
@@ -576,75 +597,54 @@
           "type_info": "Varchar"
         },
         {
-          "name": "description!",
+          "name": "slug!",
           "ordinal": 5,
           "type_info": "Varchar"
         },
         {
-          "name": "slug!",
+          "name": "description!",
           "ordinal": 6,
           "type_info": "Varchar"
         },
         {
-          "name": "user_id!",
-          "ordinal": 7,
-          "type_info": "Int8"
-        },
-        {
-          "name": "favorited!",
-          "ordinal": 8,
-          "type_info": "Bool"
-        },
-        {
-          "name": "favorites!",
-          "ordinal": 9,
-          "type_info": "Int8"
-        },
-        {
-          "name": "following_author!",
-          "ordinal": 10,
-          "type_info": "Bool"
-        },
-        {
           "name": "author_username!",
-          "ordinal": 11,
+          "ordinal": 7,
           "type_info": "Varchar"
         },
         {
           "name": "author_bio!",
-          "ordinal": 12,
+          "ordinal": 8,
           "type_info": "Varchar"
         },
         {
           "name": "author_image!",
-          "ordinal": 13,
+          "ordinal": 9,
           "type_info": "Varchar"
         }
       ],
       "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        null,
-        null,
-        null,
-        false,
-        false,
-        false
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
       ],
       "parameters": {
         "Left": [
-          "Int8",
-          "Varchar"
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Int8"
         ]
       }
     },
-    "query": "\n        select a.id as \"id!\",\n               a.created_at as \"created_at!\",\n               a.updated_at as \"updated_at!\",\n               a.title as \"title!\",\n               a.body as \"body!\",\n               a.description as \"description!\",\n               a.slug as \"slug!\",\n               u.id as \"user_id!\",\n               exists(select 1 from user_favorites af where af.user_id = $1 and af.article_id = a.id) as \"favorited!\",\n               (select count(*) from user_favorites where article_id = a.id) as \"favorites!\",\n               exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) \"following_author!\",\n               u.username as \"author_username!\",\n               u.bio as \"author_bio!\",\n               u.image as \"author_image!\"\n        from articles a\n        join users u on u.id = a.user_id\n        where a.slug = $2::varchar\n            "
+    "query": "with updated_article_cte as (\r\n    update articles\r\n        set updated_at = current_timestamp,\r\n            title = $1::varchar,\r\n            slug = $2::varchar,\r\n            description = $3::varchar,\r\n            body = $4::varchar\r\n        where id = $5\r\n        returning id as \"id\",\r\n            created_at as \"created_at\",\r\n            updated_at as \"updated_at\",\r\n            title as \"title\",\r\n            body as \"body\",\r\n            slug as \"slug\",\r\n            description as \"description\",\r\n            user_id as \"user_id\")\r\nselect a.id          as \"id!\",\r\n       a.created_at  as \"created_at!\",\r\n       a.updated_at  as \"updated_at!\",\r\n       a.title       as \"title!\",\r\n       a.body        as \"body!\",\r\n       a.slug        as \"slug!\",\r\n       a.description as \"description!\",\r\n       u.username    as \"author_username!\",\r\n       u.bio         as \"author_bio!\",\r\n       u.image       as \"author_image!\"\r\nfrom updated_article_cte a\r\n         join users u on u.id = a.user_id;"
   },
   "6ae4afb2c573f74d972cd395a3d8f25c3a1bfd7b61ca584e939a49f4709fa044": {
     "describe": {
@@ -931,7 +931,110 @@
     },
     "query": "\n        insert into users (created_at, updated_at, username, email, password, bio, image)\n        values (current_timestamp, current_timestamp, $1::varchar, $2::varchar, $3::varchar, '', '')\n        returning *\n            "
   },
-  "9bbc0afec98c632e00c85feeb4dcb5ccaea88339f7e20ebb61a9ecd8ead8d0f4": {
+  "9a92439c434aebf14b6d0c424eb41da29a92515e5d37684017633afc4dcc335b": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id!",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "created_at!",
+          "ordinal": 1,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "updated_at!",
+          "ordinal": 2,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "title!",
+          "ordinal": 3,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "body!",
+          "ordinal": 4,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "description!",
+          "ordinal": 5,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "slug!",
+          "ordinal": 6,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "user_id!",
+          "ordinal": 7,
+          "type_info": "Int8"
+        },
+        {
+          "name": "favorited!",
+          "ordinal": 8,
+          "type_info": "Bool"
+        },
+        {
+          "name": "favorites!",
+          "ordinal": 9,
+          "type_info": "Int8"
+        },
+        {
+          "name": "following_author!",
+          "ordinal": 10,
+          "type_info": "Bool"
+        },
+        {
+          "name": "author_username!",
+          "ordinal": 11,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_bio!",
+          "ordinal": 12,
+          "type_info": "Varchar"
+        },
+        {
+          "name": "author_image!",
+          "ordinal": 13,
+          "type_info": "Varchar"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        null,
+        null,
+        null,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Varchar",
+          "Varchar",
+          "Varchar",
+          "Int4",
+          "Int4"
+        ]
+      }
+    },
+    "query": "select a.id                                                                                           as \"id!\",\r\n       a.created_at                                                                                   as \"created_at!\",\r\n       a.updated_at                                                                                   as \"updated_at!\",\r\n       a.title                                                                                        as \"title!\",\r\n       a.body                                                                                         as \"body!\",\r\n       a.description                                                                                  as \"description!\",\r\n       a.slug                                                                                         as \"slug!\",\r\n       u.id                                                                                           as \"user_id!\",\r\n       exists(select 1 from user_favorites af where af.user_id = $1::bigint and af.article_id = a.id) as \"favorited!\",\r\n       (select count(*) from user_favorites where article_id = a.id)                                  as \"favorites!\",\r\n       exists(select 1\r\n              from user_follows\r\n              where followee_id = a.user_id\r\n                and follower_id = $1::bigint)                                                            \"following_author!\",\r\n       u.username                                                                                     as \"author_username!\",\r\n       u.bio                                                                                          as \"author_bio!\",\r\n       u.image                                                                                        as \"author_image!\"\r\nfrom articles a\r\n         join users u on u.id = a.user_id\r\n     -- filter on users for the author\r\nwhere ($2::varchar is null or $2::varchar = u.username)\r\n  -- filter on tags, if applicable\r\n  and ($3::varchar is null or exists(\r\n        select 1\r\n        from tags t\r\n                 join article_tags at on (t.id, a.id) = (at.tag_id, at.article_id)\r\n        where tag = $3::varchar\r\n    ))\r\n  -- filter on the favoriting user\r\n  and ($4::varchar is null or exists(\r\n        select 1\r\n        from users favoriting_user\r\n                 join user_favorites f on favoriting_user.id = f.user_id\r\n        where favoriting_user.username = $4::varchar)\r\n    )\r\norder by a.created_at desc\r\nlimit $5::integer offset $6::integer\r\n"
+  },
+  "a36cbee4581c0a9cbc91e838956f232b55987352683c000e8157f66b621a2c8f": {
     "describe": {
       "columns": [
         {
@@ -1007,7 +1110,7 @@
         ]
       }
     },
-    "query": "\n    with inserted_article_cte as (\n        insert into articles (created_at, updated_at, title, body, slug, description, user_id)\n        values (current_timestamp, current_timestamp, $1::varchar, $2::varchar, $3::varchar, $4::varchar, $5)\n        returning id as \"id\",\n                  created_at as \"created_at\",\n                  updated_at as \"updated_at\",\n                  title as \"title\",\n                  body as \"body\",\n                  slug as \"slug\",\n                  description as \"description\",\n                  user_id as \"user_id\"\n    ) select a.id as \"id!\",\n           a.created_at as \"created_at!\",\n           a.updated_at as \"updated_at!\",\n           a.title as \"title!\",\n           a.body as \"body!\",\n           a.slug as \"slug!\",\n           a.description as \"description!\",\n           u.username as \"author_username!\",\n           u.bio as \"author_bio!\",\n           u.image as \"author_image!\"\n    from inserted_article_cte a\n    join users u on u.id = a.user_id\n            "
+    "query": "with inserted_article_cte as (\n    insert into articles (created_at, updated_at, title, body, slug, description, user_id)\n        values (current_timestamp, current_timestamp, $1::varchar, $2::varchar, $3::varchar, $4::varchar, $5::bigint)\n        returning id as \"id\",\n            created_at as \"created_at\",\n            updated_at as \"updated_at\",\n            title as \"title\",\n            body as \"body\",\n            slug as \"slug\",\n            description as \"description\",\n            user_id as \"user_id\")\nselect a.id          as \"id!\",\n       a.created_at  as \"created_at!\",\n       a.updated_at  as \"updated_at!\",\n       a.title       as \"title!\",\n       a.body        as \"body!\",\n       a.slug        as \"slug!\",\n       a.description as \"description!\",\n       u.username    as \"author_username!\",\n       u.bio         as \"author_bio!\",\n       u.image       as \"author_image!\"\nfrom inserted_article_cte a\n         join users u on u.id = a.user_id;"
   },
   "a8865d4eff71d9c91add28658d80e0cb8d55cc90a7fe1bc5507cf94852d2576b": {
     "describe": {
@@ -1169,109 +1272,6 @@
       }
     },
     "query": "\n        select *\n        from comments\n        where id = $1::bigint\n            "
-  },
-  "ded3a2c7f97b29c1f811ffa2f4edc600e6ae67bd55229e1ad3dec679b79a7f35": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id!",
-          "ordinal": 0,
-          "type_info": "Int8"
-        },
-        {
-          "name": "created_at!",
-          "ordinal": 1,
-          "type_info": "Timestamptz"
-        },
-        {
-          "name": "updated_at!",
-          "ordinal": 2,
-          "type_info": "Timestamptz"
-        },
-        {
-          "name": "title!",
-          "ordinal": 3,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "body!",
-          "ordinal": 4,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "description!",
-          "ordinal": 5,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "slug!",
-          "ordinal": 6,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "user_id!",
-          "ordinal": 7,
-          "type_info": "Int8"
-        },
-        {
-          "name": "favorited!",
-          "ordinal": 8,
-          "type_info": "Bool"
-        },
-        {
-          "name": "favorites!",
-          "ordinal": 9,
-          "type_info": "Int8"
-        },
-        {
-          "name": "following_author!",
-          "ordinal": 10,
-          "type_info": "Bool"
-        },
-        {
-          "name": "author_username!",
-          "ordinal": 11,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "author_bio!",
-          "ordinal": 12,
-          "type_info": "Varchar"
-        },
-        {
-          "name": "author_image!",
-          "ordinal": 13,
-          "type_info": "Varchar"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        null,
-        null,
-        null,
-        false,
-        false,
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Int8",
-          "Varchar",
-          "Varchar",
-          "Varchar",
-          "Int8",
-          "Int8"
-        ]
-      }
-    },
-    "query": "\n        select a.id as \"id!\",\n               a.created_at as \"created_at!\",\n               a.updated_at as \"updated_at!\",\n               a.title as \"title!\",\n               a.body as \"body!\",\n               a.description as \"description!\",\n               a.slug as \"slug!\",\n               u.id as \"user_id!\",\n               exists(select 1 from user_favorites af where af.user_id = $1 and af.article_id = a.id) as \"favorited!\",\n               (select count(*) from user_favorites where article_id = a.id) as \"favorites!\",\n               exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) \"following_author!\",\n               u.username as \"author_username!\",\n               u.bio as \"author_bio!\",\n               u.image as \"author_image!\"\n        from articles a\n        join users u on u.id = a.user_id\n        -- filter on users for the author\n        where ($2::varchar is null or $2::varchar = u.username)\n        -- filter on tags, if applicable\n        and ($3::varchar is null or exists(\n            select 1 from tags t\n            join article_tags at on (t.id, a.id) = (at.tag_id, at.article_id)\n            where tag = $3::varchar\n        ))\n        -- filter on the favoriting user\n        and ($4::varchar is null or exists(\n            select 1 from users favoriting_user\n            join user_favorites f on favoriting_user.id = f.user_id\n            where favoriting_user.username = $4::varchar)\n        )\n        order by a.created_at desc\n        limit $5\n        offset $6\n            "
   },
   "e25e699f9ddee9face6b78dcf55203c1b59753f8aa33d2fed31298c729cc8207": {
     "describe": {

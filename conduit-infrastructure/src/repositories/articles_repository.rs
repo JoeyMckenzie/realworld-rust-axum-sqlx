@@ -1,6 +1,6 @@
 use anyhow::Context;
 use async_trait::async_trait;
-use sqlx::{query, query_as};
+use sqlx::{query, query_as, query_file_as};
 
 use conduit_core::articles::repository::{
     ArticlesRepository, GetArticleFavoritesQuery, GetArticleQuery, UpsertArticleQuery,
@@ -29,33 +29,9 @@ impl ArticlesRepository for PostgresArticlesRepository {
         description: String,
         body: String,
     ) -> anyhow::Result<UpsertArticleQuery> {
-        query_as!(
+        query_file_as!(
             UpsertArticleQuery,
-            r#"
-    with inserted_article_cte as (
-        insert into articles (created_at, updated_at, title, body, slug, description, user_id)
-        values (current_timestamp, current_timestamp, $1::varchar, $2::varchar, $3::varchar, $4::varchar, $5)
-        returning id as "id",
-                  created_at as "created_at",
-                  updated_at as "updated_at",
-                  title as "title",
-                  body as "body",
-                  slug as "slug",
-                  description as "description",
-                  user_id as "user_id"
-    ) select a.id as "id!",
-           a.created_at as "created_at!",
-           a.updated_at as "updated_at!",
-           a.title as "title!",
-           a.body as "body!",
-           a.slug as "slug!",
-           a.description as "description!",
-           u.username as "author_username!",
-           u.bio as "author_bio!",
-           u.image as "author_image!"
-    from inserted_article_cte a
-    join users u on u.id = a.user_id
-            "#,
+            "queries/insert_article.sql",
             title,
             body,
             slug,
@@ -75,31 +51,9 @@ impl ArticlesRepository for PostgresArticlesRepository {
         description: String,
         body: String,
     ) -> anyhow::Result<UpsertArticleQuery> {
-        query_as!(
+        query_file_as!(
             UpsertArticleQuery,
-            r#"
-    with updated_article_cte as (
-        update articles
-        set updated_at = current_timestamp,
-            title = $1::varchar,
-            slug = $2::varchar,
-            description = $3::varchar,
-            body = $4::varchar
-        where id = $5
-        returning *
-    ) select a.id as "id!",
-             a.created_at as "created_at!",
-             a.updated_at as "updated_at!",
-             a.title as "title!",
-             a.body as "body!",
-             a.slug as "slug!",
-             a.description as "description!",
-             u.username as "author_username!",
-             u.bio as "author_bio!",
-             u.image as "author_image!"
-    from updated_article_cte a
-    join users u on u.id = a.user_id
-            "#,
+            "queries/update_article.sql",
             title,
             slug,
             description,
@@ -120,78 +74,23 @@ impl ArticlesRepository for PostgresArticlesRepository {
         limit: i64,
         offset: i64,
     ) -> anyhow::Result<Vec<GetArticleQuery>> {
-        query_as!(
+        query_file_as!(
             GetArticleQuery,
-            r#"
-        select a.id as "id!",
-               a.created_at as "created_at!",
-               a.updated_at as "updated_at!",
-               a.title as "title!",
-               a.body as "body!",
-               a.description as "description!",
-               a.slug as "slug!",
-               u.id as "user_id!",
-               exists(select 1 from user_favorites af where af.user_id = $1 and af.article_id = a.id) as "favorited!",
-               (select count(*) from user_favorites where article_id = a.id) as "favorites!",
-               exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) "following_author!",
-               u.username as "author_username!",
-               u.bio as "author_bio!",
-               u.image as "author_image!"
-        from articles a
-        join users u on u.id = a.user_id
-        -- filter on users for the author
-        where ($2::varchar is null or $2::varchar = u.username)
-        -- filter on tags, if applicable
-        and ($3::varchar is null or exists(
-            select 1 from tags t
-            join article_tags at on (t.id, a.id) = (at.tag_id, at.article_id)
-            where tag = $3::varchar
-        ))
-        -- filter on the favoriting user
-        and ($4::varchar is null or exists(
-            select 1 from users favoriting_user
-            join user_favorites f on favoriting_user.id = f.user_id
-            where favoriting_user.username = $4::varchar)
-        )
-        order by a.created_at desc
-        limit $5
-        offset $6
-            "#,
+            "queries/get_articles.sql",
             user_id,
             author,
             tag,
             favorited,
-            limit,
-            offset)
-            .fetch_all(&self.pool)
-            .await
-            .context("an unexpected error occured retrieving articles")
+            limit as i32,
+            offset as i32
+        )
+        .fetch_all(&self.pool)
+        .await
+        .context("an unexpected error occured retrieving articles")
     }
 
     async fn get_article_by_slug(&self, user_id: Option<i64>, slug: String) -> anyhow::Result<Option<GetArticleQuery>> {
-        query_as!(
-            GetArticleQuery,
-            r#"
-        select a.id as "id!",
-               a.created_at as "created_at!",
-               a.updated_at as "updated_at!",
-               a.title as "title!",
-               a.body as "body!",
-               a.description as "description!",
-               a.slug as "slug!",
-               u.id as "user_id!",
-               exists(select 1 from user_favorites af where af.user_id = $1 and af.article_id = a.id) as "favorited!",
-               (select count(*) from user_favorites where article_id = a.id) as "favorites!",
-               exists(select 1 from user_follows where followee_id = a.user_id and follower_id = $1) "following_author!",
-               u.username as "author_username!",
-               u.bio as "author_bio!",
-               u.image as "author_image!"
-        from articles a
-        join users u on u.id = a.user_id
-        where a.slug = $2::varchar
-            "#,
-            user_id,
-            slug)
+        query_file_as!(GetArticleQuery, "queries/get_article_by_slug.sql", user_id, slug)
             .fetch_optional(&self.pool)
             .await
             .context("an unexpected error occured retrieving articles")

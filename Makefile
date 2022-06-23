@@ -59,3 +59,8 @@ format: ## run "cargo fmt" on all rust packages
 migrate: ## runs sqlx migrations in the infrastructure project
 	@cd conduit-infrastructure/ && sqlx migrate run
 	@cd ../
+
+.PHONY: refresh
+refresh: ## removes sqlx offline and regenerates it, useful for updating offline schema
+	@cd conduit-infrastructure/ && rm -f sqlx-data.json
+	@cargo sqlx prepare && cd ../
