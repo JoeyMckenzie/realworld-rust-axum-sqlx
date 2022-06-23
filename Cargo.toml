@@ -5,6 +5,7 @@ members = [
     "conduit-core",
     "conduit-domain",
     "conduit-infrastructure",
+    "conduit-web"
 ]
 
 [profile.release]

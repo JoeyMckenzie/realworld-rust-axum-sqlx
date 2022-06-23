@@ -1,0 +1,40 @@
+<!DOCTYPE html><html lang="en-US"><head>
+    <meta charset="utf-8">
+    <title>Conduit</title>
+    <!-- Import Ionicon icons & Google Fonts our Bootstrap theme relies on -->
+    <link href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Titillium+Web:700|Source+Serif+Pro:400,700|Merriweather+Sans:400,700|Source+Sans+Pro:400,300,600,700,300italic,400italic,600italic,700italic" rel="stylesheet" type="text/css">
+    <!-- Import the custom Bootstrap 4 theme from our hosted CDN -->
+    <link href="//demo.productionready.io/main.css" rel="stylesheet">
+    
+
+<link rel="preload" href="/conduit-web-fc7f8f6f69ca878_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
+<link rel="modulepreload" href="/conduit-web-fc7f8f6f69ca878.js"></head>
+<body><script type="module">import init from '/conduit-web-fc7f8f6f69ca878.js';init('/conduit-web-fc7f8f6f69ca878_bg.wasm');</script><script>(function () {
+    var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    var url = protocol + '//' + window.location.host + '/_trunk/ws';
+    var poll_interval = 5000;
+    var reload_upon_connect = () => {
+        window.setTimeout(
+            () => {
+                // when we successfully reconnect, we'll force a
+                // reload (since we presumably lost connection to
+                // trunk due to it being killed, so it will have
+                // rebuilt on restart)
+                var ws = new WebSocket(url);
+                ws.onopen = () => window.location.reload();
+                ws.onclose = reload_upon_connect;
+            },
+            poll_interval);
+    };
+
+    var ws = new WebSocket(url);
+    ws.onmessage = (ev) => {
+        const msg = JSON.parse(ev.data);
+        if (msg.reload) {
+            window.location.reload();
+        }
+    };
+    ws.onclose = reload_upon_connect;
+})()
+</script></body></html>
