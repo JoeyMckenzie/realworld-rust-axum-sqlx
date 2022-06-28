@@ -3,27 +3,32 @@
 An implementation of the RealWorld project using Rust
 alongside [axum](https://github.com/tokio-rs/axum) and [sqlx](https://github.com/launchbadge/sqlx).
 
-To get started, install [Docker](https://www.docker.com/) and [make](https://www.gnu.org/software/make/)
+To get started, install [Docker](https://www.docker.com/) and [cargo-make](https://github.com/sagiegurari/cargo-make)
 on your local machine (Windows users may want to use WSL for ease of development), then clone/fork the repository. Once
 you have the project
 local to your machine, create an `.env` file local to workspace with valid values (you can use the defaults as well).
 
 ```bash
-mv .env.example .env
-make docker
+cp .env.example .env
+```
+
+Next, create and start our Docker containers:
+
+```bash
+cargo make docker
 ```
 
 Once the application containers have started, verify all integration tests pass:
 
-```
-make integration
+```bash
+cargo make integration
 ```
 
 The above target will run the included Postman suite of tests designed by the authors of the RealWorld project.
 Once the tests have completed, verify all unit tests are passing as well:
 
 ```
-cargo test # or make test
+cargo make test
 ```
 
 Again, the target above will run all included unit tests found in the project.
@@ -64,23 +69,20 @@ git commit -m "feat(core): add some amazing unit tests" --no-verify
 ## Using Docker
 
 The project utilizes Docker containers for Postgres and Prometheus metrics. For example, when starting the
-application with `make docker`, navigating to `localhost:9090` will bring you to the Prometheus metrics page.
-From there, running integration tests with `make integration` to simulate traffic to the API allows one to observe the
+application with `cargo make docker`, navigating to `localhost:9090` will bring you to the Prometheus metrics page.
+From there, running integration tests with `cargo make integration` to simulate traffic to the API allows one to observe
+the
 various
 metrics that are recorded in the service layer: request count, request latency, and histograms of service request
 intervals.
 
-To start the API outside the Docker context, ensure that Postgres is running before booting up:
+To start the API outside the Docker context, run:
 
 ```bash
-make start-db
+cargo make dev # or cargo run
 ```
 
-Once the Postgres container has started, go ahead and spin up the API for active development:
-
-```bash
-make dev # or cargo run
-```
+The `dev` tasks takes on the `postgres` task as a dependency, so your database container will start automatically.
 
 If you're starting the application for the first time, it will attempt to seed a bit of data that is also used for
 testing.
