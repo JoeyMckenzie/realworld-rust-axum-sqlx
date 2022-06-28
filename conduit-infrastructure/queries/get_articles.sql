@@ -17,16 +17,13 @@ select a.id                                                                     
        u.image                                                                                        as "author_image!"
 from articles a
          join users u on u.id = a.user_id
-     -- filter on users for the author
 where ($2::varchar is null or $2::varchar = u.username)
-  -- filter on tags, if applicable
   and ($3::varchar is null or exists(
         select 1
         from tags t
                  join article_tags at on (t.id, a.id) = (at.tag_id, at.article_id)
         where tag = $3::varchar
     ))
-  -- filter on the favoriting user
   and ($4::varchar is null or exists(
         select 1
         from users favoriting_user
@@ -34,4 +31,4 @@ where ($2::varchar is null or $2::varchar = u.username)
         where favoriting_user.username = $4::varchar)
     )
 order by a.created_at desc
-limit $5::integer offset $6::integer
+limit $5::integer offset $6::integer;

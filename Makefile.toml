@@ -90,6 +90,7 @@ dependencies = [
 
 [tasks.ci]
 dependencies = [
-    "build",
-    "test"
+    "format"
+    # "build",
+    # "test"
 ]
