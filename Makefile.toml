@@ -61,6 +61,10 @@ command = "cargo"
 args = ["test"]
 dependencies = ["clean"]
 
+[tasks.test-commit]
+command = "cargo"
+args = ["test"]
+
 [tasks.integration]
 command = "./tests/run-postman-tests.sh"
 dependencies = ["docker"]
@@ -82,5 +86,5 @@ args = ["sqlx", "prepare"]
 dependencies = [
     "format",
     "lint",
-    "test",
+    "test-commit",
 ]
