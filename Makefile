@@ -64,3 +64,7 @@ migrate: ## runs sqlx migrations in the infrastructure project
 refresh: ## removes sqlx offline and regenerates it, useful for updating offline schema
 	@cd conduit-infrastructure/ && rm -f sqlx-data.json
 	@cargo sqlx prepare && cd ../
+
+.PHONY: web
+web: ## runs the yew frontend project
+	@trunk serve

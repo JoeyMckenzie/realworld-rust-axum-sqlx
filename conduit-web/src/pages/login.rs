@@ -1,10 +1,10 @@
 use yew::prelude::*;
+use yew_router::prelude::*;
 
-#[derive(Properties, PartialEq, Clone)]
-pub struct LoginProps {}
+use crate::router::ConduitRouter;
 
 #[function_component(Login)]
-pub fn login(props: &LoginProps) -> Html {
+pub fn login() -> Html {
     html! {
         <div class="auth-page">
             <div class="container page">
@@ -12,7 +12,7 @@ pub fn login(props: &LoginProps) -> Html {
                     <div class="col-md-6 offset-md-3 col-xs-12">
                         <h1 class="text-xs-center">{ "Sign up" }</h1>
                         <p class="text-xs-center">
-                            <a href="">{ "Have an account?" }</a>
+                            <Link<ConduitRouter> to={ConduitRouter::Register}>{ "Need an account?" }</Link<ConduitRouter>>
                         </p>
 
                         <ul class="error-messages">

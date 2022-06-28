@@ -1,18 +1,12 @@
 use yew::prelude::*;
-use yew_router::prelude::*;
 
-use crate::components::{footer::Footer, navbar::Navbar};
-use crate::router::{switch, ConduitRouter};
+use crate::layout::Layout;
 
 #[function_component(App)]
 pub fn app() -> Html {
     html! {
         <body>
-            <BrowserRouter>
-                <Navbar />
-                <Switch<ConduitRouter> render={Switch::render(switch)} />
-                <Footer />
-            </BrowserRouter>
+            <Layout/>
         </body>
     }
 }
