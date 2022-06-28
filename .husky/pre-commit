@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 . "$(dirname "$0")/_/husky.sh"
 
-# verify you first have
-cargo make test
+cargo make test-commit
 cargo make clippy
 npx lint-staged
