@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname "$0")/_/husky.sh"
 
-cargo make test-commit
-cargo make clippy
-npx lint-staged
+cargo make pre-commit

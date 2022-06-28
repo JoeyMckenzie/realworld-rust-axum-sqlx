@@ -43,6 +43,10 @@ args = ["fix", "--allow-dirty"]
 command = "cargo"
 args = ["clippy"]
 
+[tasks.lint-staged]
+command = "npx"
+args = ["lint-staged"]
+
 [tasks.clean]
 command = "cargo"
 args = ["clean"]
@@ -56,10 +60,6 @@ dependencies = ["clean"]
 command = "cargo"
 args = ["test"]
 dependencies = ["clean"]
-
-[tasks.test-commit]
-command = "cargo"
-args = ["test"]
 
 [tasks.integration]
 command = "./tests/run-postman-tests.sh"
@@ -78,9 +78,9 @@ install_crate = "sqlx"
 command = "cargo"
 args = ["sqlx", "prepare"]
 
-[tasks.my-flow]
+[tasks.pre-commit]
 dependencies = [
     "format",
-    "build",
-    "test"
+    "lint",
+    "test",
 ]
