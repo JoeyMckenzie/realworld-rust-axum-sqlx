@@ -4,19 +4,6 @@
   "scripts": {
     "prepare": "husky install"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/joeymckenzie/realworld-rust-axum-sqlx.git"
-  },
-  "author": "Joey McKenzie",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/joeymckenzie/realworld-rust-axum-sqlx/issues"
-  },
-  "homepage": "https://github.com/joeymckenzie/realworld-rust-axum-sqlx#readme",
-  "lint-staged": {
-    "*.rs": "make format"
-  },
   "devDependencies": {
     "husky": "^7.0.0",
     "lint-staged": "^12.4.0",
@@ -25,5 +12,8 @@
   },
   "hooks": {
     "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+  },
+  "lint-staged": {
+    "*.rs": "cargo make format"
   }
 }

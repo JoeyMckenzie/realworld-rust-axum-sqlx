@@ -84,7 +84,12 @@ args = ["sqlx", "prepare"]
 
 [tasks.pre-commit]
 dependencies = [
-    "format",
-    "lint",
-    "test-commit",
+    "lint", ## lints our code using clippy during pre-commit
+    "lint-staged", ## uses cargofmt to format our staged files
+]
+
+[tasks.ci]
+dependencies = [
+    "build",
+    "test"
 ]
