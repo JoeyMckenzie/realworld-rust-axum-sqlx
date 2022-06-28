@@ -67,14 +67,14 @@ dependencies = ["docker"]
 
 [tasks.migrate] ## ensure Postgres is running, the container has a bit of warmup time causing migrations to fail
 cwd = "./conduit-infrastructure"
-install = "sqlx"
+install_crate = "sqlx"
 command = "sqlx"
 args = ["migrate", "run"]
 dependencies = ["postgres"]
 
 [tasks.refresh-schema]
 cwd = "./conduit-infrastructure"
-install = "sqlx"
+install_crate = "sqlx"
 command = "cargo"
 args = ["sqlx", "prepare"]
 
