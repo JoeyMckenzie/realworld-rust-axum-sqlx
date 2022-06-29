@@ -27,11 +27,15 @@ cargo make integration
 The above target will run the included Postman suite of tests designed by the authors of the RealWorld project.
 Once the tests have completed, verify all unit tests are passing as well:
 
-```
+```bash
 cargo make test
 ```
 
-Again, the target above will run all included unit tests found in the project.
+Again, the target above will run all included unit tests found in the project. To run the frontend project using [trunk](https://trunkrs.dev/):
+
+```bash
+cargo make web
+```
 
 ## Architecture
 
