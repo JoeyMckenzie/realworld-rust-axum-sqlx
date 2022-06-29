@@ -39,13 +39,14 @@ This project is more or less a Rust playground for myself and others to learn Ru
 We utilize [cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) to help encapsulate
 project-specific logic/domains, with a rough organization strategy as follows:
 
-- `conduit-api` - web project housing axum specific setup, endpoints, routing, request/response marshalling, etc.
-- `conduit-bin` - the application entry point, consisting of a single `main.rs` file to drive startup and wire library
+- `bin/conduit-bin` - API entry point, consisting of a single `main.rs` file to drive startup and wire library
   dependencies together
-- `conduit-core` - core logic and contract definitions between domains, services, and repository
-- `conduit-domain` - a simple project to house PORS (plain old rust structs) used for API request and responses,
+- `bin/conduit-web` - (*in progress*) web frontend project utilizing [yew](https://yew.rs/)
+- `crates/conduit-api` - web API project housing axum specific setup, endpoints, routing, request/response marshalling, etc.
+- `crates/conduit-core` - core logic and contract definitions between domains, services, and repository
+- `crates/conduit-domain` - a simple project to house PORS (plain old rust structs) used for API request and responses,
   services, etc.
-- `conduit-infrastructure` - a project adapter containing implementations of the core business logics definitions from
+- `crates/conduit-infrastructure` - a project adapter containing implementations of the core business logics definitions from
   higher up
 
 #### Why is there `package.json` file?
