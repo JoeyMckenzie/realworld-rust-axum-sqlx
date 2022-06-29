@@ -1,18 +1,18 @@
 version: '3.9'
 
 services:
-  realworld_rust_axum_sqlx_conduit:
-    container_name: realworld_rust_axum_sqlx_conduit
+  realworld_rust_axum_sqlx_conduit_bin:
+    container_name: realworld_rust_axum_sqlx_conduit_bin
     build:
-      context: .
-      dockerfile: ./conduit-bin/src/Dockerfile
+      context: ..
+      dockerfile: bin/conduit-bin/src/Dockerfile
     volumes:
       - /tmp/app:/var/log/app
     ports:
       - '8080:8080'
     env_file:
-      - .env
-      - .env.docker
+      - ../.env
+      - ../.env.docker
     depends_on:
       realworld_rust_axum_sqlx_postgres:
         condition: service_healthy

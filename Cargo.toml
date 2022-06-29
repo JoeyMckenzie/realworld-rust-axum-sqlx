@@ -1,11 +1,13 @@
 [workspace]
 members = [
-    "conduit-api",
-    "conduit-bin",
-    "conduit-core",
-    "conduit-domain",
-    "conduit-infrastructure",
-    "conduit-web"
+    # our runnable applications
+    "bin/conduit-bin",
+    "bin/conduit-web",
+    # our dependent library crates
+    "crates/conduit-api",
+    "crates/conduit-core",
+    "crates/conduit-domain",
+    "crates/conduit-infrastructure",
 ]
 
 [profile.release]

@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  realworld_rust_axum_sqlx_conduit_web:
+    container_name: realworld_rust_axum_sqlx_conduit_web
+    build:
+      context: ..
+      dockerfile: bin/conduit-bin/src/Dockerfile
+    volumes:
+      - /tmp/app:/var/log/app
+    ports:
+      - '3000:3000'

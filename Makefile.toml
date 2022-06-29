@@ -5,28 +5,43 @@ CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 default_to_workspace = false
 
 [tasks.dev]
-cwd = "./conduit-bin"
+cwd = "./bin/conduit-bin"
 command = "cargo"
 args = ["run"]
 dependencies = ["postgres"]
+
+[tasks.web]
+command = "trunk"
+args = ["serve"]
+dependencies = ["docker-start"]
 
 [tasks.docker]
 command = "docker"
 args = [
     "compose",
-    "-f", "./docker-compose.metrics.yml",
-    "-f", "./docker-compose.postgres.yml",
-    "-f", "./docker-compose.conduit.yml",
+    "-f", "./deploy/docker-compose.metrics.yml",
+    "-f", "./deploy/docker-compose.postgres.yml",
+    "-f", "./deploy/docker-compose.conduit-bin.yml",
     "up",
     "--build"
+]
+
+[tasks.docker-start]
+command = "docker"
+args = [
+    "compose",
+    "-f", "./deploy/docker-compose.metrics.yml",
+    "-f", "./deploy/docker-compose.postgres.yml",
+    "-f", "./deploy/docker-compose.conduit-bin.yml",
+    "start"
 ]
 
 [tasks.postgres]
 command = "docker"
 args = [
     "compose",
-    "-f", "./docker-compose.metrics.yml",
-    "-f", "./docker-compose.postgres.yml",
+    "-f", "./deploy/docker-compose.metrics.yml",
+    "-f", "./deploy/docker-compose.postgres.yml",
     "start",
 ]
 
@@ -67,17 +82,17 @@ args = ["test"]
 
 [tasks.integration]
 command = "./tests/run-postman-tests.sh"
-dependencies = ["docker"]
+dependencies = ["docker-start"]
 
 [tasks.migrate] ## ensure Postgres is running, the container has a bit of warmup time causing migrations to fail
-cwd = "./conduit-infrastructure"
+cwd = "./crates/conduit-infrastructure"
 install_crate = "sqlx"
 command = "sqlx"
 args = ["migrate", "run"]
 dependencies = ["postgres"]
 
 [tasks.refresh-schema]
-cwd = "./conduit-infrastructure"
+cwd = "./crates/conduit-infrastructure"
 install_crate = "sqlx"
 command = "cargo"
 args = ["sqlx", "prepare"]

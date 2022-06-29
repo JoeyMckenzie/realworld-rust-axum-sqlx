@@ -6,8 +6,8 @@ services:
     image: postgres:latest
     restart: always
     env_file:
-      - .env
-      - .env.docker
+      - ../.env
+      - ../.env.docker
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s

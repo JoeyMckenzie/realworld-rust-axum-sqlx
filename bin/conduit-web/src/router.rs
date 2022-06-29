@@ -3,7 +3,7 @@ use yew_router::prelude::*;
 
 use crate::pages::{home::Home, login::Login, register::Register};
 
-#[derive(Clone, Routable, PartialEq)]
+#[derive(Clone, Copy, Routable, PartialEq)]
 pub enum ConduitRouter {
     #[at("/")]
     Home,

@@ -2,11 +2,11 @@
 name = "conduit-web"
 version = "0.1.0"
 edition = "2021"
-license-file = "../LICENSE"
+license-file = "../../LICENSE"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-conduit-domain = { path = "../conduit-domain" }
+conduit-domain = { path = "../../crates/conduit-domain" }
 
 yew = "0.19"
 yew-router = "0.16"

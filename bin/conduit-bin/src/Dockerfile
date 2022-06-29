@@ -12,11 +12,12 @@ COPY ./rust-toolchain ./
 COPY ./Cargo.lock ./
 COPY ./Cargo.toml ./
 COPY ./.env.docker ./.env
-COPY ./conduit-api ./conduit-api
-COPY ./conduit-bin ./conduit-bin
-COPY ./conduit-core ./conduit-core
-COPY ./conduit-domain ./conduit-domain
-COPY ./conduit-infrastructure ./conduit-infrastructure
+COPY ./bin/conduit-bin ./bin/conduit-bin
+COPY ./bin/conduit-web ./bin/conduit-web
+COPY ./crates/conduit-api ./crates/conduit-api
+COPY ./crates/conduit-core ./crates/conduit-core
+COPY ./crates/conduit-domain ./crates/conduit-domain
+COPY ./crates/conduit-infrastructure ./crates/conduit-infrastructure
 
 # on rebuilds, we explicitly cache our rust build dependencies to speed things up
 RUN --mount=type=cache,target=/app/target \

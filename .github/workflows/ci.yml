@@ -1,4 +1,4 @@
-name: Worksapce CI
+name: Conduit CI
 
 on:
   push:
