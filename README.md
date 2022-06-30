@@ -31,7 +31,8 @@ Once the tests have completed, verify all unit tests are passing as well:
 cargo make test
 ```
 
-Again, the target above will run all included unit tests found in the project. To run the frontend project using [trunk](https://trunkrs.dev/):
+Again, the target above will run all included unit tests found in the project. To run the frontend project
+using [trunk](https://trunkrs.dev/):
 
 ```bash
 cargo make web
@@ -43,14 +44,16 @@ This project is more or less a Rust playground for myself and others to learn Ru
 We utilize [cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) to help encapsulate
 project-specific logic/domains, with a rough organization strategy as follows:
 
-- `bin/conduit-bin` - API entry point, consisting of a single `main.rs` file to drive startup and wire library
+- `crates/conduit-bin` - API entry point, consisting of a single `main.rs` file to drive startup and wire library
   dependencies together
-- `bin/conduit-web` - (*in progress*) web frontend project utilizing [yew](https://yew.rs/)
-- `crates/conduit-api` - web API project housing axum specific setup, endpoints, routing, request/response marshalling, etc.
+- `crates/conduit-web` - (*in progress*) web frontend project utilizing [yew](https://yew.rs/)
+- `crates/conduit-api` - web API project housing axum specific setup, endpoints, routing, request/response marshalling,
+  etc.
 - `crates/conduit-core` - core logic and contract definitions between domains, services, and repository
 - `crates/conduit-domain` - a simple project to house PORS (plain old rust structs) used for API request and responses,
   services, etc.
-- `crates/conduit-infrastructure` - a project adapter containing implementations of the core business logics definitions from
+- `crates/conduit-infrastructure` - a project adapter containing implementations of the core business logics definitions
+  from
   higher up
 
 #### Why is there `package.json` file?

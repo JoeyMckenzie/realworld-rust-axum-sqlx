@@ -5,7 +5,7 @@ CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 default_to_workspace = false
 
 [tasks.dev]
-cwd = "./bin/conduit-bin"
+cwd = "./crates/conduit-bin"
 command = "cargo"
 args = ["run"]
 dependencies = ["postgres"]

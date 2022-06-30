@@ -7,10 +7,10 @@ license-file = "../../LICENSE"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-conduit-api = { path = "../../crates/conduit-api" }
-conduit-domain = { path = "../../crates/conduit-domain" }
-conduit-core = { path = "../../crates/conduit-core" }
-conduit-infrastructure = { path = "../../crates/conduit-infrastructure" }
+conduit-api = { path = "../conduit-api" }
+conduit-domain = { path = "../conduit-domain" }
+conduit-core = { path = "../conduit-core" }
+conduit-infrastructure = { path = "../conduit-infrastructure" }
 
 sqlx = { version = "0.5", features = ["runtime-tokio-rustls", "postgres"] }
 anyhow = "1"

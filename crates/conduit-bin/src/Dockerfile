@@ -12,8 +12,8 @@ COPY ./rust-toolchain ./
 COPY ./Cargo.lock ./
 COPY ./Cargo.toml ./
 COPY ./.env.docker ./.env
-COPY ./bin/conduit-bin ./bin/conduit-bin
-COPY ./bin/conduit-web ./bin/conduit-web
+COPY ./crates/conduit-bin ./crates/conduit-bin
+COPY ./crates/conduit-web ./crates/conduit-web
 COPY ./crates/conduit-api ./crates/conduit-api
 COPY ./crates/conduit-core ./crates/conduit-core
 COPY ./crates/conduit-domain ./crates/conduit-domain

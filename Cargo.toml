@@ -1,8 +1,8 @@
 [workspace]
 members = [
     # our runnable applications
-    "bin/conduit-bin",
-    "bin/conduit-web",
+    "crates/conduit-bin",
+    "crates/conduit-web",
     # our dependent library crates
     "crates/conduit-api",
     "crates/conduit-core",
