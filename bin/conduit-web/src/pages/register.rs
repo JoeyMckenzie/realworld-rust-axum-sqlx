@@ -1,35 +1,49 @@
-use gloo::console::log;
+use log::info;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::prelude::*;
-
-use conduit_domain::users::requests::RegisterUserDto;
 
 use crate::router::ConduitRouter;
 
 #[function_component(Register)]
 pub fn register() -> Html {
-    let user_registration_form = use_state(RegisterUserDto::default);
+    let username = use_state(String::default);
+    let email = use_state(String::default);
+    let password = use_state(String::default);
 
     let onsubmit = {
-        let user_register = user_registration_form.clone();
-
         Callback::from(move |e: FocusEvent| {
             e.prevent_default();
         })
     };
 
-    let on_username_input = {
-        let current_user_registration_form = user_registration_form.clone();
+    let email_oninput = {
+        let email = email.clone();
 
         Callback::from(move |e: InputEvent| {
             let input: HtmlInputElement = e.target_unchecked_into();
+            email.set(input.value());
+            info!("email {:?}", email);
+        })
+    };
 
-            log!("username {}", input.value());
+    let username_oninput = {
+        let username = username.clone();
 
-            let mut current_form = (*current_user_registration_form).clone();
-            current_form.username = Some(input.value());
-            current_user_registration_form.set(current_form);
+        Callback::from(move |e: InputEvent| {
+            let input: HtmlInputElement = e.target_unchecked_into();
+            username.set(input.value());
+            info!("username {:?}", username);
+        })
+    };
+
+    let password_oninput = {
+        let password = password.clone();
+
+        Callback::from(move |e: InputEvent| {
+            let input: HtmlInputElement = e.target_unchecked_into();
+            password.set(input.value());
+            info!("password {:?}", password);
         })
     };
 
@@ -49,19 +63,31 @@ pub fn register() -> Html {
 
                         <form {onsubmit}>
                             <fieldset class="form-group">
-                                <input class="form-control form-control-lg" type="text" placeholder="Your Name"/>
+                                <input
+                                    class="form-control form-control-lg"
+                                    type="text"
+                                    placeholder="Your Name"
+                                    value={(*username).clone()}
+                                    oninput={username_oninput}
+                                />
                             </fieldset>
                             <fieldset class="form-group">
                                 <input
                                     class="form-control form-control-lg"
                                     type="text"
                                     placeholder="Email"
-                                    value={user_registration_form.username.clone()}
-                                    oninput={on_username_input}
+                                    value={(*email).clone()}
+                                    oninput={email_oninput}
                                 />
                             </fieldset>
                             <fieldset class="form-group">
-                                <input class="form-control form-control-lg" type="password" placeholder="Password"/>
+                                <input
+                                    class="form-control form-control-lg"
+                                    type="password"
+                                    placeholder="Password"
+                                    value={(*password).clone()}
+                                    oninput={password_oninput}
+                                />
                             </fieldset>
                             <button class="btn btn-lg btn-primary pull-xs-right">
                                 { "Sign up" }
