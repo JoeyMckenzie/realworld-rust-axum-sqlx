@@ -80,6 +80,11 @@ dependencies = ["clean"]
 command = "cargo"
 args = ["test"]
 
+[tasks.test-coverage]
+install_crate = "cargo-tarpaulin"
+command = "cargo"
+args = ["tarpaulin", "-v"]
+
 [tasks.integration]
 command = "./tests/run-postman-tests.sh"
 dependencies = ["docker-start"]
