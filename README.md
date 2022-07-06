@@ -1,4 +1,4 @@
-[![CI](https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx/actions/workflows/ci.yml/badge.svg)](https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx/actions/workflows/ci.yml/badge.svg)](https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![coverage](https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx/actions/workflows/coverage.yml/badge.svg)](https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx/actions/workflows/coverage.yml)
 
 ![realworld_logo](/realworld-dual-mode.png)
 
