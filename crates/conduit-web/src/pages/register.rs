@@ -3,6 +3,7 @@ use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::authentication_error_list::AuthenticationErrorList;
 use crate::router::ConduitRouter;
 
 #[function_component(Register)]
@@ -57,9 +58,7 @@ pub fn register() -> Html {
                             <Link<ConduitRouter> to={ConduitRouter::Login}>{ "Have an account?" }</Link<ConduitRouter>>
                         </p>
 
-                        <ul class="error-messages">
-                            <li>{ "That email is already taken" }</li>
-                        </ul>
+                        <AuthenticationErrorList errors={vec!["email is invalid".to_owned()]} />
 
                         <form {onsubmit}>
                             <fieldset class="form-group">

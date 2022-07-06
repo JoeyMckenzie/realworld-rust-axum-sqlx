@@ -1,3 +1,5 @@
+[![Conduit CI](https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx/actions/workflows/ci.yml/badge.svg)](https://github.com/JoeyMckenzie/realworld-rust-axum-sqlx/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ![realworld_logo](/realworld-dual-mode.png)
 
 An implementation of the RealWorld project using Rust

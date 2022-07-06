@@ -2,11 +2,11 @@
 
 [build]
 # The index HTML file to drive the bundling process.
-target = "bin/conduit-web/index.html"
+target = "crates/conduit-web/index.html"
 # Build in release mode.
 release = false
 # The output dir for all final assets.
-dist = "bin/conduit-web/dist"
+dist = "crates/conduit-web/dist"
 # The public URL from which assets are to be served.
 public_url = "/"
 # Whether to include hash values in the output file names.
@@ -30,7 +30,7 @@ no_autoreload = false
 
 [clean]
 # The output dir for all final assets.
-dist = "bin/conduit-web/dist"
+dist = "crates/conduit-web/dist"
 # Optionally perform a cargo clean.
 cargo = false
 
@@ -75,7 +75,7 @@ insecure = true
 # is read). By default, the command is spawned directly and no shell is used.
 stage = "pre_build"
 command = "echo"
-command_arguments = ["Hello", "Trunk!"]
+command_arguments = ["Pre-building..."]
 
 [[hooks]]
 # This hook example shows running a command inside a shell. As a result, features such as variable

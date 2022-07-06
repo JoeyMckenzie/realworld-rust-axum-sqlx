@@ -1,4 +1,4 @@
-name: Conduit CI
+name: CI
 
 on:
   push:
