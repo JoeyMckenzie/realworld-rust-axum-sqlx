@@ -40,7 +40,7 @@ async fn main() -> anyhow::Result<()> {
     }
 
     info!("migrations successfully ran, initializing axum server...");
-    ConduitApplicationController::serve(port, service_register)
+    ConduitApplicationController::serve(port, &config.cors_origin, service_register)
         .await
         .context("could not initialize application routes")?;
 

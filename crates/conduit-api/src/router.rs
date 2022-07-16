@@ -10,11 +10,12 @@ use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{middleware, BoxError, Json, Router};
 use clap::lazy_static::lazy_static;
-use http::Request;
+use conduit_domain::PingResponse;
+use http::{HeaderValue, Method, Request};
 use metrics_exporter_prometheus::{Matcher, PrometheusBuilder};
 use serde_json::json;
 use tower::ServiceBuilder;
-use tower_http::trace::TraceLayer;
+use tower_http::{cors::CorsLayer, trace::TraceLayer};
 use tracing::info;
 
 use conduit_infrastructure::service_register::ServiceRegister;
@@ -32,7 +33,7 @@ lazy_static! {
 pub struct ConduitApplicationController;
 
 impl ConduitApplicationController {
-    pub async fn serve(port: u32, service_register: ServiceRegister) -> anyhow::Result<()> {
+    pub async fn serve(port: u32, cors_origin: &str, service_register: ServiceRegister) -> anyhow::Result<()> {
         let recorder_handle = PrometheusBuilder::new()
             .set_buckets_for_metric(
                 Matcher::Full(String::from("http_requests_duration_seconds")),
@@ -47,13 +48,19 @@ impl ConduitApplicationController {
             .nest("/api", ProfilesRouter::new_router(service_register.clone()))
             .nest("/api", ArticlesRouter::new_router(service_register.clone()))
             .nest("/api", TagsRouter::new_router(service_register))
+            .route("/api/ping", get(Self::ping))
+            .route("/metrics", get(move || ready(recorder_handle.render())))
             .layer(
                 ServiceBuilder::new()
                     .layer(TraceLayer::new_for_http())
                     .layer(HandleErrorLayer::new(Self::handle_timeout_error))
                     .timeout(Duration::from_secs(*HTTP_TIMEOUT)),
             )
-            .route("/metrics", get(move || ready(recorder_handle.render())))
+            .layer(
+                CorsLayer::new()
+                    .allow_origin(cors_origin.parse::<HeaderValue>().unwrap())
+                    .allow_methods([Method::GET]),
+            )
             .route_layer(middleware::from_fn(Self::track_metrics));
 
         info!("routes initialized, listening on port {}", port);
@@ -105,5 +112,10 @@ impl ConduitApplicationController {
         metrics::histogram!("http_requests_duration_seconds", latency, &labels);
 
         response
+    }
+
+    async fn ping() -> Json<PingResponse> {
+        info!("received ping request");
+        Json(PingResponse::new("API is responsive".to_owned()))
     }
 }

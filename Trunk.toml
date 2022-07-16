@@ -42,28 +42,8 @@ wasm_bindgen = "0.2.80"
 # Default wasm-opt version to download.
 wasm_opt = "version_105"
 
-## proxy
-# Proxies are optional, and default to `None`.
-# Proxies are only run as part of the `trunk serve` command.
-
 [[proxy]]
-# This proxy example has a backend and a rewrite field. Requests received on `rewrite` will be
-# proxied to the backend after rewriting the `rewrite` prefix to the `backend`'s URI prefix.
-# E.G., `/api/v1/resource/x/y/z` -> `/resource/x/y/z`
-rewrite = "/api/v1/"
-backend = "http://localhost:9000/"
-
-[[proxy]]
-# This proxy specifies only the backend, which is the only required field. In this example,
-# request URIs are not modified when proxied.
-backend = "http://localhost:9000/api/v2/"
-
-[[proxy]]
-# This proxy example has an insecure field. In this example,
-# connections to https://localhost:9000/api/v3/ will not have certificate validation performed.
-# This is useful for development with a server using self-signed certificates.
-backend = "https://localhost:9000/api/v3/"
-insecure = true
+backend = "http://localhost:8080/api"
 
 ## hooks
 # Hooks are optional, and default to `None`.

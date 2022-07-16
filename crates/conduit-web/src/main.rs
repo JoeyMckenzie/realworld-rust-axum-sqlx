@@ -5,6 +5,7 @@ mod hooks;
 mod layout;
 mod pages;
 mod router;
+mod utilities;
 
 fn main() -> anyhow::Result<()> {
     wasm_logger::init(wasm_logger::Config::default());

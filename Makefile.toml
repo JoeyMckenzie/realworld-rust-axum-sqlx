@@ -5,9 +5,10 @@ CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 default_to_workspace = false
 
 [tasks.dev]
+install_crate="cargo-watch"
 cwd = "./crates/conduit-bin"
 command = "cargo"
-args = ["run"]
+args = ["watch", "-x", "clippy"]
 dependencies = ["postgres"]
 
 [tasks.web]
@@ -42,7 +43,7 @@ args = [
     "compose",
     "-f", "./deploy/docker-compose.metrics.yml",
     "-f", "./deploy/docker-compose.postgres.yml",
-    "start",
+    "start"
 ]
 
 [tasks.format]
@@ -86,7 +87,7 @@ command = "cargo"
 args = ["tarpaulin", "-v"]
 
 [tasks.integration]
-command = "./tests/run-postman-tests.sh"
+command = "./integrations/run-postman-tests.sh"
 dependencies = ["docker-start"]
 
 [tasks.migrate] ## ensure Postgres is running, the container has a bit of warmup time causing migrations to fail

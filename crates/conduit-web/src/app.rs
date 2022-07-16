@@ -1,15 +1,24 @@
-use reqwest::Request;
+use log::{error, info};
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
-use crate::layout::Layout;
+use crate::{layout::Layout, utilities::http::http_request_json};
 
 #[function_component(App)]
 pub fn app() -> Html {
-    // wasm_bindgen_futures::spawn_local(async move {
-    //     let client = reqwest::Client::new();
-    //     client.get("http://localhost:8080/api/tags").send().await?;
-    //     || ()
-    // });
+    use_effect(|| {
+        info!("application started, pinging API");
+        spawn_local(async {
+            let ping_response = http_request_json("/api/ping", "GET", None).await;
+
+            if ping_response.is_ok() {
+                info!("API ping successfully");
+            } else {
+                error!("API ping returned an error");
+            }
+        });
+        || ()
+    });
 
     html! {
         <body>
