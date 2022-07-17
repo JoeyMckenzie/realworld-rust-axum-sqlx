@@ -17,13 +17,12 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install cargo-make
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: --debug cargo-make
+        uses: dtolnay/rust-toolchain@stable
+        run: cargo install --debug cargo-make
 
       - name: Run CI
-        uses: actions-rs/cargo@v1
+        uses: dtolnay/rust-toolchain@stable
+        run: cargo make ci
         with:
           command: make
           args: ci
