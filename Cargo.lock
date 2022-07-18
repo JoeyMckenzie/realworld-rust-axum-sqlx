@@ -346,6 +346,7 @@ dependencies = [
  "lazy_static",
  "serde",
  "validator",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -380,6 +381,7 @@ dependencies = [
  "gloo-utils",
  "js-sys",
  "log",
+ "serde",
  "thiserror",
  "wasm-bindgen",
  "wasm-bindgen-futures",

@@ -4,12 +4,33 @@ use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, RequestMode, Response};
 
+#[derive(Debug)]
+enum Method {
+    Get,
+}
+
+impl std::fmt::Display for Method {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+pub async fn get<T>(url: &str) -> Result<T, JsValue>
+where
+    T: Default + for<'a> serde::de::Deserialize<'a>,
+{
+    with_request::<T>(url, Method::Get, None).await
+}
+
 /// Performs an HTTP request asynchnonously by given URL
 /// and returns parsed JSON.
-pub async fn http_request_json(url: &str, method: &str, body: Option<JsValue>) -> Result<JsValue, JsValue> {
-    // prepare request opts
+async fn with_request<T>(url: &str, method: Method, body: Option<JsValue>) -> Result<T, JsValue>
+where
+    T: Default + for<'a> serde::de::Deserialize<'a>,
+{
+    // prepare request options
     let mut request_options = RequestInit::new();
-    request_options.method(method);
+    request_options.method(&method.to_string());
     request_options.mode(RequestMode::Cors);
 
     // set JSON body
@@ -31,12 +52,11 @@ pub async fn http_request_json(url: &str, method: &str, body: Option<JsValue>) -
     let http_response = JsFuture::from(window.fetch_with_request(&request)).await?;
     let response_meta: Response = http_response.dyn_into().unwrap();
 
-    // get JSON data
-    let json = if response_meta.status() == 200 {
-        JsFuture::from(response_meta.json()?).await?
-    } else {
-        JsValue::null()
-    };
+    if response_meta.status() == 200 {
+        let json_content = JsFuture::from(response_meta.json()?).await?;
+        let struct_response: T = json_content.into_serde().unwrap();
+        return Ok(struct_response);
+    }
 
-    Ok(json)
+    Ok(T::default())
 }

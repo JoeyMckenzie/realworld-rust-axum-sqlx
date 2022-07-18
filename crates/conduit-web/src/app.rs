@@ -1,18 +1,19 @@
+use conduit_domain::PingResponse;
 use log::{error, info};
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
-use crate::{layout::Layout, utilities::http::http_request_json};
+use crate::{layout::Layout, utilities::http::get};
 
 #[function_component(App)]
 pub fn app() -> Html {
     use_effect(|| {
         info!("application started, pinging API");
         spawn_local(async {
-            let ping_response = http_request_json("/api/ping", "GET", None).await;
+            let ping_response = get::<PingResponse>("/api/ping").await;
 
-            if ping_response.is_ok() {
-                info!("API ping successfully");
+            if let Ok(value) = ping_response {
+                info!("API ping successfully, response: {:?}", value);
             } else {
                 error!("API ping returned an error");
             }

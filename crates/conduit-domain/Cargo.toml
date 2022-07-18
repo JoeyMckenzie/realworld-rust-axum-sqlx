@@ -10,3 +10,4 @@ license-file = "../../LICENSE"
 serde = { version = "1.0", features = ["derive"] }
 validator = { version = "0.15", features = ["derive"] }
 lazy_static = "1.4.0"
+wasm-bindgen = "0.2"

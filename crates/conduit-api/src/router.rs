@@ -116,6 +116,6 @@ impl ConduitApplicationController {
 
     async fn ping() -> Json<PingResponse> {
         info!("received ping request");
-        Json(PingResponse::new("API is responsive".to_owned()))
+        Json(PingResponse::default())
     }
 }
