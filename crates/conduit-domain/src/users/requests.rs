@@ -1,7 +1,7 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-#[derive(Deserialize, Debug, Validate, Default)]
+#[derive(Serialize, Deserialize, Debug, Validate, Default)]
 pub struct RegisterUserRequest {
     #[validate]
     pub user: RegisterUserDto,
@@ -18,7 +18,7 @@ pub struct UpdateUserRequest {
     pub user: UpdateUserDto,
 }
 
-#[derive(Clone, Deserialize, Debug, Validate, Default)]
+#[derive(Clone, Serialize, Deserialize, Debug, Validate, Default)]
 pub struct RegisterUserDto {
     #[validate(required)]
     pub username: Option<String>,

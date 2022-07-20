@@ -5,9 +5,10 @@ mod hooks;
 mod layout;
 mod pages;
 mod router;
+mod services;
 mod utilities;
 
-fn main() -> anyhow::Result<()> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     wasm_logger::init(wasm_logger::Config::default());
     yew::start_app::<app::App>();
     Ok(())

@@ -1,20 +1,36 @@
 use log::info;
+use wasm_bindgen_futures::spawn_local;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::authentication_error_list::AuthenticationErrorList;
 use crate::router::ConduitRouter;
+use crate::services::authentication_service::{self, register_user};
 
 #[function_component(Register)]
 pub fn register() -> Html {
+    let router = use_route::<ConduitRouter>().expect("error while loading router");
     let username = use_state(String::default);
     let email = use_state(String::default);
     let password = use_state(String::default);
 
     let onsubmit = {
+        let username = username.clone();
+        let email = email.clone();
+        let password = password.clone();
+
         Callback::from(move |e: FocusEvent| {
             e.prevent_default();
+
+            let username = username.clone();
+            let email = email.clone();
+            let password = password.clone();
+
+            spawn_local(async move {
+                let register_user_task =
+                    register_user((*username).clone(), (*email).clone(), (*password).clone()).await;
+            });
         })
     };
 

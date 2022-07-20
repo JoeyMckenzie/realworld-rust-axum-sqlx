@@ -1,25 +1,25 @@
+use gloo::net::http::Method;
 use js_sys::JSON;
+use serde::Serialize;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, RequestMode, Response};
 
-#[derive(Debug)]
-enum Method {
-    Get,
-}
-
-impl std::fmt::Display for Method {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{:?}", self)
-    }
-}
-
 pub async fn get<T>(url: &str) -> Result<T, JsValue>
 where
     T: Default + for<'a> serde::de::Deserialize<'a>,
 {
-    with_request::<T>(url, Method::Get, None).await
+    with_request::<T>(url, Method::GET, None).await
+}
+
+pub async fn post<T, K>(url: &str, body: K) -> Result<T, JsValue>
+where
+    T: Default + for<'a> serde::de::Deserialize<'a>,
+    K: Serialize,
+{
+    let request_body = JsValue::from_serde(&body).unwrap();
+    with_request::<T>(url, Method::POST, Some(request_body)).await
 }
 
 /// Performs an HTTP request asynchnonously by given URL
@@ -54,8 +54,8 @@ where
 
     if response_meta.status() == 200 {
         let json_content = JsFuture::from(response_meta.json()?).await?;
-        let struct_response: T = json_content.into_serde().unwrap();
-        return Ok(struct_response);
+        let as_struct_response: T = json_content.into_serde().unwrap();
+        return Ok(as_struct_response);
     }
 
     Ok(T::default())

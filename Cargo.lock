@@ -380,9 +380,9 @@ dependencies = [
  "gloo 0.7.0",
  "gloo-utils",
  "js-sys",
+ "lazy_static",
  "log",
  "serde",
- "thiserror",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-logger",
@@ -904,9 +904,9 @@ dependencies = [
 
 [[package]]
 name = "http"
-version = "0.2.7"
+version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff8670570af52249509a86f5e3e18a08c60b177071826898fde8997cf5f6bfbb"
+checksum = "75f43d41e26995c17e71ee126451dd3941010b0514a81a9d11f3b341debc2399"
 dependencies = [
  "bytes",
  "fnv",

@@ -1,6 +1,8 @@
+use serde::{Deserialize, Serialize};
+
 use crate::users::UserDto;
 
-#[derive(serde::Serialize, Debug)]
+#[derive(Serialize, Deserialize, Default, Debug)]
 pub struct UserAuthenicationResponse {
     pub user: UserDto,
 }
