@@ -11,6 +11,8 @@ pub enum ConduitRouter {
     Login,
     #[at("/register")]
     Register,
+    #[at("/profile")]
+    Profile,
 }
 
 pub fn router_map(routes: &ConduitRouter) -> Html {
@@ -22,6 +24,9 @@ pub fn router_map(routes: &ConduitRouter) -> Html {
             <Login />
         },
         ConduitRouter::Register => html! {
+            <Register />
+        },
+        ConduitRouter::Profile => html! {
             <Register />
         },
     }

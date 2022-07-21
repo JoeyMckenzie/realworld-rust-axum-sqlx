@@ -10,6 +10,8 @@ use serde::Deserialize;
 
 use crate::utilities::http::post;
 
+pub type AuthenticationResult = Result<UserAuthenicationResponse, Vec<String>>;
+
 #[derive(Deserialize)]
 pub struct Errors {
     pub error: HashMap<String, Vec<String>>,
@@ -19,11 +21,7 @@ lazy_static! {
     static ref AUTH_ENDPOINT: &'static str = "/api/users";
 }
 
-pub async fn register_user(
-    username: String,
-    email: String,
-    password: String,
-) -> Result<UserAuthenicationResponse, Vec<String>> {
+pub async fn register_user(username: String, email: String, password: String) -> AuthenticationResult {
     let register_user_request = RegisterUserDto {
         username: Some(username),
         email: Some(email),
@@ -53,7 +51,7 @@ pub async fn register_user(
     Ok(response.unwrap())
 }
 
-pub async fn login_user(email: String, password: String) -> Result<UserAuthenicationResponse, Vec<String>> {
+pub async fn login_user(email: String, password: String) -> AuthenticationResult {
     let login_user_request = LoginUserDto {
         email: Some(email),
         password: Some(password),
