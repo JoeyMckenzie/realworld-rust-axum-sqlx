@@ -3,6 +3,7 @@ use std::{collections::HashMap, fmt::Debug};
 
 use axum::response::Response;
 use axum::{http::StatusCode, response::IntoResponse, Json};
+use conduit_domain::ApiError;
 use serde_json::json;
 use thiserror::Error;
 use tracing::log::error;
@@ -94,9 +95,9 @@ impl IntoResponse for ConduitError {
             ),
         };
 
-        let body = Json(json!({
-            "error": error_message,
-        }));
+        // I'm not a fan of the error specification, so for the sake of consistency,
+        // serialize singular errors as a map of vectors similar to the 422 validation responses
+        let body = Json(ApiError::new(error_message));
 
         (status, body).into_response()
     }

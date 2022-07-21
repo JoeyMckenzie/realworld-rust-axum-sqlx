@@ -51,12 +51,12 @@ where
     let window = web_sys::window().expect("window was not found");
     let http_response = JsFuture::from(window.fetch_with_request(&request)).await?;
     let response_meta: Response = http_response.dyn_into().unwrap();
+    let json_content = JsFuture::from(response_meta.json()?).await?;
 
     if response_meta.status() == 200 {
-        let json_content = JsFuture::from(response_meta.json()?).await?;
         let as_struct_response: T = json_content.into_serde().unwrap();
         return Ok(as_struct_response);
     }
 
-    Ok(T::default())
+    Err(json_content)
 }

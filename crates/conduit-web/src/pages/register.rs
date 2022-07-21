@@ -6,19 +6,21 @@ use yew_router::prelude::*;
 
 use crate::components::authentication_error_list::AuthenticationErrorList;
 use crate::router::ConduitRouter;
-use crate::services::authentication_service::{self, register_user};
+use crate::services::authentication_service::register_user;
 
 #[function_component(Register)]
 pub fn register() -> Html {
-    let router = use_route::<ConduitRouter>().expect("error while loading router");
+    let history = use_history().expect("error while loading location");
     let username = use_state(String::default);
     let email = use_state(String::default);
     let password = use_state(String::default);
+    let register_errors = use_state(Vec::<String>::new);
 
     let onsubmit = {
         let username = username.clone();
         let email = email.clone();
         let password = password.clone();
+        let register_errors = register_errors.clone();
 
         Callback::from(move |e: FocusEvent| {
             e.prevent_default();
@@ -26,10 +28,17 @@ pub fn register() -> Html {
             let username = username.clone();
             let email = email.clone();
             let password = password.clone();
+            let history = history.clone();
+            let register_errors = register_errors.clone();
 
             spawn_local(async move {
-                let register_user_task =
-                    register_user((*username).clone(), (*email).clone(), (*password).clone()).await;
+                let register_response = register_user((*username).clone(), (*email).clone(), (*password).clone()).await;
+
+                if let Err(returned_errors) = register_response {
+                    register_errors.set(returned_errors);
+                } else {
+                    history.push(ConduitRouter::Home);
+                }
             });
         })
     };
@@ -74,7 +83,7 @@ pub fn register() -> Html {
                             <Link<ConduitRouter> to={ConduitRouter::Login}>{ "Have an account?" }</Link<ConduitRouter>>
                         </p>
 
-                        <AuthenticationErrorList errors={vec!["email is invalid".to_owned()]} />
+                        <AuthenticationErrorList errors={(*register_errors).clone()} />
 
                         <form {onsubmit}>
                             <fieldset class="form-group">

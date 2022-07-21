@@ -8,7 +8,7 @@ default_to_workspace = false
 install_crate="cargo-watch"
 cwd = "./crates/conduit-bin"
 command = "cargo"
-args = ["watch", "-x", "clippy"]
+args = ["watch", "-x", "clippy", "-x", "run"]
 dependencies = ["postgres"]
 
 [tasks.web]

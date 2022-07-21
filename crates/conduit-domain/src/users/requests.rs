@@ -7,7 +7,7 @@ pub struct RegisterUserRequest {
     pub user: RegisterUserDto,
 }
 
-#[derive(Deserialize, Debug, Validate)]
+#[derive(Serialize, Deserialize, Debug, Validate)]
 pub struct LoginUserRequest {
     #[validate]
     pub user: LoginUserDto,
@@ -20,19 +20,19 @@ pub struct UpdateUserRequest {
 
 #[derive(Clone, Serialize, Deserialize, Debug, Validate, Default)]
 pub struct RegisterUserDto {
-    #[validate(required)]
+    #[validate(required, length(min = 1))]
     pub username: Option<String>,
-    #[validate(required, email(message = "email is invalid"))]
+    #[validate(required, length(min = 1), email(message = "email is invalid"))]
     pub email: Option<String>,
-    #[validate(required)]
+    #[validate(required, length(min = 1))]
     pub password: Option<String>,
 }
 
-#[derive(Deserialize, Debug, Validate)]
+#[derive(Serialize, Deserialize, Debug, Validate)]
 pub struct LoginUserDto {
-    #[validate(required, email(message = "email is invalid"))]
+    #[validate(required, length(min = 1), email(message = "email is invalid"))]
     pub email: Option<String>,
-    #[validate(required)]
+    #[validate(required, length(min = 1))]
     pub password: Option<String>,
 }
 
