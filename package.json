@@ -5,15 +5,21 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.0.0",
+    "@commitlint/config-conventional": "^17.0.0",
+    "cypress": "^10.3.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-cypress": "^2.12.1",
     "husky": "^7.0.0",
     "lint-staged": "^12.4.0",
-    "@commitlint/cli": "^17.0.0",
-    "@commitlint/config-conventional": "^17.0.0"
+    "prettier": "2.7.1",
+    "typescript": "^4.7.4"
   },
   "hooks": {
     "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
   },
   "lint-staged": {
-    "*.rs": "cargo make format"
+    "*.rs": "cargo make format",
+    "*.{ts,js}": "prettier --write --ignore-unknown"
   }
 }

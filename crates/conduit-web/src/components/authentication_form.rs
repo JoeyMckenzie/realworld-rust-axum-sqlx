@@ -34,6 +34,7 @@ pub fn authentication_form(props: &AuthenticationFormProps) -> Html {
             html! {
                 <fieldset class="form-group">
                     <input
+                        id="authentication-form-email"
                         class="form-control form-control-lg"
                         type="text"
                         placeholder="Your Name"
@@ -61,7 +62,10 @@ pub fn authentication_form(props: &AuthenticationFormProps) -> Html {
 
     let submit_button = move || -> Html {
         html! {
-            <button class="btn btn-lg btn-primary pull-xs-right">
+            <button
+                id="authentication-form-submit-button"
+                class="btn btn-lg btn-primary pull-xs-right"
+            >
                 {
                     if props.include_username {
                         "Sign up"
@@ -89,6 +93,7 @@ pub fn authentication_form(props: &AuthenticationFormProps) -> Html {
                             {maybe_display_username()}
                             <fieldset class="form-group">
                                 <input
+                                    id="authentication-form-email"
                                     class="form-control form-control-lg"
                                     type="text"
                                     placeholder="Email"
@@ -98,6 +103,7 @@ pub fn authentication_form(props: &AuthenticationFormProps) -> Html {
                             </fieldset>
                             <fieldset class="form-group">
                                 <input
+                                    id="authentication-form-password"
                                     class="form-control form-control-lg"
                                     type="password"
                                     placeholder="Password"
