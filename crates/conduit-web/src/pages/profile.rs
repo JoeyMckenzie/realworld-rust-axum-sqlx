@@ -1,23 +1,35 @@
 use yew::prelude::*;
+use yew_router::prelude::*;
+
+use crate::{contexts::authentication_context::use_authentication_context, router::ConduitRouter};
+
+#[derive(Properties, PartialEq, Clone)]
+pub struct ProfileProps {
+    pub username: String,
+}
 
 #[function_component(Profile)]
-pub fn profile() -> Html {
+pub fn profile(props: &ProfileProps) -> Html {
+    let image = "test".to_owned();
+    let bio = "test".to_owned();
+    let username = "test".to_owned();
+
+    use_effect(move || || ());
+
     html! {
         <div class="profile-page">
             <div class="user-info">
                 <div class="container">
                     <div class="row">
-
                         <div class="col-xs-12 col-md-10 offset-md-1">
-                            <img src="http://i.imgur.com/Qr71crq.jpg" class="user-img"/>
-                            <h4>{ "Eric Simmons" }</h4>
+                            <img src={image.clone()} class="user-img"/>
+                            <h4>{ username.clone() }</h4>
                             <p>
-                                { "Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda looks like Peeta from the
-                                Hunger Games" }
+                                { bio.clone() }
                             </p>
                             <button class="btn btn-sm btn-outline-secondary action-btn">
                                 <i class="ion-plus-round"></i>
-                                { "\u{00a0}Follow Eric Simons" }
+                                { &format!("\u{00a0}Follow {}", username.clone()) }
                             </button>
                         </div>
 
@@ -27,7 +39,6 @@ pub fn profile() -> Html {
 
             <div class="container">
                 <div class="row">
-
                     <div class="col-xs-12 col-md-10 offset-md-1">
                         <div class="articles-toggle">
                             <ul class="nav nav-pills outline-active">

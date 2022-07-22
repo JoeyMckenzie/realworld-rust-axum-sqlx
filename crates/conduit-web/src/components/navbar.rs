@@ -33,7 +33,7 @@ pub fn navbar() -> Html {
         });
 
         if authentication_context.is_authenticated() {
-            let email = authentication_context.email.as_ref().unwrap();
+            let username = authentication_context.username.as_ref().unwrap();
 
             html! {
                 <>
@@ -48,7 +48,7 @@ pub fn navbar() -> Html {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <ActiveLink to={ConduitRouter::Profile} display_as={email.clone()} />
+                        <ActiveLink to={ConduitRouter::Profile { username: username.clone() }} display_as={username.clone()} />
                          //<Link<ConduitRouter> classes={*active_classes} to={props.to}>{ props.display_as.clone() }</Link<ConduitRouter>>
                     </li>
                     <li onclick={clear_token_onclick} class="nav-item">
