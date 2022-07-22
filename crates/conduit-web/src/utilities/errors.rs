@@ -7,4 +7,6 @@ pub type ConduitWebResult<T> = Result<T, ConduitWebError>;
 pub enum ConduitWebError {
     #[error("stored user was not found in local storage")]
     StoredUserNotFound(#[from] StorageError),
+    #[error("token not available")]
+    TokenNotAvailable,
 }

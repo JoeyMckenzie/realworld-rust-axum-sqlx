@@ -16,8 +16,11 @@ pub fn navbar() -> Html {
         let authentication_context = authentication_context.clone();
 
         use_effect(move || {
-            spawn_local(async {
+            spawn_local(async move {
                 let current_user = get_current_user().await;
+                if let Ok(user_meta) = current_user {
+                    authentication_context.dispatch(user_meta.user);
+                }
             });
             || ()
         });

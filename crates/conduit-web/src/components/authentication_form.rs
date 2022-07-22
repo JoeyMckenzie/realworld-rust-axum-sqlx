@@ -1,7 +1,9 @@
+use log::info;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::authentication_error_list::AuthenticationErrorList;
+use crate::contexts::authentication_context::use_authentication_context;
 use crate::hooks::use_authentication_hook::use_authentication;
 use crate::router::ConduitRouter;
 
@@ -12,7 +14,18 @@ pub struct AuthenticationFormProps {
 
 #[function_component(AuthenticationForm)]
 pub fn authentication_form(props: &AuthenticationFormProps) -> Html {
+    let authentication_context = use_authentication_context();
     let authentication_form_state = use_authentication(props.include_username);
+    let history = use_history().expect("history was not loaded");
+
+    use_effect(move || {
+        // for the scallywags that try to manually navigate around, kick them out if they're already authenticated
+        if authentication_context.is_authenticated() {
+            info!("user is already authenticated, navigating home");
+            history.push(ConduitRouter::Home);
+        }
+        || ()
+    });
 
     let onsubmit = authentication_form_state.onsubmit;
 

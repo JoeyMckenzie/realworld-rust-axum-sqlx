@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use conduit_domain::users::{
     requests::{LoginUserDto, LoginUserRequest, RegisterUserDto, RegisterUserRequest},
     responses::UserAuthenicationResponse,
+    UserDto,
 };
 use gloo::console::info;
 use lazy_static::lazy_static;
@@ -10,7 +11,7 @@ use log::{error, warn};
 use serde::Deserialize;
 
 use crate::utilities::{
-    errors::ConduitWebResult,
+    errors::{ConduitWebError, ConduitWebResult},
     http::{get, post},
     storage::{get_token, stash_token},
 };
@@ -98,13 +99,20 @@ pub async fn login_user(email: String, password: String) -> AuthenticationResult
     Ok(user)
 }
 
-pub async fn get_current_user() -> ConduitWebResult<()> {
-    if let Ok(stashed_token) = get_token() {
+pub async fn get_current_user() -> ConduitWebResult<UserAuthenicationResponse> {
+    if get_token().is_ok() {
         info!("retrieving stashed user");
         let response = get::<UserAuthenicationResponse>(*USER_ENDPOINT).await;
-    } else {
-        warn!("no user token in storage");
+
+        if let Ok(user) = response {
+            info!("user successfully authenticated");
+            return Ok(user);
+        } else {
+            error!("could not authenticate user with stashed token");
+        }
     }
 
-    Ok(())
+    warn!("no user token in storage");
+
+    Err(ConduitWebError::TokenNotAvailable)
 }
