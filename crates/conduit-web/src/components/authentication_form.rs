@@ -34,7 +34,7 @@ pub fn authentication_form(props: &AuthenticationFormProps) -> Html {
             html! {
                 <fieldset class="form-group">
                     <input
-                        id="authentication-form-email"
+                        id="authentication-form-username"
                         class="form-control form-control-lg"
                         type="text"
                         placeholder="Your Name"

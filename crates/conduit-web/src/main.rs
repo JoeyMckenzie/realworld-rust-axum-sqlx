@@ -8,7 +8,7 @@ mod router;
 mod services;
 mod utilities;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> anyhow::Result<()> {
     wasm_logger::init(wasm_logger::Config::default());
     yew::start_app::<app::App>();
     Ok(())

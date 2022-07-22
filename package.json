@@ -7,6 +7,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.0",
     "@commitlint/config-conventional": "^17.0.0",
+    "@types/uuid": "^8.3.4",
     "cypress": "^10.3.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-cypress": "^2.12.1",
@@ -21,5 +22,8 @@
   "lint-staged": {
     "*.rs": "cargo make format",
     "*.{ts,js}": "prettier --write --ignore-unknown"
+  },
+  "dependencies": {
+    "uuid": "^8.3.2"
   }
 }

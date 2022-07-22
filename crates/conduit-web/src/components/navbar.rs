@@ -49,6 +49,7 @@ pub fn navbar() -> Html {
                     </li>
                     <li class="nav-item">
                         <ActiveLink to={ConduitRouter::Profile} display_as={email.clone()} />
+                         //<Link<ConduitRouter> classes={*active_classes} to={props.to}>{ props.display_as.clone() }</Link<ConduitRouter>>
                     </li>
                     <li onclick={clear_token_onclick} class="nav-item">
                         <span class="nav-link">

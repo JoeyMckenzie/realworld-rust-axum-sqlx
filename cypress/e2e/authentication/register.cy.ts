@@ -1,12 +1,16 @@
-context('login', () => {
+import { v4 as uuidv4 } from 'uuid';
+
+context('register', () => {
   beforeEach(() => {
-    const loginUrl = `${Cypress.env('baseUrl')}${Cypress.env('loginUrl')}`;
-    cy.visit(loginUrl);
+    const registerUrl = `${Cypress.env('baseUrl')}${Cypress.env(
+      'registerUrl'
+    )}`;
+    cy.visit(registerUrl);
   });
 
-  it('should contain the "Need an account?" link and navigate to register when clicked', () => {
+  it('should contain the "Have an account?" link and navigate to login when clicked', () => {
     // arrange
-    const link = cy.contains('a', 'Need an account?').should('be.visible');
+    const link = cy.contains('a', 'Have an account?').should('be.visible');
 
     // act
     link.click();
@@ -14,23 +18,30 @@ context('login', () => {
     // assert
     cy.location().should((location) =>
       expect(location.href).to.eq(
-        `${Cypress.env('baseUrl')}${Cypress.env('registerUrl')}`
+        `${Cypress.env('baseUrl')}${Cypress.env('loginUrl')}`
       )
     );
   });
 
-  it('should contain the "Sign in" submit button', () => {
+  it('should contain the "Sign up" submit button', () => {
     // singular assert
     cy.get('#authentication-form-submit-button')
       .should('be.visible')
-      .should('contain.text', 'Sign in');
+      .should('contain.text', 'Sign up');
   });
 
-  it('should redirect back to home on successful login', () => {
-    // arrange
+  it('should redirect back to home on successful register', () => {
+    // arrange, generate a random user ID and email so we don't clash
+    const username = uuidv4();
+    const email = `${username}@gmail.com`;
+
     cy.get('#authentication-form-email')
-      .type(Cypress.env('mockUserEmail'))
-      .should('have.value', Cypress.env('mockUserEmail'));
+      .type(email)
+      .should('have.value', email);
+
+    cy.get('#authentication-form-username')
+      .type(username)
+      .should('have.value', username);
 
     cy.get('#authentication-form-password')
       .type(Cypress.env('mockUserPassword'))
@@ -54,13 +65,14 @@ context('login', () => {
     // assert
     cy.location().should((location) =>
       expect(location.href).to.eq(
-        `${Cypress.env('baseUrl')}${Cypress.env('loginUrl')}`
+        `${Cypress.env('baseUrl')}${Cypress.env('registerUrl')}`
       )
     );
 
     cy.get('.error-messages')
       .should('be.visible')
       .children()
+      .should('contain.text', 'username is required')
       .should('contain.text', 'password is required')
       .should('contain.text', 'email is required')
       .should('contain.text', 'email is invalid');
@@ -78,7 +90,7 @@ context('login', () => {
     // assert
     cy.location().should((location) =>
       expect(location.href).to.eq(
-        `${Cypress.env('baseUrl')}${Cypress.env('loginUrl')}`
+        `${Cypress.env('baseUrl')}${Cypress.env('registerUrl')}`
       )
     );
 
@@ -86,6 +98,7 @@ context('login', () => {
       .should('be.visible')
       .children()
       .should('contain.text', 'password is required')
+      .should('contain.text', 'username is required')
       .should('not.contain.text', 'email is required')
       .should('not.contain.text', 'email is invalid');
   });
