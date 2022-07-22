@@ -6,6 +6,8 @@ use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, RequestMode, Response};
 
+use super::storage::get_token;
+
 pub async fn get<T>(url: &str) -> Result<T, JsValue>
 where
     T: Default + for<'a> serde::de::Deserialize<'a>,
@@ -41,6 +43,10 @@ where
     // prepare request
     let request = Request::new_with_str_and_init(url, &request_options)?;
     request.headers().set("Accept", "application/json")?;
+
+    if let Ok(token) = get_token() {
+        request.headers().set("Authorization", &format!("Token {}", token))?;
+    }
 
     // set Content-Type to application/json
     if body.is_some() {

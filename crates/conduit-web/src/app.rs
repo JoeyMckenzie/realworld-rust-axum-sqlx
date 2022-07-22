@@ -11,6 +11,7 @@ pub fn app() -> Html {
     use_effect(|| {
         info!("application started, pinging API");
         spawn_local(async {
+            // ping the API to verify it's up and running
             let ping_response = get::<PingResponse>("/api/ping").await;
 
             if let Ok(value) = ping_response {
@@ -18,6 +19,8 @@ pub fn app() -> Html {
             } else {
                 error!("API ping returned an error");
             }
+
+            // load in user information
         });
         || ()
     });

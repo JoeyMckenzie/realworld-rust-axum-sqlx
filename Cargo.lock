@@ -383,6 +383,7 @@ dependencies = [
  "lazy_static",
  "log",
  "serde",
+ "thiserror",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-logger",

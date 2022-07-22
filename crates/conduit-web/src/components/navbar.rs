@@ -1,16 +1,33 @@
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::active_link::ActiveLink;
 use crate::contexts::authentication_context::use_authentication_context;
 use crate::router::ConduitRouter;
+use crate::services::authentication_service::get_current_user;
+use crate::utilities::storage::clear_token;
 
 #[function_component(Navbar)]
 pub fn navbar() -> Html {
     let authentication_context = use_authentication_context();
 
+    {
+        let authentication_context = authentication_context.clone();
+
+        use_effect(move || {
+            spawn_local(async {
+                let current_user = get_current_user().await;
+            });
+            || ()
+        });
+    }
+
     let maybe_authentication_links = move || -> Html {
         let authentication_context = authentication_context.clone();
+        let clear_token_onclick = Callback::from(|_| {
+            clear_token();
+        });
 
         if authentication_context.is_authenticated() {
             let email = authentication_context.email.as_ref().unwrap();
@@ -29,6 +46,11 @@ pub fn navbar() -> Html {
                     </li>
                     <li class="nav-item">
                         <ActiveLink to={ConduitRouter::Profile} display_as={email.clone()} />
+                    </li>
+                    <li onclick={clear_token_onclick} class="nav-item">
+                        <span class="nav-link">
+                            { "Clear token" }
+                        </span>
                     </li>
                 </>
             }
