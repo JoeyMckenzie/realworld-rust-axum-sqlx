@@ -5,8 +5,9 @@ use crate::router::ConduitRouter;
 
 #[derive(Properties, PartialEq, Clone)]
 pub struct ActiveLinkProps {
+    #[prop_or_default]
+    pub children: Children,
     pub to: ConduitRouter,
-    pub display_as: String,
 }
 
 #[function_component(ActiveLink)]
@@ -29,6 +30,8 @@ pub fn active_link(props: &ActiveLinkProps) -> Html {
     }
 
     html! {
-        <Link<ConduitRouter> classes={*active_classes} to={props.to.clone()}>{ props.display_as.clone() }</Link<ConduitRouter>>
+        <Link<ConduitRouter> classes={*active_classes} to={props.to.clone()}>
+            { props.children.clone() }
+        </Link<ConduitRouter>>
     }
 }

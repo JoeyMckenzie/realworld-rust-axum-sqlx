@@ -43,13 +43,14 @@ pub fn navbar() -> Html {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <ActiveLink to={ConduitRouter::Settings}>
                             <i class="ion-gear-a"></i>{ " \u{00a0}Settings" }
-                        </a>
+                        </ActiveLink>
                     </li>
                     <li class="nav-item">
-                        <ActiveLink to={ConduitRouter::Profile { username: username.clone() }} display_as={username.clone()} />
-                         //<Link<ConduitRouter> classes={*active_classes} to={props.to}>{ props.display_as.clone() }</Link<ConduitRouter>>
+                        <ActiveLink to={ConduitRouter::Profile { username: username.clone() }}>
+                            { username.clone() }
+                        </ActiveLink>
                     </li>
                     <li onclick={clear_token_onclick} class="nav-item">
                         <span class="nav-link">
@@ -62,10 +63,14 @@ pub fn navbar() -> Html {
             html! {
                 <>
                     <li class="nav-item">
-                        <ActiveLink to={ConduitRouter::Login} display_as="Sign in" />
+                        <ActiveLink to={ConduitRouter::Login}>
+                            { "Sign in" }
+                        </ActiveLink>
                     </li>
                     <li class="nav-item">
-                        <ActiveLink to={ConduitRouter::Register} display_as="Sign up" />
+                        <ActiveLink to={ConduitRouter::Register}>
+                            { "Sign up" }
+                        </ActiveLink>
                     </li>
                 </>
             }
@@ -78,7 +83,9 @@ pub fn navbar() -> Html {
                 <Link<ConduitRouter> classes="navbar-brand" to={ConduitRouter::Home}>{ "conduit" }</Link<ConduitRouter>>
                 <ul class="nav navbar-nav pull-xs-right">
                     <li class="nav-item">
-                        <ActiveLink to={ConduitRouter::Home} display_as="Home" />
+                        <ActiveLink to={ConduitRouter::Home}>
+                            { "Home" }
+                        </ActiveLink>
                     </li>
                     {maybe_authentication_links()}
                 </ul>

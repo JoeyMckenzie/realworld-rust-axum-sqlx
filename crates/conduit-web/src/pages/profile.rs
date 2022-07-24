@@ -1,7 +1,7 @@
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
-use yew_router::prelude::*;
 
-use crate::{contexts::authentication_context::use_authentication_context, router::ConduitRouter};
+use crate::{contexts::authentication_context::use_authentication_context, services::profile_service::get_profile};
 
 #[derive(Properties, PartialEq, Clone)]
 pub struct ProfileProps {
@@ -10,11 +10,83 @@ pub struct ProfileProps {
 
 #[function_component(Profile)]
 pub fn profile(props: &ProfileProps) -> Html {
-    let image = "test".to_owned();
-    let bio = "test".to_owned();
-    let username = "test".to_owned();
+    let authentication_context = use_authentication_context();
+    let image = use_state(String::default);
+    let bio = use_state(String::default);
+    let username = use_state(String::default);
+    let following = use_state(|| false);
 
-    use_effect(move || || ());
+    {
+        let props = props.clone();
+        let authentication_context = authentication_context.clone();
+        let image = image.clone();
+        let bio = bio.clone();
+        let username = username.clone();
+        let following = following.clone();
+
+        use_effect_with_deps(
+            move |_| {
+                // in the case the current user is navigating to their profile, pull there info from state
+                if authentication_context
+                    .username
+                    .as_ref()
+                    .unwrap_or(&String::default())
+                    .eq(&*props.username)
+                {
+                    bio.set(authentication_context.bio.as_ref().unwrap().clone());
+                    username.set(authentication_context.username.as_ref().unwrap().clone());
+                    image.set(authentication_context.image.as_ref().unwrap().clone());
+                    following.set(false);
+                } else {
+                    spawn_local(async move {
+                        let current_profile_response = get_profile(props.username).await;
+
+                        if let Ok(current_profile) = current_profile_response {
+                            bio.set(current_profile.bio);
+                            username.set(current_profile.username);
+                            following.set(current_profile.following);
+                            image.set(current_profile.image);
+                        }
+                    });
+                }
+                || ()
+            },
+            (),
+        );
+    }
+
+    let maybe_following_button = {
+        let authentication_context = authentication_context.clone();
+        let username = username.clone();
+
+        move || -> Html {
+            // if the current profile is the authenticated user, don't display the follow/unfollow button
+            if authentication_context
+                .username
+                .as_ref()
+                .unwrap_or(&String::default())
+                .eq(&*username)
+            {
+                return html! {};
+            }
+
+            if *following {
+                html! {
+                    <button class="btn btn-sm btn-outline-secondary action-btn">
+                        <i class="ion-plus-round"></i>
+                        { &format!("\u{00a0}Follow {}", (*username).clone()) }
+                    </button>
+                }
+            } else {
+                html! {
+                    <button class="btn btn-sm btn-outline-secondary action-btn">
+                        <i class="ion-plus-round"></i>
+                        { &format!("\u{00a0}Unfollow {}", (*username).clone()) }
+                    </button>
+                }
+            }
+        }
+    };
 
     html! {
         <div class="profile-page">
@@ -22,15 +94,12 @@ pub fn profile(props: &ProfileProps) -> Html {
                 <div class="container">
                     <div class="row">
                         <div class="col-xs-12 col-md-10 offset-md-1">
-                            <img src={image.clone()} class="user-img"/>
-                            <h4>{ username.clone() }</h4>
+                            <img src={(*image).clone()} class="user-img"/>
+                            <h4>{ (*username).clone() }</h4>
                             <p>
-                                { bio.clone() }
+                                { (*bio).clone() }
                             </p>
-                            <button class="btn btn-sm btn-outline-secondary action-btn">
-                                <i class="ion-plus-round"></i>
-                                { &format!("\u{00a0}Follow {}", username.clone()) }
-                            </button>
+                            {maybe_following_button()}
                         </div>
 
                     </div>

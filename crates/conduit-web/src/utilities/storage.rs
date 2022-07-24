@@ -1,7 +1,7 @@
 use gloo::storage::{LocalStorage, Storage};
 use gloo_utils::window;
 use lazy_static::lazy_static;
-use log::info;
+use log::{error, info};
 use serde::{Deserialize, Serialize};
 
 use super::errors::ConduitWebResult;
@@ -37,5 +37,7 @@ pub fn get_token() -> ConduitWebResult<String> {
 pub fn clear_token() {
     info!("clearing stashed token");
     LocalStorage::delete(*TOKEN_STORAGE_KEY);
-    window().location().reload();
+    if window().location().reload().is_err() {
+        error!("window reload after clearing token failed");
+    }
 }

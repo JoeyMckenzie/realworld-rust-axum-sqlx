@@ -1,27 +1,21 @@
-use std::collections::HashMap;
-
 use conduit_domain::users::{
     requests::{LoginUserDto, LoginUserRequest, RegisterUserDto, RegisterUserRequest},
     responses::UserAuthenicationResponse,
-    UserDto,
 };
 use gloo::console::info;
 use lazy_static::lazy_static;
 use log::{error, warn};
-use serde::Deserialize;
 
-use crate::utilities::{
-    errors::{ConduitWebError, ConduitWebResult},
-    http::{get, post},
-    storage::{get_token, stash_token},
+use crate::{
+    services::Errors,
+    utilities::{
+        errors::{ConduitWebError, ConduitWebResult},
+        http::{get, post},
+        storage::{clear_token, get_token, stash_token},
+    },
 };
 
 pub type AuthenticationResult = Result<UserAuthenicationResponse, Vec<String>>;
-
-#[derive(Deserialize)]
-pub struct Errors {
-    pub error: HashMap<String, Vec<String>>,
-}
 
 lazy_static! {
     static ref AUTH_ENDPOINT: &'static str = "/api/users";
@@ -108,7 +102,8 @@ pub async fn get_current_user() -> ConduitWebResult<UserAuthenicationResponse> {
             info!("user successfully authenticated");
             return Ok(user);
         } else {
-            error!("could not authenticate user with stashed token");
+            error!("could not authenticate user with stashed token, removing");
+            clear_token();
         }
     }
 

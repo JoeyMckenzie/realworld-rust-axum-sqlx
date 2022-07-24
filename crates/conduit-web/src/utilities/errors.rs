@@ -9,4 +9,6 @@ pub enum ConduitWebError {
     StoredUserNotFound(#[from] StorageError),
     #[error("token not available")]
     TokenNotAvailable,
+    #[error("profile not found")]
+    ProfileNotFound,
 }

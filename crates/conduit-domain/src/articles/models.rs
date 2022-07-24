@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Default)]
 pub struct ArticleDto {
     #[serde(skip_serializing)]
     pub id: i64,
@@ -21,7 +21,7 @@ pub struct ArticleDto {
     pub author: AuthorDto,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct AuthorDto {
     pub username: String,
     pub bio: String,

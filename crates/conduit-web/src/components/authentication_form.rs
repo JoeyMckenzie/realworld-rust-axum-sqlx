@@ -4,7 +4,7 @@ use yew_router::prelude::*;
 
 use crate::components::authentication_error_list::AuthenticationErrorList;
 use crate::contexts::authentication_context::use_authentication_context;
-use crate::hooks::use_authentication_hook::use_authentication;
+use crate::hooks::use_authentication::use_authentication;
 use crate::router::ConduitRouter;
 
 #[derive(Properties, PartialEq, Clone)]

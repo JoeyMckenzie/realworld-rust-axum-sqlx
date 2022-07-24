@@ -1,10 +1,9 @@
 use yew::prelude::*;
 
-#[derive(Properties, PartialEq, Clone)]
-pub struct HomeProps {}
+use crate::components::tag_list::TagList;
 
 #[function_component(Home)]
-pub fn home(_props: &HomeProps) -> Html {
+pub fn home() -> Html {
     html! {
         <div class="home-page">
             <div class="banner">
@@ -64,21 +63,7 @@ pub fn home(_props: &HomeProps) -> Html {
                             </a>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="sidebar">
-                            <p>{ "Popular Tags" }</p>
-                            <div class="tag-list">
-                                <a href="" class="tag-pill tag-default">{ "programming" }</a>
-                                <a href="" class="tag-pill tag-default">{ "javascript" }</a>
-                                <a href="" class="tag-pill tag-default">{ "emberjs" }</a>
-                                <a href="" class="tag-pill tag-default">{ "angularjs" }</a>
-                                <a href="" class="tag-pill tag-default">{ "react" }</a>
-                                <a href="" class="tag-pill tag-default">{ "mean" }</a>
-                                <a href="" class="tag-pill tag-default">{ "node" }</a>
-                                <a href="" class="tag-pill tag-default">{ "rails" }</a>
-                            </div>
-                        </div>
-                    </div>
+                    <TagList />
                 </div>
             </div>
         </div>

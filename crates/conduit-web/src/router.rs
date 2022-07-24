@@ -1,7 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::pages::{home::Home, login::Login, profile::Profile, register::Register};
+use crate::pages::{home::Home, login::Login, profile::Profile, register::Register, settings::Settings};
 
 #[derive(Clone, Routable, PartialEq)]
 pub enum ConduitRouter {
@@ -13,6 +13,8 @@ pub enum ConduitRouter {
     Register,
     #[at("/profile:/:username")]
     Profile { username: String },
+    #[at("/settings")]
+    Settings,
 }
 
 pub fn router_map(routes: &ConduitRouter) -> Html {
@@ -28,6 +30,9 @@ pub fn router_map(routes: &ConduitRouter) -> Html {
         },
         ConduitRouter::Profile { username } => html! {
             <Profile username={username.clone()} />
+        },
+        ConduitRouter::Settings => html! {
+            <Settings />
         },
     }
 }

@@ -1,1 +1,1 @@
-pub mod use_authentication_hook;
+pub mod use_authentication;
