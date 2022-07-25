@@ -2,7 +2,8 @@
   "name": "realworld-rust-axum-sqlx",
   "version": "1.0.0",
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "sloc": "sloc ./crates --exclude ./crates/conduit-web/dist"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.0",
@@ -24,6 +25,7 @@
     "*.{ts,js}": "prettier --write --ignore-unknown"
   },
   "dependencies": {
+    "sloc": "^0.2.1",
     "uuid": "^8.3.2"
   }
 }

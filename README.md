@@ -48,7 +48,7 @@ project-specific logic/domains, with a rough organization strategy as follows:
 
 - `crates/conduit-bin` - API entry point, consisting of a single `main.rs` file to drive startup and wire library
   dependencies together
-- `crates/conduit-web` - (*in progress*) web frontend project utilizing [yew](https://yew.rs/)
+- `crates/conduit-web` - (_in progress_) web frontend project utilizing [yew](https://yew.rs/)
 - `crates/conduit-api` - web API project housing axum specific setup, endpoints, routing, request/response marshalling,
   etc.
 - `crates/conduit-core` - core logic and contract definitions between domains, services, and repository
