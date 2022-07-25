@@ -101,7 +101,6 @@ pub fn use_settings() -> UseSettingsHook {
     };
 
     let onsubmit = {
-        let authentication_context = authentication_context.clone();
         let image = image.clone();
         let username = username.clone();
         let bio = bio.clone();

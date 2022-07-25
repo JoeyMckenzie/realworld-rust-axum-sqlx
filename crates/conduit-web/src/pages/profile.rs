@@ -56,7 +56,6 @@ pub fn profile(props: &ProfileProps) -> Html {
     }
 
     let maybe_following_button = {
-        let authentication_context = authentication_context.clone();
         let username = username.clone();
 
         move || -> Html {
