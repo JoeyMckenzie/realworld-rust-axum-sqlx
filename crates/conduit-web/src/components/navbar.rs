@@ -38,9 +38,9 @@ pub fn navbar() -> Html {
             html! {
                 <>
                     <li class="nav-item">
-                        <a class="nav-link" href="">
+                        <ActiveLink to={ConduitRouter::Editor}>
                             <i class="ion-compose"></i>{ " \u{00a0}New Article" }
-                        </a>
+                        </ActiveLink>
                     </li>
                     <li class="nav-item">
                         <ActiveLink to={ConduitRouter::Settings}>

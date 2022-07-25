@@ -1,3 +1,4 @@
+pub mod editor;
 pub mod home;
 pub mod login;
 pub mod profile;

@@ -1,5 +1,5 @@
 use lazy_static::lazy_static;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::articles::models::{CreateArticleDto, UpdateArticleDto};
@@ -9,7 +9,7 @@ lazy_static! {
     pub static ref OFFSET: i64 = 0;
 }
 
-#[derive(Debug, Deserialize, Validate)]
+#[derive(Debug, Deserialize, Serialize, Validate)]
 pub struct CreateArticleRequest {
     #[validate]
     pub article: CreateArticleDto,

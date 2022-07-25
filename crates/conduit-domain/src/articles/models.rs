@@ -29,7 +29,7 @@ pub struct AuthorDto {
     pub following: bool,
 }
 
-#[derive(Debug, Deserialize, Validate)]
+#[derive(Debug, Deserialize, Serialize, Validate)]
 pub struct CreateArticleDto {
     #[validate(required)]
     pub title: Option<String>,

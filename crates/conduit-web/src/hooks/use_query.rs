@@ -80,7 +80,6 @@ impl<'a> FetchOptions<'a> {
     }
 }
 
-#[function_component(UseQuery)]
 pub fn use_query<T, K, E, F>(key: &str, fetcher: F, mut options: Option<FetchOptions>) -> FetchResult<T, E>
 where
     T: for<'a> serde::de::Deserialize<'a> + Copy,
