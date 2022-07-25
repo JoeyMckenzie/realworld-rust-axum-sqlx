@@ -40,7 +40,7 @@ using [trunk](https://trunkrs.dev/):
 cargo make web
 ```
 
-## Architecture
+## Prject Structure
 
 This project is more or less a Rust playground for myself and others to learn Rust, axum, and sqlx.
 We utilize [cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) to help encapsulate
@@ -57,6 +57,10 @@ project-specific logic/domains, with a rough organization strategy as follows:
 - `crates/conduit-infrastructure` - a project adapter containing implementations of the core business logics definitions
   from
   higher up
+- `integrations` - contains the RealWorld Postman test scripts and collection
+- `cypress` - contains the e2e tests used to test the frontend project (`crates/conduit-web`)
+- `deploy` - contains all Docker Compose files used for building the project containers
+- `.husky` - contains husky git hooks
 
 #### Why is there `package.json` file?
 
