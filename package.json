@@ -22,7 +22,7 @@
   },
   "lint-staged": {
     "*.rs": "cargo make format",
-    "*.{ts,js}": "prettier --write --ignore-unknown"
+    "*.{ts,js,json}": "prettier --write --ignore-unknown"
   },
   "dependencies": {
     "sloc": "^0.2.1",
