@@ -109,7 +109,7 @@ impl UsersService for ConduitUsersService {
         let mut updated_hashed_password = user.password;
 
         // if the password is included on the request, hash it and update the stored password
-        if request.password.is_some() {
+        if request.password.is_some() && !request.password.as_ref().unwrap().is_empty() {
             updated_hashed_password = self
                 .security_service
                 .hash_password(request.password.unwrap().as_str())?;

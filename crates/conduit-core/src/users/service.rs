@@ -16,7 +16,10 @@ pub type DynUsersService = Arc<dyn UsersService + Send + Sync>;
 #[async_trait]
 pub trait UsersService {
     async fn register_user(&self, request: RegisterUserDto) -> ConduitResult<UserDto>;
+
     async fn login_user(&self, request: LoginUserDto) -> ConduitResult<UserDto>;
+
     async fn get_current_user(&self, user_id: i64) -> ConduitResult<UserDto>;
+
     async fn updated_user(&self, user_id: i64, request: UpdateUserDto) -> ConduitResult<UserDto>;
 }

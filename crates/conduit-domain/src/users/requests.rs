@@ -13,7 +13,7 @@ pub struct LoginUserRequest {
     pub user: LoginUserDto,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Default)]
 pub struct UpdateUserRequest {
     pub user: UpdateUserDto,
 }
@@ -36,7 +36,7 @@ pub struct LoginUserDto {
     pub password: Option<String>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Default)]
 pub struct UpdateUserDto {
     pub email: Option<String>,
     pub username: Option<String>,

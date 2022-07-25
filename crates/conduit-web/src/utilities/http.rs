@@ -24,6 +24,15 @@ where
     with_request::<T>(url, Method::POST, Some(request_body)).await
 }
 
+pub async fn put<T, K>(url: &str, body: K) -> Result<T, JsValue>
+where
+    T: Default + for<'a> serde::de::Deserialize<'a>,
+    K: Serialize,
+{
+    let request_body = JsValue::from_serde(&body).unwrap();
+    with_request::<T>(url, Method::PUT, Some(request_body)).await
+}
+
 /// Performs an HTTP request asynchnonously by given URL
 /// and returns parsed JSON.
 async fn with_request<T>(url: &str, method: Method, body: Option<JsValue>) -> Result<T, JsValue>
