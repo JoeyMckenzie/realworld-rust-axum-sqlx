@@ -21,7 +21,7 @@ pub fn editor() -> Html {
             <div class="container page">
                 <div class="row">
                     <div class="col-md-10 offset-md-1 col-xs-12">
-                        <form>
+                        <form onsubmit={onsubmit}>
                             <fieldset>
                                 <fieldset class="form-group">
                                     <input
@@ -60,7 +60,7 @@ pub fn editor() -> Html {
                                     />
                                     <div class="tag-list"></div>
                                 </fieldset>
-                                <button onsubmit={onsubmit} class="btn btn-lg pull-xs-right btn-primary" type="button">
+                                <button class="btn btn-lg pull-xs-right btn-primary" type="submit">
                                     { "Publish Article" }
                                 </button>
                             </fieldset>

@@ -1,5 +1,9 @@
+use log::{error, info};
+use wasm_bindgen_futures::spawn_local;
 use web_sys::{FocusEvent, HtmlInputElement, HtmlTextAreaElement, InputEvent};
 use yew::prelude::*;
+
+use crate::services::article_service::create_article;
 
 #[derive(Debug)]
 pub struct UseArticleEditorHook {
@@ -62,7 +66,32 @@ pub fn use_article_editor() -> UseArticleEditorHook {
         let body = body.clone();
         let tags = tags.clone();
 
-        Callback::from(move |e: FocusEvent| e.prevent_default())
+        Callback::from(move |e: FocusEvent| {
+            e.prevent_default();
+
+            let title = title.clone();
+            let description = description.clone();
+            let body = body.clone();
+            let tags = tags.clone();
+
+            // split the tags input, removing any non-alpha characters
+            let split_tags = tags
+                .split(' ')
+                .map(|c| c.to_owned())
+                .filter(|tag| !tag.is_empty())
+                .collect::<Vec<String>>();
+
+            spawn_local(async move {
+                let article_response =
+                    create_article((*title).clone(), (*description).clone(), (*body).clone(), split_tags).await;
+
+                if article_response.is_ok() {
+                    info!("article {} successfully created", (*title).clone());
+                } else {
+                    error!("error while creating article {}", (*title).clone());
+                }
+            });
+        })
     };
 
     UseArticleEditorHook {

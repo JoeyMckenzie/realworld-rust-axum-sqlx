@@ -3,7 +3,7 @@ use validator::Validate;
 
 #[derive(Debug, Deserialize, Serialize, Default)]
 pub struct ArticleDto {
-    #[serde(skip_serializing)]
+    #[serde(skip_serializing, skip_deserializing)]
     pub id: i64,
     pub slug: String,
     pub title: String,
@@ -31,11 +31,11 @@ pub struct AuthorDto {
 
 #[derive(Debug, Deserialize, Serialize, Validate)]
 pub struct CreateArticleDto {
-    #[validate(required)]
+    #[validate(required, length(min = 1))]
     pub title: Option<String>,
-    #[validate(required)]
+    #[validate(required, length(min = 1))]
     pub description: Option<String>,
-    #[validate(required)]
+    #[validate(required, length(min = 1))]
     pub body: Option<String>,
     #[serde(rename = "tagList")]
     pub tag_list: Vec<String>,

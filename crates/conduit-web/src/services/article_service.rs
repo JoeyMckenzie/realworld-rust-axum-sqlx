@@ -1,6 +1,5 @@
 use conduit_domain::articles::{models::CreateArticleDto, requests::CreateArticleRequest, responses::ArticleResponse};
 use lazy_static::lazy_static;
-use log::{error, info};
 
 use crate::utilities::{
     errors::{ConduitWebError, ConduitWebResult},
@@ -31,10 +30,8 @@ pub async fn create_article(
     .await;
 
     if create_article_response.is_ok() {
-        info!("article {} successfully created", title);
         return Ok(());
     }
 
-    error!("article {} was not created", title);
     Err(ConduitWebError::ArticleNotCreated)
 }
