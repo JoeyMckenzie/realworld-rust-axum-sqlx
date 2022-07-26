@@ -1,5 +1,10 @@
 use yew::prelude::*;
 
+use crate::{
+    contexts::authentication_context::use_authentication_context,
+    hooks::use_selected_article::{use_selected_article, UseSelectedArticleHook},
+};
+
 #[derive(Properties, PartialEq, Clone)]
 pub struct ArticleProps {
     pub slug: String,
@@ -7,18 +12,16 @@ pub struct ArticleProps {
 
 #[function_component(Article)]
 pub fn article(props: &ArticleProps) -> Html {
-    html! {
-        <div class="article-page">
-            <div class="banner">
-                <div class="container">
-                    <h1>{"How to build webapps that scale"}</h1>
+    let UseSelectedArticleHook { article } = use_selected_article(props.slug.clone());
+    let authentication_context = use_authentication_context();
 
-                    <div class="article-meta">
-                        <a href=""><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-                        <div class="info">
-                            <a href="" class="author">{"Eric Simons"}</a>
-                            <span class="date">{"January 20th"}</span>
-                        </div>
+    let maybe_follow_and_post_buttons = {
+        let authentication_context = authentication_context.clone();
+
+        move || -> Html {
+            if authentication_context.is_authenticated() {
+                html! {
+                    <>
                         <button class="btn btn-sm btn-outline-secondary">
                             <i class="ion-plus-round"></i>
                             {"\u{00a0}Follow Eric Simons"} <span class="counter">{" \u{0028}10\u{0029}"}</span>
@@ -28,6 +31,66 @@ pub fn article(props: &ArticleProps) -> Html {
                             <i class="ion-heart"></i>
                             {"\u{00a0}Favorite Post"} <span class="counter">{" \u{0028}29\u{0029}"}</span>
                         </button>
+                    </>
+                }
+            } else {
+                html! {}
+            }
+        }
+    };
+
+    let maybe_comment_box = {
+        let authentication_context = authentication_context.clone();
+
+        move || -> Html {
+            if authentication_context.is_authenticated() {
+                html! {
+                    <form class="card comment-form">
+                        <div class="card-block">
+                            <textarea class="form-control" placeholder="Write a comment..." rows="3"></textarea>
+                        </div>
+                        <div class="card-footer">
+                            <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
+                            <button class="btn btn-sm btn-primary">
+                                {"Post Comment"}
+                            </button>
+                        </div>
+                    </form>
+                }
+            } else {
+                html! {}
+            }
+        }
+    };
+
+    let maybe_edit_comment_options = {
+        move || -> Html {
+            if authentication_context.is_authenticated() {
+                html! {
+                    <span class="mod-options">
+                        <i class="ion-edit"></i>
+                        <i class="ion-trash-a"></i>
+                    </span>
+                }
+            } else {
+                html! {}
+            }
+        }
+    };
+
+    html! {
+        <div class="article-page">
+            <div class="banner">
+                <div class="container">
+                    <h1>{article.title.clone()}</h1>
+
+                    <div class="article-meta">
+                        <a href=""><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
+                        <div class="info">
+                            <a href="" class="author">{"Eric Simons"}</a>
+                            <span class="date">{"January 20th"}</span>
+                        </div>
+                        {maybe_follow_and_post_buttons()}
                     </div>
                 </div>
             </div>
@@ -36,10 +99,10 @@ pub fn article(props: &ArticleProps) -> Html {
                 <div class="row article-content">
                     <div class="col-md-12">
                         <p>
-                            {"Web development technologies have evolved at an incredible clip over the past few years."}
+                            {article.description}
                         </p>
-                        <h2 id="introducing-ionic">{"Introducing RealWorld."}</h2>
-                        <p>{"It's a great solution for learning how other frameworks work."}</p>
+                        <h2 id="introducing-ionic">{article.title}</h2>
+                        <p>{article.body}</p>
                     </div>
                 </div>
 
@@ -52,32 +115,13 @@ pub fn article(props: &ArticleProps) -> Html {
                             <a href="" class="author">{"Eric Simons"}</a>
                             <span class="date">{"January 20th"}</span>
                         </div>
-
-                        <button class="btn btn-sm btn-outline-secondary">
-                            <i class="ion-plus-round"></i>
-                            {"\u{00a0} Follow Eric Simons"}
-                        </button>
-                        {"\u{00a0}"}
-                        <button class="btn btn-sm btn-outline-primary">
-                            <i class="ion-heart"></i>
-                            {"\u{00a0} Favorite Post "}<span class="counter">{"\u{0028}10\u{0029}"}</span>
-                        </button>
+                        {maybe_follow_and_post_buttons()}
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xs-12 col-md-8 offset-md-2">
-                        <form class="card comment-form">
-                            <div class="card-block">
-                                <textarea class="form-control" placeholder="Write a comment..." rows="3"></textarea>
-                            </div>
-                            <div class="card-footer">
-                                <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
-                                <button class="btn btn-sm btn-primary">
-                                    {"Post Comment"}
-                                </button>
-                            </div>
-                        </form>
+                        {maybe_comment_box()}
 
                         <div class="card">
                             <div class="card-block">
@@ -104,10 +148,7 @@ pub fn article(props: &ArticleProps) -> Html {
                                 {"\u{00a0}"}
                                 <a href="" class="comment-author">{"Jacob Schmidt"}</a>
                                 <span class="date-posted">{"Dec 29th"}</span>
-                                <span class="mod-options">
-                                    <i class="ion-edit"></i>
-                                    <i class="ion-trash-a"></i>
-                                </span>
+                                {maybe_edit_comment_options()}
                             </div>
                         </div>
                     </div>

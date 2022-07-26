@@ -3,7 +3,7 @@ use lazy_static::lazy_static;
 
 use crate::utilities::{
     errors::{ConduitWebError, ConduitWebResult},
-    http::post,
+    http::{get, post},
 };
 
 lazy_static! {
@@ -34,4 +34,14 @@ pub async fn create_article(
     }
 
     Err(ConduitWebError::ArticleNotCreated)
+}
+
+pub async fn get_article(slug: String) -> ConduitWebResult<ArticleResponse> {
+    let get_article_response = get::<ArticleResponse>(&format!("{}/{}", *ARTICLES_ENDPOINT, slug)).await;
+
+    if let Ok(article_response) = get_article_response {
+        return Ok(article_response);
+    }
+
+    Err(ConduitWebError::ArticleNotFound)
 }

@@ -13,4 +13,6 @@ pub enum ConduitWebError {
     ProfileNotFound,
     #[error("article was not created")]
     ArticleNotCreated,
+    #[error("article was not found")]
+    ArticleNotFound,
 }
