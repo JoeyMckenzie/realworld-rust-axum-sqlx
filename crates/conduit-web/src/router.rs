@@ -19,6 +19,9 @@ pub enum ConduitRouter {
     Settings,
     #[at("/article/new")]
     Editor,
+    #[not_found]
+    #[at("/404")]
+    NotFound,
 }
 
 pub fn router_map(routes: &ConduitRouter) -> Html {
@@ -40,6 +43,9 @@ pub fn router_map(routes: &ConduitRouter) -> Html {
         },
         ConduitRouter::Editor => html! {
             <Editor />
+        },
+        ConduitRouter::NotFound => html! {
+            <Home />
         },
     }
 }

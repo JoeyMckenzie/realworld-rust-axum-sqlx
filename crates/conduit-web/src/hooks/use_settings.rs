@@ -3,12 +3,15 @@ use conduit_domain::users::{
     responses::UserAuthenicationResponse,
 };
 use gloo::console::error;
-use log::info;
+use log::{info, warn};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{FocusEvent, HtmlInputElement, HtmlTextAreaElement, InputEvent};
 use yew::prelude::*;
+use yew_router::prelude::*;
 
-use crate::{contexts::authentication_context::use_authentication_context, utilities::http::put};
+use crate::{
+    contexts::authentication_context::use_authentication_context, router::ConduitRouter, utilities::http::put,
+};
 
 #[derive(Debug)]
 pub struct UseSettingsHook {
@@ -27,7 +30,6 @@ pub struct UseSettingsHook {
 
 pub fn use_settings() -> UseSettingsHook {
     let authentication_context = use_authentication_context();
-
     let image = use_state(String::default);
     let username = use_state(String::default);
     let bio = use_state(String::default);
@@ -36,22 +38,26 @@ pub fn use_settings() -> UseSettingsHook {
 
     {
         let authentication_context = use_authentication_context();
+        let history = use_history().expect("history to load");
         let image = image.clone();
         let username = username.clone();
         let bio = bio.clone();
         let email = email.clone();
 
         use_effect_with_deps(
-            move |context| {
+            move |(context, history_location)| {
                 if context.is_authenticated() {
                     image.set(context.image.as_ref().unwrap().to_owned());
                     username.set(context.username.as_ref().unwrap().to_owned());
                     bio.set(context.bio.as_ref().unwrap().to_owned());
                     email.set(context.email.as_ref().unwrap().to_owned());
+                } else {
+                    warn!("user is not authenticated, redirecting to home");
+                    history_location.push(ConduitRouter::Home);
                 }
                 || ()
             },
-            authentication_context,
+            (authentication_context, history),
         )
     }
 

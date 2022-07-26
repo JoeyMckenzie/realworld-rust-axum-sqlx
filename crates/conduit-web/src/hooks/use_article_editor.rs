@@ -1,9 +1,13 @@
-use log::{error, info};
+use log::{error, info, warn};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::{FocusEvent, HtmlInputElement, HtmlTextAreaElement, InputEvent};
 use yew::prelude::*;
+use yew_router::prelude::*;
 
-use crate::services::article_service::create_article;
+use crate::{
+    contexts::authentication_context::use_authentication_context, router::ConduitRouter,
+    services::article_service::create_article,
+};
 
 #[derive(Debug)]
 pub struct UseArticleEditorHook {
@@ -19,10 +23,27 @@ pub struct UseArticleEditorHook {
 }
 
 pub fn use_article_editor() -> UseArticleEditorHook {
+    let history = use_history().expect("history failed to load");
     let title = use_state(String::default);
     let description = use_state(String::default);
     let body = use_state(String::default);
     let tags = use_state(String::new);
+
+    {
+        let authentication_context = use_authentication_context();
+        let history = history.clone();
+
+        use_effect_with_deps(
+            move |(context, history_location)| {
+                if !context.is_authenticated() {
+                    warn!("user is not authenticated, redirecting to home");
+                    history_location.push(ConduitRouter::Home);
+                }
+                || ()
+            },
+            (authentication_context, history),
+        );
+    }
 
     let title_oninput = {
         let title = title.clone();
@@ -69,6 +90,7 @@ pub fn use_article_editor() -> UseArticleEditorHook {
         Callback::from(move |e: FocusEvent| {
             e.prevent_default();
 
+            let history = history.clone();
             let title = title.clone();
             let description = description.clone();
             let body = body.clone();
@@ -87,6 +109,7 @@ pub fn use_article_editor() -> UseArticleEditorHook {
 
                 if article_response.is_ok() {
                     info!("article {} successfully created", (*title).clone());
+                    history.push(ConduitRouter::Home);
                 } else {
                     error!("error while creating article {}", (*title).clone());
                 }
