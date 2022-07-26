@@ -3,7 +3,7 @@ use log::{error, info};
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
-use crate::contexts::{article_context::ArticleProvider, authentication_context::AuthenticationProvider};
+use crate::contexts::authentication_context::AuthenticationProvider;
 use crate::{layout::Layout, utilities::http::get};
 
 #[function_component(App)]
@@ -24,9 +24,7 @@ pub fn app() -> Html {
     html! {
         <body>
             <AuthenticationProvider>
-                <ArticleProvider>
-                    <Layout />
-                </ArticleProvider>
+                <Layout />
             </AuthenticationProvider>
         </body>
     }
