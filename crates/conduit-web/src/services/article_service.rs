@@ -15,7 +15,7 @@ pub async fn create_article(
     description: String,
     body: String,
     tags: Vec<String>,
-) -> ConduitWebResult<()> {
+) -> ConduitWebResult<ArticleResponse> {
     let article_dto = CreateArticleDto {
         title: Some(title.clone()),
         description: Some(description),
@@ -29,8 +29,8 @@ pub async fn create_article(
     )
     .await;
 
-    if create_article_response.is_ok() {
-        return Ok(());
+    if let Ok(article_response) = create_article_response {
+        return Ok(article_response);
     }
 
     Err(ConduitWebError::ArticleNotCreated)

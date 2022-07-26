@@ -5,7 +5,8 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::{
-    contexts::authentication_context::use_authentication_context, router::ConduitRouter,
+    contexts::{article_context::use_article_context, authentication_context::use_authentication_context},
+    router::ConduitRouter,
     services::article_service::create_article,
 };
 
@@ -23,6 +24,7 @@ pub struct UseArticleEditorHook {
 }
 
 pub fn use_article_editor() -> UseArticleEditorHook {
+    let article_context = use_article_context();
     let history = use_history().expect("history failed to load");
     let title = use_state(String::default);
     let description = use_state(String::default);
@@ -82,6 +84,7 @@ pub fn use_article_editor() -> UseArticleEditorHook {
     };
 
     let onsubmit = {
+        let article_context = article_context.clone();
         let title = title.clone();
         let description = description.clone();
         let body = body.clone();
@@ -90,6 +93,7 @@ pub fn use_article_editor() -> UseArticleEditorHook {
         Callback::from(move |e: FocusEvent| {
             e.prevent_default();
 
+            let article_context = article_context.clone();
             let history = history.clone();
             let title = title.clone();
             let description = description.clone();
@@ -107,9 +111,11 @@ pub fn use_article_editor() -> UseArticleEditorHook {
                 let article_response =
                     create_article((*title).clone(), (*description).clone(), (*body).clone(), split_tags).await;
 
-                if article_response.is_ok() {
+                if let Ok(created_article) = article_response {
                     info!("article {} successfully created", (*title).clone());
-                    history.push(ConduitRouter::Home);
+                    history.push(ConduitRouter::Article {
+                        slug: created_article.article.slug,
+                    });
                 } else {
                     error!("error while creating article {}", (*title).clone());
                 }

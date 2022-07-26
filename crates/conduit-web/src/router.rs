@@ -2,7 +2,8 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::pages::{
-    editor::Editor, home::Home, login::Login, profile::Profile, register::Register, settings::Settings,
+    article::Article, editor::Editor, home::Home, login::Login, profile::Profile, register::Register,
+    settings::Settings,
 };
 
 #[derive(Clone, Routable, PartialEq)]
@@ -19,6 +20,8 @@ pub enum ConduitRouter {
     Settings,
     #[at("/article/new")]
     Editor,
+    #[at("/article/:slug")]
+    Article { slug: String },
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -43,6 +46,9 @@ pub fn router_map(routes: &ConduitRouter) -> Html {
         },
         ConduitRouter::Editor => html! {
             <Editor />
+        },
+        ConduitRouter::Article { slug } => html! {
+            <Article slug={slug.clone()} />
         },
         ConduitRouter::NotFound => html! {
             <Home />
