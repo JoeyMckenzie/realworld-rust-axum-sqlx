@@ -10,14 +10,14 @@ pub mod users;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ApiError {
-    pub error: HashMap<String, Vec<String>>,
+    pub errors: HashMap<String, Vec<String>>,
 }
 
 impl ApiError {
     pub fn new(error: String) -> Self {
         let mut error_map: HashMap<String, Vec<String>> = HashMap::new();
         error_map.insert("message".to_owned(), vec![error]);
-        Self { error: error_map }
+        Self { errors: error_map }
     }
 }
 

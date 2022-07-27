@@ -55,8 +55,8 @@ impl UserEntity {
             id: self.id,
             email: self.email,
             username: self.username,
-            bio: self.bio,
-            image: self.image,
+            bio: Some(self.bio),
+            image: Some(self.image),
             token,
         }
     }

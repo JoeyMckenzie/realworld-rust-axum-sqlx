@@ -7,7 +7,7 @@ use crate::utilities::{
 };
 
 lazy_static! {
-    static ref ARTICLES_ENDPOINT: &'static str = "/api/articles";
+    static ref ARTICLES_ENDPOINT: &'static str = "/articles";
 }
 
 pub async fn create_article(

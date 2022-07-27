@@ -42,9 +42,6 @@ wasm_bindgen = "0.2.80"
 # Default wasm-opt version to download.
 wasm_opt = "version_105"
 
-[[proxy]]
-backend = "http://localhost:8080/api"
-
 ## hooks
 # Hooks are optional, and default to `None`.
 # Hooks are executed as part of Trunk's main build pipeline, no matter how it is run.

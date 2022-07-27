@@ -8,7 +8,7 @@ use crate::utilities::{
 };
 
 lazy_static! {
-    static ref PROFILE_ENDPOINT: &'static str = "/api/profiles";
+    static ref PROFILE_ENDPOINT: &'static str = "/profiles";
 }
 
 pub async fn get_profile(username: String) -> ConduitWebResult<ProfileDto> {

@@ -1,25 +1,25 @@
-use conduit_domain::users::{
-    requests::{LoginUserDto, LoginUserRequest, RegisterUserDto, RegisterUserRequest},
-    responses::UserAuthenicationResponse,
+use conduit_domain::{
+    users::{
+        requests::{LoginUserDto, LoginUserRequest, RegisterUserDto, RegisterUserRequest},
+        responses::UserAuthenicationResponse,
+    },
+    ApiError,
 };
 use gloo::console::info;
 use lazy_static::lazy_static;
 use log::{error, warn};
 
-use crate::{
-    services::Errors,
-    utilities::{
-        errors::{ConduitWebError, ConduitWebResult},
-        http::{get, post},
-        storage::{clear_token, get_token, stash_token},
-    },
+use crate::utilities::{
+    errors::{ConduitWebError, ConduitWebResult},
+    http::{get, post},
+    storage::{clear_token, get_token, stash_token},
 };
 
 pub type AuthenticationResult = Result<UserAuthenicationResponse, Vec<String>>;
 
 lazy_static! {
-    static ref AUTH_ENDPOINT: &'static str = "/api/users";
-    static ref USER_ENDPOINT: &'static str = "/api/user";
+    static ref AUTH_ENDPOINT: &'static str = "/users";
+    static ref USER_ENDPOINT: &'static str = "/user";
 }
 
 pub async fn register_user(username: String, email: String, password: String) -> AuthenticationResult {
@@ -39,9 +39,9 @@ pub async fn register_user(username: String, email: String, password: String) ->
 
     if let Err(error) = response {
         error!("error while attempting to register user");
-        let mapped_errors: Errors = error.into_serde().unwrap();
+        let mapped_errors: ApiError = error.into_serde().unwrap();
         let returned_errors: Vec<String> = mapped_errors
-            .error
+            .errors
             .into_iter()
             .flat_map(|(_, property_errors)| property_errors)
             .collect();
@@ -74,9 +74,9 @@ pub async fn login_user(email: String, password: String) -> AuthenticationResult
 
     if let Err(error) = response {
         error!("error while attempting to login user");
-        let mapped_errors: Errors = error.into_serde().unwrap();
+        let mapped_errors: ApiError = error.into_serde().unwrap();
         let returned_errors: Vec<String> = mapped_errors
-            .error
+            .errors
             .into_iter()
             .flat_map(|(_, property_errors)| property_errors)
             .collect();

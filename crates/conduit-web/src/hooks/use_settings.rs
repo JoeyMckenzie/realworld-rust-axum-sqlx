@@ -140,9 +140,16 @@ pub fn use_settings() -> UseSettingsHook {
 
                 if let Ok(user_response) = response {
                     info!("user successfully updated");
-                    image.set(user_response.user.image.clone());
+                    image.set(
+                        user_response
+                            .user
+                            .image
+                            .as_ref()
+                            .unwrap_or(&String::default())
+                            .to_owned(),
+                    );
                     username.set(user_response.user.username.clone());
-                    bio.set(user_response.user.bio.clone());
+                    bio.set(user_response.user.bio.as_ref().unwrap_or(&String::default()).to_owned());
                     email.set(user_response.user.email.clone());
                     password.set(String::default());
 

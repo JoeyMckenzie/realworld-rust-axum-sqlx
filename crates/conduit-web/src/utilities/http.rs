@@ -1,5 +1,7 @@
 use gloo::net::http::Method;
 use js_sys::JSON;
+use lazy_static::lazy_static;
+use log::info;
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -7,6 +9,10 @@ use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, RequestMode, Response};
 
 use super::storage::get_token;
+
+lazy_static! {
+    static ref API_BASE_URL: &'static str = "https://api.realworld.io/api";
+}
 
 pub async fn get<T>(url: &str) -> Result<T, JsValue>
 where
@@ -50,7 +56,7 @@ where
     }
 
     // prepare request
-    let request = Request::new_with_str_and_init(url, &request_options)?;
+    let request = Request::new_with_str_and_init(&format!("{}{}", *API_BASE_URL, url), &request_options)?;
     request.headers().set("Accept", "application/json")?;
 
     if let Ok(token) = get_token() {
@@ -69,6 +75,7 @@ where
     let json_content = JsFuture::from(response_meta.json()?).await?;
 
     if response_meta.status() == 200 {
+        info!("{:?}", response_meta);
         let as_struct_response: T = json_content.into_serde().unwrap();
         return Ok(as_struct_response);
     }

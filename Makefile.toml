@@ -16,6 +16,10 @@ command = "trunk"
 args = ["serve"]
 dependencies = ["docker-start"]
 
+[tasks.web-demo]
+command = "trunk"
+args = ["serve"]
+
 [tasks.docker]
 command = "docker"
 args = [

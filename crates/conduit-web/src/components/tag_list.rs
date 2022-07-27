@@ -15,7 +15,7 @@ pub fn tag_list() -> Html {
         use_effect_with_deps(
             move |_| {
                 spawn_local(async move {
-                    let tags_response = get::<TagsResponse>("/api/tags").await;
+                    let tags_response = get::<TagsResponse>("/tags").await;
 
                     if let Ok(tags_list) = tags_response {
                         info!("tags successfully retrieved, found {} tags", tags_list.tags.len());

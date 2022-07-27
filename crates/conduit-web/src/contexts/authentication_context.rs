@@ -37,8 +37,8 @@ impl Reducible for AuthenticationState {
             username: Some(action.username),
             email: Some(action.email),
             token: Some(action.token),
-            image: Some(action.image),
-            bio: Some(action.bio),
+            image: Some(action.image.unwrap_or_default()),
+            bio: Some(action.bio.unwrap_or_default()),
         }
         .into()
     }
