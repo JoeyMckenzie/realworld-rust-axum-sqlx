@@ -1,6 +1,7 @@
 use yew::prelude::*;
 
 use crate::{
+    components::author_profile_meta::AuthorProfileMeta,
     contexts::authentication_context::use_authentication_context,
     hooks::use_selected_article::{use_selected_article, UseSelectedArticleHook},
 };
@@ -17,24 +18,39 @@ pub fn article(props: &ArticleProps) -> Html {
 
     let maybe_follow_and_post_buttons = {
         let authentication_context = authentication_context.clone();
+        let article = article.clone();
 
         move || -> Html {
+            let follow_button_text = if article.author.following { "Unfollow" } else { "Follow" };
+            let favorite_button_text = if article.favorited { "Unfavorite" } else { "Favorite" };
+
             if authentication_context.is_authenticated() {
                 html! {
                     <>
+                        <AuthorProfileMeta
+                            username={article.author.username.clone()}
+                            image={article.author.image.clone()}
+                            created_date={article.created_at.clone()}
+                        />
                         <button class="btn btn-sm btn-outline-secondary">
                             <i class="ion-plus-round"></i>
-                            {"\u{00a0}Follow Eric Simons"} <span class="counter">{" \u{0028}10\u{0029}"}</span>
+                            {format!("\u{00a0}{} {}", follow_button_text, article.author.username)}
                         </button>
                         {"\u{00a0}\u{00a0}"}
                         <button class="btn btn-sm btn-outline-primary">
                             <i class="ion-heart"></i>
-                            {"\u{00a0}Favorite Post"} <span class="counter">{" \u{0028}29\u{0029}"}</span>
+                            {format!("\u{00a0}{} Post", favorite_button_text)} <span class="counter">{format!(" \u{0028}{}\u{0029}", article.favorites_count)}</span>
                         </button>
                     </>
                 }
             } else {
-                html! {}
+                html! {
+                    <AuthorProfileMeta
+                        username={article.author.username.clone()}
+                        image={article.author.image.clone()}
+                        created_date={article.created_at.clone()}
+                    />
+                }
             }
         }
     };
@@ -85,11 +101,6 @@ pub fn article(props: &ArticleProps) -> Html {
                     <h1>{article.title.clone()}</h1>
 
                     <div class="article-meta">
-                        <a href=""><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-                        <div class="info">
-                            <a href="" class="author">{"Eric Simons"}</a>
-                            <span class="date">{"January 20th"}</span>
-                        </div>
                         {maybe_follow_and_post_buttons()}
                     </div>
                 </div>
@@ -110,11 +121,6 @@ pub fn article(props: &ArticleProps) -> Html {
 
                 <div class="article-actions">
                     <div class="article-meta">
-                        <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-                        <div class="info">
-                            <a href="" class="author">{"Eric Simons"}</a>
-                            <span class="date">{"January 20th"}</span>
-                        </div>
                         {maybe_follow_and_post_buttons()}
                     </div>
                 </div>
