@@ -1,4 +1,7 @@
-use conduit_domain::articles::{models::CreateArticleDto, requests::CreateArticleRequest, responses::ArticleResponse};
+use conduit_domain::{
+    articles::{models::CreateArticleDto, requests::CreateArticleRequest, responses::ArticleResponse},
+    comments::responses::CommentsResponse,
+};
 use lazy_static::lazy_static;
 
 use crate::utilities::{
@@ -44,4 +47,15 @@ pub async fn get_article(slug: String) -> ConduitWebResult<ArticleResponse> {
     }
 
     Err(ConduitWebError::ArticleNotFound)
+}
+
+pub async fn get_article_comments(slug: String) -> ConduitWebResult<CommentsResponse> {
+    let get_article_comments_response =
+        get::<CommentsResponse>(&format!("{}/{}/comments", *ARTICLES_ENDPOINT, slug)).await;
+
+    if let Ok(comments_response) = get_article_comments_response {
+        return Ok(comments_response);
+    }
+
+    Err(ConduitWebError::CommentsNotLoaded)
 }

@@ -24,8 +24,8 @@ pub struct ArticleDto {
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct AuthorDto {
     pub username: String,
-    pub bio: String,
-    pub image: String,
+    pub bio: Option<String>,
+    pub image: Option<String>,
     pub following: bool,
 }
 

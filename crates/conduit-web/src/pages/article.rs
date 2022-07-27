@@ -1,7 +1,7 @@
 use yew::prelude::*;
 
 use crate::{
-    components::author_profile_meta::AuthorProfileMeta,
+    components::{author_profile_meta::AuthorProfileMeta, comment_card::CommentCard},
     contexts::authentication_context::use_authentication_context,
     hooks::use_selected_article::{use_selected_article, UseSelectedArticleHook},
 };
@@ -13,7 +13,7 @@ pub struct ArticleProps {
 
 #[function_component(Article)]
 pub fn article(props: &ArticleProps) -> Html {
-    let UseSelectedArticleHook { article } = use_selected_article(props.slug.clone());
+    let UseSelectedArticleHook { article, comments } = use_selected_article(props.slug.clone());
     let authentication_context = use_authentication_context();
 
     let maybe_follow_and_post_buttons = {
@@ -29,7 +29,7 @@ pub fn article(props: &ArticleProps) -> Html {
                     <>
                         <AuthorProfileMeta
                             username={article.author.username.clone()}
-                            image={article.author.image.clone()}
+                            image={article.author.image.as_ref().unwrap_or(&String::default()).to_owned()}
                             created_date={article.created_at.clone()}
                         />
                         <button class="btn btn-sm btn-outline-secondary">
@@ -47,7 +47,7 @@ pub fn article(props: &ArticleProps) -> Html {
                 html! {
                     <AuthorProfileMeta
                         username={article.author.username.clone()}
-                        image={article.author.image.clone()}
+                        image={article.author.image.as_ref().unwrap_or(&String::default()).to_owned()}
                         created_date={article.created_at.clone()}
                     />
                 }
@@ -94,6 +94,27 @@ pub fn article(props: &ArticleProps) -> Html {
         }
     };
 
+    let user_comments = move || -> Html {
+        let mapped_comments = comments
+            .into_iter()
+            .map(|comment| {
+                html! {
+                    <CommentCard
+                        username={comment.author.username.clone()}
+                        image={comment.author.image.as_ref().unwrap_or(&String::default()).to_owned()}
+                        created_date={comment.created_at.clone()}
+                    />
+                }
+            })
+            .collect::<Vec<Html>>();
+
+        html! {
+            <>
+                {mapped_comments}
+            </>
+        }
+    };
+
     html! {
         <div class="article-page">
             <div class="banner">
@@ -129,19 +150,7 @@ pub fn article(props: &ArticleProps) -> Html {
                     <div class="col-xs-12 col-md-8 offset-md-2">
                         {maybe_comment_box()}
 
-                        <div class="card">
-                            <div class="card-block">
-                                <p class="card-text">{"With supporting text below as a natural lead-in to additional content."}</p>
-                            </div>
-                            <div class="card-footer">
-                                <a href="" class="comment-author">
-                                    <img src="http://i.imgur.com/Qr71crq.jpg" class="comment-author-img" />
-                                </a>
-                                {"\u{00a0}"}
-                                <a href="" class="comment-author">{"Jacob Schmidt"}</a>
-                                <span class="date-posted">{"Dec 29th"}</span>
-                            </div>
-                        </div>
+                        {user_comments()}
 
                         <div class="card">
                             <div class="card-block">

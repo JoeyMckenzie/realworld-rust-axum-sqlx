@@ -40,6 +40,7 @@ impl ArticlesService for ConduitArticlesService {
     ) -> ConduitResult<ArticleDto> {
         let slug = slugify(&title);
 
+        // TODO: remove this, just create the article and slap a GUID or something on the slug regardless of it it exists or not
         // verify an existing article does not exist with the request title
         let article_title_exists = self
             .articles_repository

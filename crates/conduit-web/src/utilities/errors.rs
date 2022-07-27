@@ -15,4 +15,8 @@ pub enum ConduitWebError {
     ArticleNotCreated,
     #[error("article was not found")]
     ArticleNotFound,
+    #[error("comments was not loaded")]
+    CommentsNotLoaded,
+    #[error("Date time is an invalid format")]
+    DateTimeInvalid,
 }

@@ -54,8 +54,8 @@ impl From<CommentQuery> for CommentDto {
             body: query.body,
             author: AuthorDto {
                 username: query.author_username,
-                bio: query.author_bio,
-                image: query.author_image,
+                bio: Some(query.author_bio),
+                image: Some(query.author_image),
                 following: query.following_author,
             },
         }

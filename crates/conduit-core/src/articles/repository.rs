@@ -106,8 +106,8 @@ impl UpsertArticleQuery {
             favorites_count: 0,
             author: AuthorDto {
                 username: self.author_username,
-                bio: self.author_bio,
-                image: self.author_image,
+                bio: Some(self.author_bio),
+                image: Some(self.author_image),
                 following: false,
             },
         }
@@ -129,8 +129,8 @@ impl GetArticleQuery {
             favorites_count: self.favorites,
             author: AuthorDto {
                 username: self.author_username,
-                bio: self.author_bio,
-                image: self.author_image,
+                bio: Some(self.author_bio),
+                image: Some(self.author_image),
                 following: self.following_author,
             },
         }

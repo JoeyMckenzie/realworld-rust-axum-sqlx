@@ -6,7 +6,7 @@ use crate::articles::models::AuthorDto;
 pub mod requests;
 pub mod responses;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize, Default, Clone, PartialEq)]
 pub struct CommentDto {
     pub id: i64,
     #[serde(rename = "createdAt")]
@@ -17,7 +17,7 @@ pub struct CommentDto {
     pub author: AuthorDto,
 }
 
-#[derive(Debug, Deserialize, Validate)]
+#[derive(Debug, Deserialize, Serialize, Default, Validate)]
 pub struct CreateCommentDto {
     #[validate(required)]
     pub body: Option<String>,
