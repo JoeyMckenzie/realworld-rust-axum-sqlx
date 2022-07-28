@@ -1,5 +1,9 @@
 use conduit_domain::{
-    articles::{models::CreateArticleDto, requests::CreateArticleRequest, responses::ArticleResponse},
+    articles::{
+        models::CreateArticleDto,
+        requests::CreateArticleRequest,
+        responses::{ArticleResponse, ArticlesResponse},
+    },
     comments::responses::CommentsResponse,
 };
 use lazy_static::lazy_static;
@@ -7,6 +11,7 @@ use lazy_static::lazy_static;
 use crate::utilities::{
     errors::{ConduitWebError, ConduitWebResult},
     http::{get, post},
+    params::PaginationQueryBuilder,
 };
 
 lazy_static! {
@@ -41,6 +46,32 @@ pub async fn create_article(
 
 pub async fn get_article(slug: String) -> ConduitWebResult<ArticleResponse> {
     let get_article_response = get::<ArticleResponse>(&format!("{}/{}", *ARTICLES_ENDPOINT, slug)).await;
+
+    if let Ok(article_response) = get_article_response {
+        return Ok(article_response);
+    }
+
+    Err(ConduitWebError::ArticleNotFound)
+}
+
+pub async fn get_articles(
+    limit: usize,
+    offset: usize,
+    author: String,
+    tag: String,
+    favorited: String,
+) -> ConduitWebResult<ArticlesResponse> {
+    let url = format!("{}", *ARTICLES_ENDPOINT);
+
+    let param_builder = PaginationQueryBuilder::new(&url)
+        .with_limit(limit)
+        .with_offset(offset)
+        .with_author(author)
+        .with_tag(tag)
+        .with_favorited(favorited)
+        .build();
+
+    let get_article_response = get::<ArticlesResponse>(&param_builder.to_query_string()).await;
 
     if let Ok(article_response) = get_article_response {
         return Ok(article_response);
