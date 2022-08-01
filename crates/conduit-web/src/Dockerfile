@@ -7,11 +7,6 @@ WORKDIR /app
 COPY ./crates/conduit-web ./crates/conduit-web
 COPY ./crates/conduit-domain ./crates/conduit-domain
 
-# install trunk via wget
-# RUN apt-get update
-# RUN apt install --yes --no-install-recommends wget
-# RUN wget -qO- https://github.com/thedodd/trunk/releases/download/v0.16.0/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
-
 # on rebuilds, we explicitly cache our rust build dependencies to speed things up
 RUN --mount=type=cache,target=/app/target \
     --mount=type=cache,target=/usr/local/cargo/registry \

@@ -2,8 +2,7 @@
 
 ![realworld_logo](/realworld-dual-mode.png)
 
-An implementation of the RealWorld project using Rust
-alongside [axum](https://github.com/tokio-rs/axum) and [sqlx](https://github.com/launchbadge/sqlx).
+A fullstack implementation of the RealWorld project using [Rust](https://www.rust-lang.org/), [axum](https://github.com/tokio-rs/axum), [sqlx](https://github.com/launchbadge/sqlx), and [yew](https://yew.rs).
 
 To get started, install [Docker](https://www.docker.com/) and [cargo-make](https://github.com/sagiegurari/cargo-make)
 on your local machine (Windows users may want to use WSL for ease of development), then clone/fork the repository. Once
@@ -40,7 +39,7 @@ using [trunk](https://trunkrs.dev/):
 cargo make web
 ```
 
-## Prject Structure
+## Project Structure
 
 This project is more or less a Rust playground for myself and others to learn Rust, axum, and sqlx.
 We utilize [cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) to help encapsulate
@@ -82,7 +81,7 @@ git commit -m "feat(core): add some amazing unit tests" --no-verify
 
 ## Using Docker
 
-The project utilizes Docker containers for Postgres and Prometheus metrics. For example, when starting the
+The project utilizes Docker containers for Postgres and Prometheus metrics, as well as containers for the API and frontend. For example, when starting the
 application with `cargo make docker`, navigating to `localhost:9090` will bring you to the Prometheus metrics page.
 From there, running integration tests with `cargo make integration` to simulate traffic to the API allows one to observe
 the
