@@ -27,6 +27,7 @@ args = [
     "-f", "./deploy/docker-compose.metrics.yml",
     "-f", "./deploy/docker-compose.postgres.yml",
     "-f", "./deploy/docker-compose.conduit-bin.yml",
+    "-f", "./deploy/docker-compose.conduit-web.yml",
     "up",
     "--build"
 ]

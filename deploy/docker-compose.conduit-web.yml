@@ -5,8 +5,8 @@ services:
     container_name: realworld_rust_axum_sqlx_conduit_web
     build:
       context: ..
-      dockerfile: crates/conduit-bin/src/Dockerfile
+      dockerfile: crates/conduit-web/src/Dockerfile
     volumes:
       - /tmp/app:/var/log/app
     ports:
-      - '3000:3000'
+      - '8081:80'

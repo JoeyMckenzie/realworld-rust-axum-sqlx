@@ -28,13 +28,13 @@ pub fn article_preview(props: &ArticlePreviewProps) -> Html {
                     <i class="ion-heart"></i> {props.favorites}
                 </button>
             </div>
-            <a href="" class="preview-link">
+            <Link<ConduitRouter> classes="preview-link" to={ConduitRouter::Article { slug: props.slug.clone() }}>
                 <h1>{props.title.clone()}</h1>
                 <p>{props.description.clone()}</p>
-                <Link<ConduitRouter> to={ConduitRouter::Article { slug: props.slug.clone() }}>
+                <>
                     { "Read more..." }
-                </Link<ConduitRouter>>
-            </a>
+                </>
+            </Link<ConduitRouter>>
         </div>
     }
 }

@@ -61,7 +61,7 @@ pub async fn get_articles(
     tag: String,
     favorited: String,
 ) -> ConduitWebResult<ArticlesResponse> {
-    let url = format!("{}", *ARTICLES_ENDPOINT);
+    let url = (*ARTICLES_ENDPOINT).to_string();
 
     let param_builder = PaginationQueryBuilder::new(&url)
         .with_limit(limit)

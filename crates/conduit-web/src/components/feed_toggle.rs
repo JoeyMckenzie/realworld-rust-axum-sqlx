@@ -1,10 +1,7 @@
 use yew::prelude::*;
 
-#[derive(Properties, PartialEq, Clone)]
-pub struct FeedToggleProps {}
-
 #[function_component(FeedToggle)]
-pub fn feed_toggle(props: &FeedToggleProps) -> Html {
+pub fn feed_toggle() -> Html {
     html! {
         <div class="feed-toggle">
             <ul class="nav nav-pills outline-active">
