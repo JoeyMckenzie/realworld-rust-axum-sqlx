@@ -13,21 +13,19 @@ pub struct ActiveLinkProps {
 #[function_component(ActiveLink)]
 pub fn active_link(props: &ActiveLinkProps) -> Html {
     let active_classes = use_state_eq(|| "");
+    let route = use_route::<ConduitRouter>().expect("failed to load current route");
 
-    {
-        let route = use_route::<ConduitRouter>().expect("failed to load current route");
-        let props = props.clone();
-        let active_classes = active_classes.clone();
-
-        use_effect(move || {
-            if route == props.to {
-                active_classes.set("nav-link active");
+    use_effect_with_deps(
+        move |(current_route, current_props, current_active_classes)| {
+            if *current_route == current_props.to {
+                current_active_classes.set("nav-link active");
             } else {
-                active_classes.set("nav-link");
+                current_active_classes.set("nav-link");
             }
             || ()
-        });
-    }
+        },
+        (route, props.clone(), active_classes.clone()),
+    );
 
     html! {
         <Link<ConduitRouter> classes={*active_classes} to={props.to.clone()}>

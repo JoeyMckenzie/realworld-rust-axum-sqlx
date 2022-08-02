@@ -1,5 +1,4 @@
 use conduit_domain::articles::models::ArticleDto;
-use log::info;
 use yew::prelude::*;
 
 use crate::components::article_preview::ArticlePreview;
@@ -11,18 +10,8 @@ pub struct ArticlePreviewsProps {
 
 #[function_component(ArticlePreviews)]
 pub fn article_previews(props: &ArticlePreviewsProps) -> Html {
-    let props = props.clone();
-
-    {
-        let props = props.clone();
-
-        use_effect(move || {
-            info!("articles {}", props.articles.len());
-            || ()
-        });
-    }
-
     let mapped_articles = props
+        .clone()
         .articles
         .into_iter()
         .map(|article| {

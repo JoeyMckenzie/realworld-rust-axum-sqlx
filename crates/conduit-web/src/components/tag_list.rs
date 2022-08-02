@@ -3,35 +3,38 @@ use log::{error, info};
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
-use crate::utilities::http::get;
+use crate::{
+    contexts::articles_context::{use_article_context, ArticleActions},
+    utilities::http::get,
+};
 
 #[function_component(TagList)]
 pub fn tag_list() -> Html {
-    let tags = use_state(Vec::<String>::new);
+    let context = use_article_context();
 
-    {
-        let tags = tags.clone();
+    use_effect_with_deps(
+        move |current_context| {
+            let current_context = current_context.clone();
 
-        use_effect_with_deps(
-            move |_| {
-                spawn_local(async move {
-                    let tags_response = get::<TagsResponse>("/tags").await;
+            spawn_local(async move {
+                let tags_response = get::<TagsResponse>("/tags").await;
 
-                    if let Ok(tags_list) = tags_response {
-                        info!("tags successfully retrieved, found {} tags", tags_list.tags.len());
-                        tags.set(tags_list.tags);
-                    } else {
-                        error!("error while retrieving tags");
-                    }
-                });
-                || ()
-            },
-            (),
-        );
-    }
+                if let Ok(tags_list) = tags_response {
+                    info!("tags successfully retrieved, found {} tags", tags_list.tags.len());
+                    current_context.dispatch(ArticleActions::SetTags(tags_list.tags));
+                } else {
+                    error!("error while retrieving tags");
+                }
+            });
+            || ()
+        },
+        context.clone(),
+    );
 
     let tags_listing = move || -> Html {
-        tags.iter()
+        context
+            .tags
+            .iter()
             .map(|tag| {
                 html! {
                     <a href="" class="tag-pill tag-default">{ tag }</a>

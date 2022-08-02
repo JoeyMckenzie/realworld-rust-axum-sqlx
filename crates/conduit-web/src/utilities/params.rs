@@ -1,10 +1,10 @@
 #[derive(Clone)]
-pub struct PaginationQueryBuilder<'a> {
-    params: ArticlePaginationQueryParams<'a>,
+pub struct PaginationQueryBuilder {
+    params: ArticlePaginationQueryParams,
 }
 
-impl<'a> PaginationQueryBuilder<'a> {
-    pub fn new(url: &'a str) -> Self {
+impl PaginationQueryBuilder {
+    pub fn new(url: String) -> Self {
         Self {
             params: ArticlePaginationQueryParams {
                 url,
@@ -42,14 +42,14 @@ impl<'a> PaginationQueryBuilder<'a> {
         self.clone()
     }
 
-    pub fn build(self) -> ArticlePaginationQueryParams<'a> {
+    pub fn build(self) -> ArticlePaginationQueryParams {
         self.params
     }
 }
 
 #[derive(Clone)]
-pub struct ArticlePaginationQueryParams<'a> {
-    url: &'a str,
+pub struct ArticlePaginationQueryParams {
+    url: String,
     pub limit: Option<usize>,
     pub offset: Option<usize>,
     pub author: Option<String>,
@@ -57,7 +57,7 @@ pub struct ArticlePaginationQueryParams<'a> {
     pub favorited: Option<String>,
 }
 
-impl<'a> ArticlePaginationQueryParams<'a> {
+impl ArticlePaginationQueryParams {
     pub fn to_query_string(&self) -> String {
         let mut query_string = format!("{}?", self.url);
         let mut param_count = 0;
@@ -123,7 +123,7 @@ mod article_pagination_query_params_should {
         let favorited = "another_user".to_string();
 
         // act
-        let params = PaginationQueryBuilder::new("https://reddit.com/r/rust")
+        let params = PaginationQueryBuilder::new("https://reddit.com/r/rust".to_string())
             .with_limit(limit)
             .with_offset(offset)
             .with_author(author.clone())
@@ -154,7 +154,7 @@ mod article_pagination_query_params_should {
         let favorited = "another_user".to_string();
 
         // act
-        let mut params_builder = PaginationQueryBuilder::new("https://reddit.com/r/rust")
+        let mut params_builder = PaginationQueryBuilder::new("https://reddit.com/r/rust".to_string())
             .with_limit(limit)
             .with_offset(offset);
 
@@ -192,7 +192,7 @@ mod article_pagination_query_params_should {
         let author = "the_beercoder".to_string();
 
         // act
-        let params = PaginationQueryBuilder::new("https://reddit.com/r/rust")
+        let params = PaginationQueryBuilder::new("https://reddit.com/r/rust".to_string())
             .with_limit(limit)
             .with_offset(offset)
             .with_author(author.clone())
@@ -219,7 +219,7 @@ mod article_pagination_query_params_should {
         let expected_url = "https://reddit.com/r/rust?limit=20&offset=0&favorited=another_user";
 
         // act
-        let params = PaginationQueryBuilder::new("https://reddit.com/r/rust")
+        let params = PaginationQueryBuilder::new("https://reddit.com/r/rust".to_string())
             .with_limit(limit)
             .with_offset(offset)
             .with_favorited(favorited)
@@ -244,7 +244,7 @@ mod article_pagination_query_params_should {
             "https://reddit.com/r/rust?limit=20&offset=0&author=the_beercoder&tag=rust&favorited=another_user";
 
         // act
-        let params = PaginationQueryBuilder::new("https://reddit.com/r/rust")
+        let params = PaginationQueryBuilder::new("https://reddit.com/r/rust".to_string())
             .with_limit(limit)
             .with_offset(offset)
             .with_author(author)
@@ -266,7 +266,7 @@ mod article_pagination_query_params_should {
         let expected_url = "https://reddit.com/r/rust?limit=20&author=the_beercoder";
 
         // act
-        let params = PaginationQueryBuilder::new("https://reddit.com/r/rust")
+        let params = PaginationQueryBuilder::new("https://reddit.com/r/rust".to_string())
             .with_limit(limit)
             .with_author(author)
             .build();

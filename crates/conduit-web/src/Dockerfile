@@ -1,13 +1,13 @@
-# stage one - copy over our build files for compilation, including workspace and .env files
+# stage one - copy over our build files for compilation
 FROM rust:1.61.0-slim-bullseye AS build
 
 WORKDIR /app
 
-# all the other projects are required as we're within a workspace conduit
+# copy over our workspace crates to build the web project
 COPY ./crates/conduit-web ./crates/conduit-web
 COPY ./crates/conduit-domain ./crates/conduit-domain
 
-# on rebuilds, we explicitly cache our rust build dependencies to speed things up
+# on rebuilds, we explicitly cache our rust build dependencies to speed things up and prepare a release build using trunk
 RUN --mount=type=cache,target=/app/target \
     --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/app/target \
     cargo install --locked trunk \
     trunk build --release
 
-# stage two - we'll utilize a second container to run our built binary from our first container - slim containers!
+# stage two - we use an nginx container to serve the static web files as we don't require much else - just copy over our dist folder and serve!
 FROM nginx:latest AS deploy
 
 EXPOSE 80
