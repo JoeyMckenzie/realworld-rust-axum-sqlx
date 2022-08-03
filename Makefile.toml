@@ -92,7 +92,6 @@ command = "cargo"
 args = ["test"]
 
 [tasks.test-coverage]
-install_crate = "cargo-tarpaulin"
 command = "cargo"
 args = [
     "+nightly",
