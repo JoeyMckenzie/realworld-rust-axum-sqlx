@@ -20,16 +20,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
 
       - name: Install cargo-make
         uses: dtolnay/rust-toolchain@stable
         run: cargo install --debug cargo-make
 
       - name: Generate code coverage
+        uses: dtolnay/rust-toolchain@stable
         run: cargo make test-coverage
 
       - name: Upload to codecov.io
-      - uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: true

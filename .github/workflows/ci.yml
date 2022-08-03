@@ -24,4 +24,5 @@ jobs:
         run: cargo install --debug cargo-make
 
       - name: Run CI
+        uses: dtolnay/rust-toolchain@stable
         run: cargo make ci
