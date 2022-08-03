@@ -22,11 +22,11 @@ use crate::repositories::comments_repository::PostgresCommentsRepository;
 use crate::repositories::profiles_repository::PostgresProfilesRepository;
 use crate::repositories::tags_repository::PostgresTagsRepository;
 use crate::repositories::users_repository::PostgresUsersRepository;
-use crate::services::features::articles_service::ConduitArticlesService;
-use crate::services::features::comments_service::ConduitCommentsService;
-use crate::services::features::profiles_service::ConduitProfilesService;
-use crate::services::features::tags_service::ConduitTagsService;
-use crate::services::features::users_service::ConduitUsersService;
+use crate::services::articles_service::ConduitArticlesService;
+use crate::services::comments_service::ConduitCommentsService;
+use crate::services::profiles_service::ConduitProfilesService;
+use crate::services::tags_service::ConduitTagsService;
+use crate::services::users_service::ConduitUsersService;
 use crate::services::utils::argon_security_service::ArgonSecurityService;
 use crate::services::utils::jwt_service::JwtService;
 

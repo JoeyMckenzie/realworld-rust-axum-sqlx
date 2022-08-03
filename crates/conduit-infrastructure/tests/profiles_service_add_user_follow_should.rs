@@ -1,13 +1,12 @@
 use std::sync::Arc;
 
+use conduit_core::profiles::service::ProfilesService;
 use mockall::predicate::*;
 
 use conduit_core::profiles::repository::{DynProfilesRepository, UserFollowEntity};
-use conduit_core::profiles::service::ProfilesService;
 use conduit_core::users::repository::{DynUsersRepository, UserEntity};
-
-use crate::services::features::profiles_service::ConduitProfilesService;
-use crate::services::features::specs::fixtures::ProfilesServiceTestFixture;
+use conduit_infrastructure::mocks::ProfilesServiceTestFixture;
+use conduit_infrastructure::services::profiles_service::ConduitProfilesService;
 
 #[tokio::test]
 async fn return_success_when_downstream_services_succeed_and_user_exists() {

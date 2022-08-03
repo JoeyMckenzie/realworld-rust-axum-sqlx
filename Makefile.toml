@@ -82,6 +82,11 @@ command = "cargo"
 args = ["test"]
 dependencies = ["clean"]
 
+[tasks.test-watch]
+install_crate = "cargo-watch"
+command = "cargo"
+args = ["watch", "-x", "test"]
+
 [tasks.test-commit]
 command = "cargo"
 args = ["test"]

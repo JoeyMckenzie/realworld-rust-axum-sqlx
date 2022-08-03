@@ -80,7 +80,7 @@ impl Default for UserEntity {
             updated_at: OffsetDateTime::from(SystemTime::now()),
             username: String::from("stub username"),
             email: String::from("stub email"),
-            password: String::from("stub password"),
+            password: String::from("hashed password"),
             image: String::from("stub image"),
         }
     }

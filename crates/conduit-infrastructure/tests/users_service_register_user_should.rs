@@ -1,15 +1,15 @@
 use std::sync::Arc;
 
+use conduit_core::users::service::UsersService;
+use conduit_infrastructure::mocks::UsersServiceTestFixture;
 use mockall::predicate::*;
 
 use conduit_core::users::repository::{DynUsersRepository, UserEntity};
-use conduit_core::users::service::UsersService;
 use conduit_core::utils::security_service::DynSecurityService;
 use conduit_core::utils::token_service::DynTokenService;
 use conduit_domain::users::requests::RegisterUserDto;
 
-use crate::services::features::specs::fixtures::UsersServiceTestFixture;
-use crate::services::features::users_service::ConduitUsersService;
+use conduit_infrastructure::services::users_service::ConduitUsersService;
 
 #[tokio::test]
 async fn return_success_when_downstream_services_succeed() {

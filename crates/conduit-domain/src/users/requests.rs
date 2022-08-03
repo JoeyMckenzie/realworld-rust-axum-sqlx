@@ -54,3 +54,12 @@ impl RegisterUserDto {
         }
     }
 }
+
+impl LoginUserDto {
+    pub fn new_stub() -> Self {
+        Self {
+            email: Some(String::from("stub email")),
+            password: Some(String::from("stub password")),
+        }
+    }
+}
