@@ -94,7 +94,17 @@ args = ["test"]
 [tasks.test-coverage]
 install_crate = "cargo-tarpaulin"
 command = "cargo"
-args = ["tarpaulin", "-v"]
+args = [
+    "+nightly",
+    "tarpaulin",
+    "-verbose",
+    "--all-features",
+    "--workspace",
+    "--timeout",
+    "240",
+    "--out",
+    "Xml"
+]
 
 [tasks.integration]
 command = "./integrations/run-postman-tests.sh"

@@ -14,10 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Install cargo-make
+        uses: dtolnay/rust-toolchain@stable
         run: cargo install --debug cargo-make
 
       - name: Run CI
