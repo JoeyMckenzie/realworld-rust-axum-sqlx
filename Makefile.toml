@@ -91,10 +91,10 @@ args = ["watch", "-x", "test"]
 command = "cargo"
 args = ["test"]
 
-[tasks.test-coverage]
+[tasks.local-coverage]
+install_crate="cargo-tarpaulin"
 command = "cargo"
 args = [
-    "+nightly",
     "tarpaulin",
     "-verbose",
     "--all-features",
@@ -128,8 +128,24 @@ dependencies = [
     "lint-staged", ## uses cargofmt to format our staged files
 ]
 
+# ci task is called from our CI GitHub action
 [tasks.ci]
 dependencies = [
     "build",
     "test"
+]
+
+# coverage task is called from our coverage GitHub action
+[tasks.coverage]
+command = "cargo"
+args = [
+    "+nightly",
+    "tarpaulin",
+    "--verbose",
+    "--all-features",
+    "--workspace",
+    "--timeout",
+    "240",
+    "--out",
+    "Xml"
 ]
