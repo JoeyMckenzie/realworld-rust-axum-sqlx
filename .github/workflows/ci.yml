@@ -16,11 +16,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      # checkout the repository and install a rust toolchain so we can run cargo commands
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
 
       - name: Install cargo-make
-        uses: dtolnay/rust-toolchain@stable
         run: cargo install --debug cargo-make
 
       - name: Run CI

@@ -19,15 +19,14 @@ jobs:
       options: --security-opt seccomp=unconfined
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      # checkout the repository and install a rust toolchain so we can run cargo commands
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
 
       - name: Install cargo-make
-        uses: dtolnay/rust-toolchain@stable
         run: cargo install --debug cargo-make
 
       - name: Generate code coverage
-        uses: dtolnay/rust-toolchain@stable
         run: cargo make test-coverage
 
       - name: Upload to codecov.io
